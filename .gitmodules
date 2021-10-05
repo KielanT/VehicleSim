@@ -1,0 +1,3 @@
+[submodule "StarterProject/external/imgui"]
+	path = StarterProject/external/imgui
+	url = https://github.com/KielanT/imgui.git
