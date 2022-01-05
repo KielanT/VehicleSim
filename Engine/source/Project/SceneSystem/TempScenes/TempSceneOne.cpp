@@ -3,7 +3,6 @@
 #include "Project/EntitySystem/Components/TransformComponent.h"
 #include "Project/EntitySystem/Components/LightRendererComponent.h"
 
-
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
@@ -30,7 +29,7 @@ namespace Project
         m_LightEntityManager = new EntityManager(m_Renderer);
         m_TestManager = new EntityManager(m_Renderer);
 
-       
+
 
         CParseLevel LevelParser(m_TestManager);
 

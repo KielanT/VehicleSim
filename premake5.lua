@@ -15,12 +15,14 @@ workspace "VehicleSim"
 	IncludeDir["TinyXML2"] = "Engine/external/TinyXML2/include"
 	IncludeDir["ImGui"] = "Engine/external/imgui"
 	IncludeDir["ImGuiBackends"] = "Engine/external/imgui/backends"
+	IncludeDir["PhysX"] = "Engine/external/PhysX/include"
 
 
 	LibDir = {}
 	LibDir["DirectXTK"] = "Engine/external/DirectXTK/%{cfg.buildcfg}"
 	LibDir["assimp"] = "Engine/external/assimp/lib/x64"
 	LibDir["TinyXML2"] = "Engine/external/TinyXML2/lib/%{cfg.buildcfg}"
+	LibDir["PhysX"] = "Engine/external/PhysX/lib/%{cfg.buildcfg}"
 
 	include "Engine/external/imgui"
 
@@ -54,6 +56,8 @@ project "Engine"
 		"%{IncludeDir.TinyXML2}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.ImGuiBackends}",
+		"%{IncludeDir.PhysX}",
+
 	}
 
 	libdirs
@@ -61,17 +65,25 @@ project "Engine"
 		"%{LibDir.DirectXTK}",
 		"%{LibDir.assimp}",
 		"%{LibDir.TinyXML2}",
+		"%{LibDir.PhysX}",
+		
 	}
 
 	links 
 	{
-		"d3d11.lib",
-		"DirectXTK.lib",
-		"d3dcompiler.lib",
-		"winmm.lib",
-		"assimp-vc140-mt.lib",
+		"d3d11",
+		"DirectXTK",
+		"d3dcompiler",
+		"winmm",
+		"assimp-vc140-mt",
 		"tinyxml2.lib",
-		"ImGui"
+		"ImGui",
+
+		"PhysX_64.lib",
+		"PhysXCommon_64.lib",
+		"PhysXCooking_64.lib",
+		"PhysXFoundation_64.lib",
+
 	}
 
 	
