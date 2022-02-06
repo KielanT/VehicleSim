@@ -34,7 +34,6 @@ namespace Project
 
 	TEntityUID EntityManager::CreateEntity(const std::string& name)
 	{
-		
 		// Create new entity with next UID
 		Entity* newEntity = new Entity(m_NextUID, name);
 

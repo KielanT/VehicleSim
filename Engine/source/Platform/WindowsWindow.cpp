@@ -21,7 +21,6 @@ namespace Project
 
     WindowsWindow::WindowsWindow(WindowProperties& props)
     {
-
         Init(props);
     }
 
@@ -174,11 +173,7 @@ namespace Project
                 // Update the scene by the amount of time since the last frame
                 float frameTime = myTimer.GetLapTime();
                 m_SceneManager->SceneLoop(frameTime);
-                /*if (KeyHit(Key_R))
-                {
-                    m_SceneManager->LoadScene(1);
-                    m_SceneManager->RemoveSceneAtIndex(0);
-                }*/
+
             }
         }
 

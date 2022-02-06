@@ -3,6 +3,9 @@
 #include "Project/EntitySystem/Components/TransformComponent.h"
 #include "Project/EntitySystem/Components/LightRendererComponent.h"
 
+//#include "vehicle/PxVehicleSDK.h"
+#include "PxPhysicsAPI.h"
+
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
@@ -29,13 +32,9 @@ namespace Project
         m_LightEntityManager = new EntityManager(m_Renderer);
         m_TestManager = new EntityManager(m_Renderer);
 
-
-
         CParseLevel LevelParser(m_TestManager);
 
         LevelParser.ParseFile("test.xml");
-
-  
 
         std::string path = "media/";
 
@@ -45,14 +44,19 @@ namespace Project
         m_EntityManager->CreateModelEntity("Crate", path + "CargoContainer.x", path + "CargoA.dds");
         m_LightEntityManager->CreateLightEntity("LightOne");
         
-
-
         m_SceneCamera = new Camera();
         return true;
     }
 
     bool TempSceneOne::InitScene()
     {
+
+        if (m_EntityManager->GetEntity("Cube")->GetComponent("Transform"))
+        {
+            TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Cube")->GetComponent("Transform"));
+            comp->SetPosition({10, 30.0f, 0 });
+        }
+
         if (m_EntityManager->GetEntity("Crate")->GetComponent("Transform"))
         {
              TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Crate")->GetComponent("Transform"));
@@ -100,8 +104,6 @@ namespace Project
 
     void TempSceneOne::UpdateScene(float frameTime)
     {
-        
-
         m_EntityManager->UpdateAllEntities(frameTime);
         m_LightEntityManager->UpdateAllEntities(frameTime);
         m_TestManager->UpdateAllEntities(frameTime);
