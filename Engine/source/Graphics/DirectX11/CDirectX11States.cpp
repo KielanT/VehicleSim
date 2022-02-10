@@ -34,7 +34,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateSamplerState(&samplerDesc, &m_PointSampler)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating point sampler");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating point sampler");
                 return false;
             }
 
@@ -53,7 +53,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateSamplerState(&samplerDesc, &m_TrilinearSampler)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating Trilinear sampler");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating Trilinear sampler");
                 return false;
             }
 
@@ -72,7 +72,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateSamplerState(&samplerDesc, &m_Anisotropic4xSampler)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating anisotropic 4x sampler");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating anisotropic 4x sampler");
                 return false;
             }
 
@@ -95,7 +95,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateRasterizerState(&rasterizerDesc, &m_CullBackState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating cull-back state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating cull-back state");
                 return false;
             }
 
@@ -110,7 +110,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateRasterizerState(&rasterizerDesc, &m_CullFrontState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating cull-front state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating cull-front state");
                 return false;
             }
 
@@ -125,7 +125,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateRasterizerState(&rasterizerDesc, &m_CullNoneState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating cull-none state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating cull-none state");
                 return false;
             }
 
@@ -153,7 +153,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateBlendState(&blendDesc, &m_NoBlendingState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating no-blend state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating no-blend state");
                 return false;
             }
 
@@ -176,7 +176,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateBlendState(&blendDesc, &m_AdditiveBlendingState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating additive blending state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating additive blending state");
                 return false;
             }
 
@@ -199,7 +199,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateDepthStencilState(&depthStencilDesc, &m_UseDepthBufferState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating use-depth-buffer state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating use-depth-buffer state");
                 return false;
             }
 
@@ -215,7 +215,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateDepthStencilState(&depthStencilDesc, &m_DepthReadOnlyState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating depth-read-only state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating depth-read-only state");
                 return false;
             }
 
@@ -230,7 +230,7 @@ namespace Project
             if (FAILED(dx11Renderer->GetDevice()->CreateDepthStencilState(&depthStencilDesc, &m_NoDepthBufferState)))
             {
                 ErrorLogger errorLog;
-                errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error creating no-depth-buffer state");
+                errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error creating no-depth-buffer state");
                 return false;
             }
 

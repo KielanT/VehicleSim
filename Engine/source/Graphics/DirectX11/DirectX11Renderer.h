@@ -67,7 +67,7 @@ namespace Project
 		virtual const ERendererType GetRenderType() override { return ERendererType::DirectX11; }
 
 		// Get the Window Properties
-		virtual WindowProperties GetWindowsPropties() override { return m_Props; }
+		virtual WindowProperties GetWindowsProperties() override { return m_Props; }
 
 	public:
 		ID3D11Device*			GetDevice()			{ return m_D3DDevice; } // Returns the DirectX11 device

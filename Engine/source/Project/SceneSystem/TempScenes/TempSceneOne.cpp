@@ -3,16 +3,15 @@
 #include "Project/EntitySystem/Components/TransformComponent.h"
 #include "Project/EntitySystem/Components/LightRendererComponent.h"
 
-//#include "vehicle/PxVehicleSDK.h"
-#include "PxPhysicsAPI.h"
+
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+
 namespace Project
 {
-
     TempSceneOne::TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
     {
         m_Renderer = renderer;
@@ -24,6 +23,39 @@ namespace Project
         m_VsyncOn = vsyncOn;
 
         m_sceneManager = sceneManager;
+        
+        /////////////////////////////////
+        // Physx set up temp (Physx 4.1 documentation startup and shutdown)
+        m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
+        if (!m_Foundation)
+           m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateFoundation Failed");
+
+        
+        // Look at documentation for more optional code
+        m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale());
+        if(!m_Physics)
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreatePhysics Failed");
+
+        m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, physx::PxCookingParams(physx::PxTolerancesScale()));
+        if(!m_Cooking)
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateCooking Failed");
+
+       /* if (!PxInitExtensions(*m_Physics, nullptr))
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxInitExtensions Failed");*/
+
+
+        physx::PxSceneDesc desc(m_Physics->getTolerancesScale());
+        desc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+        
+        if (!desc.cpuDispatcher)
+        {
+            physx::PxU32 mNbThreads = 1;
+            m_CpuDispatcher = physx::PxDefaultCpuDispatcherCreate(mNbThreads);
+            //if (!m_CpuDispatcher)
+            //{
+            //    m_Log.ErrorMessage(renderer->GetWindowsProperties(), "CpuDispatcher Failed");
+            //}
+        }
     }
 
     bool TempSceneOne::InitGeometry()
@@ -43,6 +75,15 @@ namespace Project
         
         m_EntityManager->CreateModelEntity("Crate", path + "CargoContainer.x", path + "CargoA.dds");
         m_LightEntityManager->CreateLightEntity("LightOne");
+
+        m_BoxActor = m_Physics->createRigidDynamic(physx::PxTransform({ 0.0f, 0.0f, 0.0f }));
+        
+        m_Material = m_Physics->createMaterial(.5f, .5f, .1f);
+        m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(2.0f, 2.0f, 2.0f), *m_Material);
+
+
+        // scene->AddActor(m_BoxActor)
+       
         
         m_SceneCamera = new Camera();
         return true;
@@ -88,17 +129,10 @@ namespace Project
 
     void TempSceneOne::RenderScene()
     {
-
-        
         ImGui::ShowDemoWindow();
-        
-       
-
         m_TestManager->RenderAllEntities();
         m_EntityManager->RenderAllEntities();
         m_LightEntityManager->RenderAllEntities();
-
-        
        
     }
 
@@ -115,7 +149,6 @@ namespace Project
             m_sceneManager->LoadScene(1);
             m_sceneManager->RemoveSceneAtIndex(0);
         }
-
     }
 
     void TempSceneOne::ReleaseResources()
@@ -125,5 +158,8 @@ namespace Project
         m_EntityManager->DestroyAllEntities();
         m_LightEntityManager->DestroyAllEntities();
         m_TestManager->DestroyAllEntities();
+
+       m_Physics->release();
+       m_Foundation->release();
     }
 }

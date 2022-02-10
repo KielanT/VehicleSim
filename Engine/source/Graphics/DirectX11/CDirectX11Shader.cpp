@@ -40,7 +40,7 @@ namespace Project
 				m_BasicTransformVertexShader == nullptr ||  m_SkinningVertexShader == nullptr || m_LightModelPixelShader == nullptr)
 			{
 				ErrorLogger errorLog;
-				errorLog.ErrorMessage(renderer->GetWindowsPropties(), "Error Initializing shaders");
+				errorLog.ErrorMessage(renderer->GetWindowsProperties(), "Error Initializing shaders");
 				return false;
 			}
 

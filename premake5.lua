@@ -83,6 +83,7 @@ project "Engine"
 		"PhysXCommon_64.lib",
 		"PhysXCooking_64.lib",
 		"PhysXFoundation_64.lib",
+		"PhysXExtensions_static_64.lib",
 
 	}
 
@@ -127,7 +128,7 @@ project "Engine"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "P_RELEASE"
+		defines "NDEBUG"
 		runtime "Release"
 		optimize "On"
 
@@ -171,6 +172,6 @@ project "KielansVehicleSim"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "P_RELEASE"
+		defines "NDEBUG"
 		runtime "Release"
 		optimize "On"

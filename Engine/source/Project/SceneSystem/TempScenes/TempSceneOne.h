@@ -7,8 +7,25 @@
 
 #include "Project/SceneSystem/CParseLevel.h"
 
+#include "PxPhysicsAPI.h"
+
 namespace Project
 {
+	// Test
+	class UserErrorCallback : public physx::PxErrorCallback
+	{
+	public:
+		virtual void reportError(physx::PxErrorCode::Enum code, const char* message, const char* file,
+			int line)
+		{
+			// error processing implementation
+		}
+	};
+
+	// Test globals 
+	static UserErrorCallback gDefaultErrorCallback;
+	static physx::PxDefaultAllocator gDefaultAllocatorCallback;
+
 	class TempSceneOne : public IScene
 	{
 	public:
@@ -41,6 +58,8 @@ namespace Project
 		virtual ColourRGBA GetBackgroundColour() override{ return m_backgroundColour; }
 		virtual bool GetVSync() override{ return m_VsyncOn; }
 
+	
+
 	private:
 		IRenderer* m_Renderer;
 		int m_SceneIndex;
@@ -52,12 +71,29 @@ namespace Project
 
 		EntityManager* m_TestManager;
 		
-
 		CVector3 m_AmbientColour;
 		float m_SpecularPower;
 		ColourRGBA m_backgroundColour;
 		bool m_VsyncOn;
 
 		CDirectX11SceneManager* m_sceneManager;
+
+		ErrorLogger m_Log;
+
+		// Physx setup temp
+		physx::PxFoundation* m_Foundation;
+		physx::PxPhysics* m_Physics;
+		physx::PxCooking* m_Cooking;
+
+		// Physx Scene test
+		physx::PxScene* m_Scene;
+		physx::PxCpuDispatcher* m_CpuDispatcher;
+
+		// Physx Geometry test
+		physx::PxRigidDynamic* m_BoxActor;
+		physx::PxShape* m_BoxShape;
+		physx::PxMaterial* m_Material;
 	};
 }
+
+

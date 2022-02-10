@@ -19,7 +19,7 @@ namespace Project
 		virtual const ERendererType GetRenderType() = 0;
 
 		// Get the Window Properties
-		virtual WindowProperties GetWindowsPropties() = 0;
+		virtual WindowProperties GetWindowsProperties() = 0;
 	};
 
 	// Returns the renderer base on the type selected
