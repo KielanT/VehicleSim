@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Misc/ProjectDefines.h"
-#include <tinyxml2.h>
+#include "Misc/tinyxml2.h"
 
 namespace Project
 {

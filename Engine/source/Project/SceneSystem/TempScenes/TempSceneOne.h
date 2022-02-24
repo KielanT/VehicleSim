@@ -7,7 +7,8 @@
 
 #include "Project/SceneSystem/CParseLevel.h"
 
-#include "PxPhysicsAPI.h"
+#include <PxPhysicsAPI.h>
+#include "extensions/PxDefaultSimulationFilterShader.h"
 
 namespace Project
 {
@@ -21,6 +22,11 @@ namespace Project
 			// error processing implementation
 		}
 	};
+
+	PX_FORCE_INLINE physx::PxSimulationFilterShader getSampleFilterShader()
+	{
+		return physx::PxDefaultSimulationFilterShader;
+	}
 
 	// Test globals 
 	static UserErrorCallback gDefaultErrorCallback;
@@ -58,6 +64,9 @@ namespace Project
 		virtual ColourRGBA GetBackgroundColour() override{ return m_backgroundColour; }
 		virtual bool GetVSync() override{ return m_VsyncOn; }
 
+	protected:
+		virtual			void									getDefaultSceneDesc(physx::PxSceneDesc&) {}
+		virtual			void									customizeSceneDesc(physx::PxSceneDesc&) {}
 	
 
 	private:
@@ -82,12 +91,14 @@ namespace Project
 
 		// Physx setup temp
 		physx::PxFoundation* m_Foundation;
+		physx::PxPvd* m_Pvd;
 		physx::PxPhysics* m_Physics;
 		physx::PxCooking* m_Cooking;
 
 		// Physx Scene test
 		physx::PxScene* m_Scene;
 		physx::PxCpuDispatcher* m_CpuDispatcher;
+		
 
 		// Physx Geometry test
 		physx::PxRigidDynamic* m_BoxActor;

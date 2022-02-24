@@ -1,7 +1,7 @@
 #pragma once
 #include "Project/EntitySystem/EntityManager.h"
 #include "Math/CVector3.h"
-#include <tinyxml2.h>
+#include "Misc/tinyxml2.h"
 
 // Implemented using Game dev 2: game data lab
 
