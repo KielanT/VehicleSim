@@ -171,7 +171,13 @@ namespace Project
             else // When no windows messages left to process then render & update our scene
             {
                 // Update the scene by the amount of time since the last frame
-                float frameTime = myTimer.GetLapTime();
+                float frameTime = 0;
+
+                while (frameTime < 1/60.0f)
+                {
+                    frameTime += myTimer.GetLapTime();
+                }
+                frameTime = 1 / 60.0f;
                 m_SceneManager->SceneLoop(frameTime);
 
             }

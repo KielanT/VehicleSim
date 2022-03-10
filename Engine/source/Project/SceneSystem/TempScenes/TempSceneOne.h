@@ -10,6 +10,9 @@
 #include <PxPhysicsAPI.h>
 #include "extensions/PxDefaultSimulationFilterShader.h"
 
+
+
+
 namespace Project
 {
 	// Test
@@ -70,6 +73,11 @@ namespace Project
 	
 
 	private:
+		void Gui();
+
+		// Gui Test variables
+		CVector3 renderedBox;
+
 		IRenderer* m_Renderer;
 		int m_SceneIndex;
 
@@ -98,12 +106,20 @@ namespace Project
 		// Physx Scene test
 		physx::PxScene* m_Scene;
 		physx::PxCpuDispatcher* m_CpuDispatcher;
+		physx::PxCudaContextManager* m_CudaContextManager;
 		
 
 		// Physx Geometry test
 		physx::PxRigidDynamic* m_BoxActor;
+		physx::PxRigidActor* m_BoxActor2;
 		physx::PxShape* m_BoxShape;
+		physx::PxShape* m_BoxShape2;
 		physx::PxMaterial* m_Material;
+
+		// Test
+		bool advance(physx::PxReal dt);
+		float mAccumulator = 0.0f;
+		float mStepSize = 1.0f / 60.0f;
 	};
 }
 
