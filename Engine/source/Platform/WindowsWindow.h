@@ -19,9 +19,9 @@ namespace Project
 		virtual void Update(ISceneManager* m_SceneManager) override;
 
 		// Returns the window width
-		virtual unsigned int GetWidth() const override { return 0; }
+		virtual unsigned int GetWidth() const override { return m_Props.Width; }
 		// Returns the window height
-		virtual unsigned int GetHeight() const override { return 0; }
+		virtual unsigned int GetHeight() const override { return m_Props.Height; }
 
 		// Returns the window propities
 		virtual WindowProperties GetWindowProperties() const override { return m_Props; }

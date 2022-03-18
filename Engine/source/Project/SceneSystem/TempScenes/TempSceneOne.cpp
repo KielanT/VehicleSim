@@ -35,8 +35,10 @@ namespace Project
         physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5424, 10);
         m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
 
-       
-        m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale(), true, m_Pvd);
+        physx::PxTolerancesScale scale = physx::PxTolerancesScale();
+        scale.length = 0.1f;
+        //scale.speed = 0.1f;
+        m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, scale, true, m_Pvd);
         if(!m_Physics)
             m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreatePhysics Failed");
         
@@ -44,8 +46,9 @@ namespace Project
        if (!PxInitExtensions(*m_Physics, m_Pvd))
            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxInitExtensions Failed");
 
-       physx::PxTolerancesScale scale;
-       physx::PxCookingParams params(scale);
+       
+       
+       physx::PxCookingParams params(m_Physics->getTolerancesScale());
        params.meshWeldTolerance = 0.001f; // Physx sample default
        params.meshPreprocessParams = physx::PxMeshPreprocessingFlags(physx::PxMeshPreprocessingFlag::eWELD_VERTICES);
        params.buildGPUData = true; //Enable GRB data being produced in cooking.
@@ -55,7 +58,7 @@ namespace Project
            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateCooking Failed");
 
 
-       physx::PxSceneDesc desc(m_Physics->getTolerancesScale());
+       physx::PxSceneDesc desc(scale);
        desc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 
        if (!desc.cpuDispatcher)
