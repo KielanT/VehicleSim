@@ -22,8 +22,6 @@ namespace Project
 		// Creates the scene
 		CreateScenesFromFile();
 		CreateSceneFromObject(); // TEMP
-
-		LoadFirstScene(); // Loads the first scene
 	}
 
 	CDirectX11SceneManager::~CDirectX11SceneManager()

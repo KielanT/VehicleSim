@@ -16,6 +16,17 @@
 namespace Project
 {
 	// Test
+
+	inline physx::PxFilterFlags SampleSubmarineFilterShader(
+		physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+		physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+		physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+	{
+		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT | physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+		return physx::PxFilterFlag::eDEFAULT;
+	}
+
 	class UserErrorCallback : public physx::PxErrorCallback
 	{
 	public:
@@ -35,7 +46,7 @@ namespace Project
 	static UserErrorCallback gDefaultErrorCallback;
 	static physx::PxDefaultAllocator gDefaultAllocatorCallback;
 
-	class TempSceneOne : public IScene
+	class TempSceneOne : public IScene, public physx::PxSimulationEventCallback
 	{
 	public:
 		TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(0.2f, 0.2f, 0.3f),
@@ -67,11 +78,24 @@ namespace Project
 		virtual ColourRGBA GetBackgroundColour() override{ return m_backgroundColour; }
 		virtual bool GetVSync() override{ return m_VsyncOn; }
 
-	protected:
-		virtual			void									getDefaultSceneDesc(physx::PxSceneDesc&) {}
-		virtual			void									customizeSceneDesc(physx::PxSceneDesc&) {}
-	
+		virtual void							onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
+		virtual void							onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
+		virtual void							onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32) {}
+		virtual void							onWake(physx::PxActor**, physx::PxU32) {}
+		virtual void							onSleep(physx::PxActor**, physx::PxU32) {}
+		virtual void							onAdvance(const physx::PxRigidBody* const*, const physx::PxTransform*, const physx::PxU32) {}
 
+	protected:
+
+		
+
+		virtual			void									getDefaultSceneDesc(physx::PxSceneDesc&) {}
+		virtual			void									customizeSceneDesc(physx::PxSceneDesc& sceneDesc)
+		{
+			sceneDesc.filterShader = SampleSubmarineFilterShader;
+			sceneDesc.simulationEventCallback = this;
+			sceneDesc.flags |= physx::PxSceneFlag::eREQUIRE_RW_LOCK;
+		}
 	private:
 		void Gui();
 

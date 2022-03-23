@@ -60,6 +60,7 @@ namespace Project
 
        physx::PxSceneDesc desc(scale);
        desc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+     
 
        if (!desc.cpuDispatcher)
        {
@@ -73,6 +74,7 @@ namespace Project
        if (!desc.filterShader)
            desc.filterShader = getSampleFilterShader();
 
+       customizeSceneDesc(desc);
        m_Scene = m_Physics->createScene(desc);
        if (!m_Scene)
            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "Scene Failed");
@@ -102,7 +104,7 @@ namespace Project
 
         m_BoxActor = m_Physics->createRigidDynamic(physx::PxTransform({ 0.0f, 40.0f, 0.0f }));
         //m_BoxActor->setActorFlags(physx::PxActorFlag::eDISABLE_SIMULATION);
-
+        
 
         m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5, 5, 5), *m_Material);
         
@@ -191,12 +193,6 @@ namespace Project
             comp->SetPosition(vect);
 
             renderedBox = comp->GetPosition();
-            static int b = 10;
-            if (b > 0)
-            {
-                m_BoxActor->setLinearVelocity({ 0, 0, 0 });
-                b--;
-            }
         }
 
         /*if (m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"))
@@ -245,6 +241,19 @@ namespace Project
 
         delete m_SceneCamera;       m_SceneCamera = nullptr;
         delete m_CpuDispatcher;     m_CpuDispatcher = nullptr;
+    }
+
+    void TempSceneOne::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+    {
+        physx::PxTransform a, b;
+        a = pairs->shapes[0]->getActor()->getGlobalPose();
+        b = pairs->shapes[1]->getActor()->getGlobalPose();
+
+        pairs = nullptr;
+    }
+
+    void TempSceneOne::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+    {
     }
 
     void TempSceneOne::Gui()
