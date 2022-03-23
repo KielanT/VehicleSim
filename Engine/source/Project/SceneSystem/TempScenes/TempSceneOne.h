@@ -10,6 +10,7 @@
 #include <PxPhysicsAPI.h>
 #include "extensions/PxDefaultSimulationFilterShader.h"
 
+#include "Physics/PhysX4.1/PhysxHelpers.h"
 
 
 
@@ -17,34 +18,26 @@ namespace Project
 {
 	// Test
 
-	inline physx::PxFilterFlags SampleSubmarineFilterShader(
-		physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
-		physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
-		physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
-	{
-		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT | physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	//inline physx::PxFilterFlags SampleSubmarineFilterShader(
+	//	physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+	//	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+	//	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+	//{
+	//	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT | physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 
-		return physx::PxFilterFlag::eDEFAULT;
-	}
+	//	return physx::PxFilterFlag::eDEFAULT;
+	//}
 
-	class UserErrorCallback : public physx::PxErrorCallback
-	{
-	public:
-		virtual void reportError(physx::PxErrorCode::Enum code, const char* message, const char* file,
-			int line)
-		{
-			// error processing implementation
-		}
-	};
 
-	PX_FORCE_INLINE physx::PxSimulationFilterShader getSampleFilterShader()
-	{
-		return physx::PxDefaultSimulationFilterShader;
-	}
 
-	// Test globals 
-	static UserErrorCallback gDefaultErrorCallback;
-	static physx::PxDefaultAllocator gDefaultAllocatorCallback;
+	//PX_FORCE_INLINE physx::PxSimulationFilterShader getSampleFilterShader()
+	//{
+	//	return physx::PxDefaultSimulationFilterShader;
+	//}
+
+	//// Test globals 
+	//UserErrorCallback gDefaultErrorCallback;
+	//physx::PxDefaultAllocator gDefaultAllocatorCallback;
 
 	class TempSceneOne : public IScene, public physx::PxSimulationEventCallback
 	{
@@ -90,12 +83,12 @@ namespace Project
 		
 
 		virtual			void									getDefaultSceneDesc(physx::PxSceneDesc&) {}
-		virtual			void									customizeSceneDesc(physx::PxSceneDesc& sceneDesc)
+		/*virtual			void									customizeSceneDesc(physx::PxSceneDesc& sceneDesc)
 		{
 			sceneDesc.filterShader = SampleSubmarineFilterShader;
 			sceneDesc.simulationEventCallback = this;
 			sceneDesc.flags |= physx::PxSceneFlag::eREQUIRE_RW_LOCK;
-		}
+		}*/
 	private:
 		void Gui();
 
@@ -130,7 +123,6 @@ namespace Project
 		// Physx Scene test
 		physx::PxScene* m_Scene;
 		physx::PxCpuDispatcher* m_CpuDispatcher;
-		physx::PxCudaContextManager* m_CudaContextManager;
 		
 
 		// Physx Geometry test

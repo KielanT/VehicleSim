@@ -35,6 +35,8 @@ namespace Project
 
 		virtual IRenderer* GetRenderer() override { return m_Renderer; }
 
+		WindowProperties GetWindowsProperties() { return m_Props; }
+
 	private:
 		// Creates the scenes
 		virtual void CreateScenesFromFile() override;

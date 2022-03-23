@@ -36,7 +36,11 @@ namespace Project
 
 				childElement = element->FirstChildElement("Renderer");
 				attr = childElement->FindAttribute("Type");
-				if (attr != nullptr) m_Props.RendererType = GetRendertype(attr->Value());
+				if (attr != nullptr) m_Props.RendererType = GetRenderType(attr->Value());
+
+				childElement = element->FirstChildElement("Physics");
+				attr = childElement->FindAttribute("Type");
+				if (attr != nullptr) m_Props.PhysicsType = GetPhysicsType(attr->Value());
 			}
 
 			element = element->NextSiblingElement();
@@ -44,7 +48,7 @@ namespace Project
 
 		return m_Props;
 	}
-	ERendererType ParseWindowSettings::GetRendertype(std::string value)
+	ERendererType ParseWindowSettings::GetRenderType(std::string value)
 	{
 		if (value == "DirectX11")
 		{
@@ -56,5 +60,19 @@ namespace Project
 		}
 
 		
+	}
+
+	EPhysicsType ParseWindowSettings::GetPhysicsType(std::string value)
+	{
+		if (value == "PhysX4")
+		{
+			return EPhysicsType::PhysX4;
+		}
+		else
+		{
+			return EPhysicsType::None;
+		}
+
+
 	}
 }

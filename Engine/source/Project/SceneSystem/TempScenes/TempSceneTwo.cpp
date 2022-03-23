@@ -28,7 +28,6 @@ namespace Project
 
         m_EntityManager->CreateModelEntity("Crate", path + "CargoContainer.x");
 
-
         m_SceneCamera = new Camera();
         return true;
     }

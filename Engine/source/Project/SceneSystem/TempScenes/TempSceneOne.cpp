@@ -28,56 +28,56 @@ namespace Project
         /////////////////////////////////
         // Physx set up temp (Physx 4.1 documentation startup and shutdown)
         m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
-        if (!m_Foundation)
-           m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateFoundation Failed");
+         if (!m_Foundation)
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateFoundation Failed");
 
-        m_Pvd = physx::PxCreatePvd(*m_Foundation); 
-        physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5424, 10);
-        m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+         m_Pvd = physx::PxCreatePvd(*m_Foundation); 
+         physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5424, 10);
+         m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
 
-        physx::PxTolerancesScale scale = physx::PxTolerancesScale();
-        scale.length = 0.1f;
-        //scale.speed = 0.1f;
-        m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, scale, true, m_Pvd);
-        if(!m_Physics)
-            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreatePhysics Failed");
+         physx::PxTolerancesScale scale = physx::PxTolerancesScale();
+         scale.length = 0.1f;
+         //scale.speed = 0.1f;
+         m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, scale, true, m_Pvd);
+         if(!m_Physics)
+             m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreatePhysics Failed");
+         
         
-      
-       if (!PxInitExtensions(*m_Physics, m_Pvd))
-           m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxInitExtensions Failed");
+        if (!PxInitExtensions(*m_Physics, m_Pvd))
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxInitExtensions Failed");
 
-       
-       
-       physx::PxCookingParams params(m_Physics->getTolerancesScale());
-       params.meshWeldTolerance = 0.001f; // Physx sample default
-       params.meshPreprocessParams = physx::PxMeshPreprocessingFlags(physx::PxMeshPreprocessingFlag::eWELD_VERTICES);
-       params.buildGPUData = true; //Enable GRB data being produced in cooking.
+        
+        
+        physx::PxCookingParams params(m_Physics->getTolerancesScale());
+        params.meshWeldTolerance = 0.001f; // Physx sample default
+        params.meshPreprocessParams = physx::PxMeshPreprocessingFlags(physx::PxMeshPreprocessingFlag::eWELD_VERTICES);
+        params.buildGPUData = true; //Enable GRB data being produced in cooking.
 
-       m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, params);
-       if (!m_Cooking)
-           m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateCooking Failed");
+        m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, params);
+        if (!m_Cooking)
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "PxCreateCooking Failed");
 
 
-       physx::PxSceneDesc desc(scale);
-       desc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+        physx::PxSceneDesc desc(scale);
+        desc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
      
 
-       if (!desc.cpuDispatcher)
-       {
-           physx::PxU32 mNbThreads = 1;
-           m_CpuDispatcher = physx::PxDefaultCpuDispatcherCreate(mNbThreads); 
-           if (!m_CpuDispatcher)
-               m_Log.ErrorMessage(renderer->GetWindowsProperties(), "CpuDispatcher Failed");
-           desc.cpuDispatcher = m_CpuDispatcher;
-       }
-       
-       if (!desc.filterShader)
-           desc.filterShader = getSampleFilterShader();
+        if (!desc.cpuDispatcher)
+        {
+            physx::PxU32 mNbThreads = 1;
+            m_CpuDispatcher = physx::PxDefaultCpuDispatcherCreate(mNbThreads); 
+            if (!m_CpuDispatcher)
+                m_Log.ErrorMessage(renderer->GetWindowsProperties(), "CpuDispatcher Failed");
+            desc.cpuDispatcher = m_CpuDispatcher;
+        }
+        
+        if (!desc.filterShader)
+            desc.filterShader = getSampleFilterShader();
 
-       customizeSceneDesc(desc);
-       m_Scene = m_Physics->createScene(desc);
-       if (!m_Scene)
-           m_Log.ErrorMessage(renderer->GetWindowsProperties(), "Scene Failed");
+        //customizeSceneDesc(desc);
+        m_Scene = m_Physics->createScene(desc);
+        if (!m_Scene)
+            m_Log.ErrorMessage(renderer->GetWindowsProperties(), "Scene Failed");
     }
 
     bool TempSceneOne::InitGeometry()
@@ -195,7 +195,7 @@ namespace Project
             renderedBox = comp->GetPosition();
         }
 
-        /*if (m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"))
+        if (m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"))
         {
             TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"));
 
@@ -204,7 +204,7 @@ namespace Project
             vect.y = m_BoxActor2->getGlobalPose().p.y;
             vect.z = m_BoxActor2->getGlobalPose().p.z;
             comp->SetPosition(vect);
-        }*/
+        }
 
         m_EntityManager->UpdateAllEntities(frameTime);
         m_LightEntityManager->UpdateAllEntities(frameTime);
@@ -260,7 +260,7 @@ namespace Project
     {
         //ImGui::ShowDemoWindow();
 
-        ImGuiWindowFlags window_flags = 0;
+       /* ImGuiWindowFlags window_flags = 0;
 
         ImGui::Begin("Debug", 0, window_flags);
 
@@ -296,10 +296,10 @@ namespace Project
             ImGui::Separator();
         }
 
-        ImGui::End();
+        ImGui::End();*/
     }
 
-    bool TempSceneOne::advance(physx::PxReal dt)
+  bool TempSceneOne::advance(physx::PxReal dt)
     {
         mAccumulator += dt;
         if (mAccumulator < mStepSize)
