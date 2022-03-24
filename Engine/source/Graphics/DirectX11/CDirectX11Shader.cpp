@@ -34,7 +34,7 @@ namespace Project
 			m_PixelLightingPixelShader = LoadPixelShader("PixelLighting_ps");
 
 			std::filesystem::current_path(MainPath); // Resets path to the main directory
-
+			
 			// CHecks that the shaders are not nullptr
 			if (m_PixelLightingVertexShader  == nullptr ||  m_PixelLightingPixelShader == nullptr ||
 				m_BasicTransformVertexShader == nullptr ||  m_SkinningVertexShader == nullptr || m_LightModelPixelShader == nullptr)

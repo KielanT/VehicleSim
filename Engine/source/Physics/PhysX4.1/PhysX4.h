@@ -24,13 +24,13 @@ namespace Project
 
 		
 
-		physx::PxFoundation* m_Foundation;
-		physx::PxPvd* m_Pvd;
-		physx::PxPhysics* m_Physics;
-		physx::PxCooking* m_Cooking;
+		physx::PxFoundation* m_Foundation = nullptr;
+		physx::PxPvd* m_Pvd = nullptr;
+		physx::PxPhysics* m_Physics = nullptr;
+		physx::PxCooking* m_Cooking = nullptr;
 
-		physx::PxScene* m_Scene;
-		physx::PxCpuDispatcher* m_CpuDispatcher;
+		physx::PxScene* m_Scene = nullptr;
+		physx::PxDefaultCpuDispatcher* m_CpuDispatcher = nullptr;
 	};
 }
 

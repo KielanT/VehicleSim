@@ -2,6 +2,7 @@
 
 #include "Project/SceneSystem/IScene.h"
 #include "Project/Interfaces/IRenderer.h"
+#include "Project/Interfaces/IPhysics.h"
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
 
@@ -43,6 +44,10 @@ namespace Project
 	{
 	public:
 		TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(0.2f, 0.2f, 0.3f),
+			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
+			bool vsyncOn = true);
+
+		TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
@@ -97,13 +102,14 @@ namespace Project
 
 		IRenderer* m_Renderer;
 		int m_SceneIndex;
+		bool m_EnablePhysics;
 
-		Camera* m_SceneCamera;
+		Camera* m_SceneCamera = nullptr;
 
-		EntityManager* m_EntityManager;
-		EntityManager* m_LightEntityManager;
+		EntityManager* m_EntityManager = nullptr;
+		EntityManager* m_LightEntityManager = nullptr;
 
-		EntityManager* m_TestManager;
+		EntityManager* m_TestManager = nullptr;
 		
 		CVector3 m_AmbientColour;
 		float m_SpecularPower;
@@ -114,23 +120,15 @@ namespace Project
 
 		ErrorLogger m_Log;
 
-		// Physx setup temp
-		physx::PxFoundation* m_Foundation;
-		physx::PxPvd* m_Pvd;
-		physx::PxPhysics* m_Physics;
-		physx::PxCooking* m_Cooking;
-
-		// Physx Scene test
-		physx::PxScene* m_Scene;
-		physx::PxCpuDispatcher* m_CpuDispatcher;
+		IPhysics* m_PhysicsSystem = nullptr;
 		
 
 		// Physx Geometry test
-		physx::PxRigidDynamic* m_BoxActor;
-		physx::PxRigidActor* m_BoxActor2;
-		physx::PxShape* m_BoxShape;
-		physx::PxShape* m_BoxShape2;
-		physx::PxMaterial* m_Material;
+		physx::PxRigidDynamic* m_BoxActor = nullptr;
+		physx::PxRigidActor* m_BoxActor2 = nullptr;
+		physx::PxShape* m_BoxShape = nullptr;
+		physx::PxShape* m_BoxShape2 = nullptr;
+		physx::PxMaterial* m_Material = nullptr;
 
 		// Test
 		bool advance(physx::PxReal dt);

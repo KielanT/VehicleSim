@@ -48,14 +48,18 @@ namespace Project
 
 	Application::~Application()
 	{
+		m_SceneManager->Release();
+		delete m_SceneManager; // Deletes the scene manager
+
 		m_Renderer->ShutdownRenderer(); // Shutdown the renderer
 		delete m_Renderer; // Deletes the renderer
 
-		delete m_SceneManager; // Deletes the scene manager
+		
 	}
 
 	void Application::Run()
 	{
+		
 		m_Window->Update(m_SceneManager); // Updates the window and sends the scene manager to the window
 	}
 }

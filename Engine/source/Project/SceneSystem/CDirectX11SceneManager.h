@@ -37,6 +37,8 @@ namespace Project
 
 		WindowProperties GetWindowsProperties() { return m_Props; }
 
+		virtual void Release() override;
+
 	private:
 		// Creates the scenes
 		virtual void CreateScenesFromFile() override;

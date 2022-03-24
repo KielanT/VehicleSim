@@ -10,6 +10,7 @@ namespace Project
 {
 	EntityManager::EntityManager(IRenderer* renderer)
 	{
+		
 		m_Renderer = renderer;
 		m_Entities.reserve(1024);
 		m_EntityUIDMap = new CHashTable<TEntityUID, TUInt32>(2048, JOneAtATimeHash);
@@ -17,12 +18,15 @@ namespace Project
 		m_NextUID = 0;
 
 		m_IsEnumerating = false;
-
+		
 		m_Shader = SetShader(renderer->GetRenderType());
+
 		m_Shader->InitShaders(m_Renderer);
+		
 
 		m_State = SetStates(renderer->GetRenderType());
 		m_State->InitStates(m_Renderer);
+		
 	}
 
 	EntityManager::~EntityManager()

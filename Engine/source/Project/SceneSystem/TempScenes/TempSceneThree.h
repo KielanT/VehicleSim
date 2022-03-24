@@ -10,9 +10,9 @@ namespace Project
 	class TempSceneThree : public IScene
 	{
 	public:
-		/*TempSceneThree(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		TempSceneThree(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
-			bool vsyncOn = true);*/
+			bool vsyncOn = true);
 
 		TempSceneThree(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
@@ -55,21 +55,21 @@ namespace Project
 		ColourRGBA m_backgroundColour;
 		bool m_VsyncOn;
 
-		Camera* m_SceneCamera;
+		Camera* m_SceneCamera = nullptr;
 
-		EntityManager* m_EntityManager;
-		EntityManager* m_LightEntityManager;
+		EntityManager* m_EntityManager = nullptr;
+		EntityManager* m_LightEntityManager = nullptr;
 
 		CDirectX11SceneManager* m_sceneManager;
 
 		IPhysics* m_PhysicsSystem;
 
 		// Physx Geometry test
-		physx::PxRigidDynamic* m_BoxActor;
-		physx::PxRigidActor* m_BoxActor2;
-		physx::PxShape* m_BoxShape;
-		physx::PxShape* m_BoxShape2;
-		physx::PxMaterial* m_Material;
+		physx::PxRigidDynamic* m_BoxActor = nullptr;
+		physx::PxRigidActor* m_BoxActor2 = nullptr;
+		physx::PxShape* m_BoxShape = nullptr;
+		physx::PxShape* m_BoxShape2 = nullptr;
+		physx::PxMaterial* m_Material = nullptr;
 	};
 }
 

@@ -27,6 +27,8 @@ namespace Project
 
 		virtual IRenderer* GetRenderer() = 0;
 
+		virtual void Release() = 0;
+
 	private:
 		// Creates the scenes
 		virtual void CreateScenesFromFile() = 0;

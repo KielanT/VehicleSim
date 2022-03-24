@@ -28,3 +28,4 @@
 
 #include "Misc/ProjectDefines.h"
 #include "Utility/ErrorLogger.h"
+#include "Misc/Macros.h"

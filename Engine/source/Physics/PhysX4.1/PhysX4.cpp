@@ -55,14 +55,21 @@ namespace Project
         return true;
     }
 
+
     void PhysX::ShutdownPhysics()
     {
-        if (m_Physics)      m_Physics->release();       delete m_Physics;       m_Physics = nullptr;
-        if (m_Foundation)   m_Foundation->release();    m_Foundation = nullptr;
-        if(m_Cooking)       m_Cooking->release();       m_Cooking = nullptr;
-        if(m_Pvd)           m_Pvd->release();           m_Pvd = nullptr;
-        if(m_Scene)         m_Scene->release();         m_Scene = nullptr;
-        if(m_CpuDispatcher) delete m_CpuDispatcher;     m_CpuDispatcher = nullptr;
+        SAFE_RELEASE(m_Scene);
+        SAFE_RELEASE(m_CpuDispatcher);
+        SAFE_RELEASE(m_Cooking);
+
+        PxCloseExtensions();
+        SAFE_RELEASE(m_Physics);
+        SAFE_RELEASE(m_Pvd);
+        
+        
+       
+        SAFE_RELEASE(m_Foundation);
+       
     }
 
     const EPhysicsType PhysX::GetPhysicsType()

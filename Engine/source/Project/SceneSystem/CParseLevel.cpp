@@ -20,7 +20,7 @@ namespace Project
 		std::filesystem::path MainPath = std::filesystem::current_path(); // Gets the current working directory
 
 		// Gets the scene path
-		std::filesystem::path scenePath = std::filesystem::current_path().parent_path().append("Engine\\source\\Project\\SceneSystem\\Scenes\\");
+		std::filesystem::path scenePath = std::filesystem::current_path().parent_path().append("Engine\\scenes\\");
 
 		std::filesystem::current_path(scenePath); // Sets the current path to the shader path
 

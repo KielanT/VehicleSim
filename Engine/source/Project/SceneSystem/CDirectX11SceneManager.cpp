@@ -33,6 +33,15 @@ namespace Project
 			 delete m_Scenes[i]; // Deletes each scene in the renderer
 	}
 
+	void CDirectX11SceneManager::Release()
+	{
+		for (int i = 0; i < m_Scenes.size(); ++i)
+		{
+			m_Scenes[i]->ReleaseResources();
+		}
+		
+	}
+
 	void CDirectX11SceneManager::CreateScenesFromFile()
 	{
 
@@ -52,9 +61,9 @@ namespace Project
 		auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		//scene = new TempSceneOne(this, m_Renderer, 1); // Creates a new temp scene
-		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
-		//m_Scenes.insert(pos, scene); // Adds scene to the array
+		scene = new TempSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
+		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		m_Scenes.insert(pos, scene); // Adds scene to the array
 
 		//scene = new TempSceneTwo(this, m_Renderer, 2); // Creates a new temp scene
 		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
@@ -78,6 +87,7 @@ namespace Project
 		m_SceneIndex = index; // Sets the scene index then Initializes the correct scene
 		m_Scenes[m_SceneIndex]->InitGeometry();
 		m_Scenes[m_SceneIndex]->InitScene();
+
 	}
 
 	void CDirectX11SceneManager::RemoveCurrentScene()
