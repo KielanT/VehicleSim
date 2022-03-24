@@ -64,11 +64,6 @@ namespace Project
 
 		IPhysics* m_PhysicsSystem;
 
-		// Physx Geometry test
-		physx::PxRigidDynamic* m_BoxActor = nullptr;
-		physx::PxRigidActor* m_BoxActor2 = nullptr;
-		physx::PxShape* m_BoxShape = nullptr;
-		physx::PxShape* m_BoxShape2 = nullptr;
 		physx::PxMaterial* m_Material = nullptr;
 	};
 }

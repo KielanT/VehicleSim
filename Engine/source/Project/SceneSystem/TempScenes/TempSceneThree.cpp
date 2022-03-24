@@ -47,8 +47,6 @@ namespace Project
 		std::string path = "media/";
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 
-		m_EntityManager->CreateModelEntity("Cube", path + "Cube.x");
-		m_EntityManager->CreateModelEntity("Cube2", path + "Cube.x", path + "brick1.jpg");
 		
 		if (m_EnablePhysics)
 		{
@@ -57,18 +55,8 @@ namespace Project
 			if (!m_PhysicsSystem->InitPhysics())
 				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Failed to Initialise Physics");
 
-			
-
 			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0, 0, 0);
-			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 40.0f, 0.0f }));
-			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5, 5, 5), *m_Material);
-
-			m_BoxActor2 = m_PhysicsSystem->GetPhysics()->createRigidStatic({ 0.0f, 10.0f, 0.0f });
-			m_BoxShape2 = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor2, physx::PxBoxGeometry(5, 5, 5), *m_Material);
-
-
-			m_PhysicsSystem->GetScene()->addActor(*m_BoxActor);
-			m_PhysicsSystem->GetScene()->addActor(*m_BoxActor2);
+			
 		}
 
 		return true;
@@ -77,22 +65,7 @@ namespace Project
 	bool TempSceneThree::InitScene()
 	{
 		
-		if (m_EnablePhysics && m_EntityManager->GetEntity("Cube")->GetComponent("Transform"))
-		{
-			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Cube")->GetComponent("Transform"));
-
-			CVector3 vect;
-			vect.x = m_BoxActor->getGlobalPose().p.x;
-			vect.y = m_BoxActor->getGlobalPose().p.y;
-			vect.z = m_BoxActor->getGlobalPose().p.z;
-			comp->SetPosition(vect);
-		}
-
-		if (m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"))
-		{
-			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"));
-			comp->SetPosition({ 0.0f, 10.0f, 0.0f });
-		}
+		
 
 
 		m_SceneCamera->SetPosition({ 0, 10, -50 });
@@ -111,28 +84,7 @@ namespace Project
 		{
 			m_PhysicsSystem->GetScene()->simulate(frameTime);
 
-			if (m_EntityManager->GetEntity("Cube")->GetComponent("Transform"))
-			{
-
-				TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Cube")->GetComponent("Transform"));
-
-				CVector3 vect;
-				vect.x = m_BoxActor->getGlobalPose().p.x;
-				vect.y = m_BoxActor->getGlobalPose().p.y;
-				vect.z = m_BoxActor->getGlobalPose().p.z;
-				comp->SetPosition(vect);
-			}
-
-			if (m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"))
-			{
-				TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Cube2")->GetComponent("Transform"));
-
-				CVector3 vect;
-				vect.x = m_BoxActor2->getGlobalPose().p.x;
-				vect.y = m_BoxActor2->getGlobalPose().p.y;
-				vect.z = m_BoxActor2->getGlobalPose().p.z;
-				comp->SetPosition(vect);
-			}
+			
 			m_PhysicsSystem->GetScene()->fetchResults(true);
 		}
 
@@ -159,9 +111,6 @@ namespace Project
 
 		SAFE_RELEASE(m_Material);
 
-		SAFE_RELEASE(m_BoxActor);
-
-		SAFE_RELEASE(m_BoxActor2);
 		
 		
 		if (m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
