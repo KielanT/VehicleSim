@@ -80,6 +80,7 @@ project "Engine"
 		"PhysXFoundation_64.lib",
 		"PhysXExtensions_static_64.lib",
 		"PhysXPvdSDK_static_64.lib",
+		"PhysXVehicle_static_64.lib"
 
 	}
 

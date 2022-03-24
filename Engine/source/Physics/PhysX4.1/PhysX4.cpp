@@ -24,6 +24,8 @@ namespace Project
         if (!PxInitExtensions(*m_Physics, m_Pvd))
             return false;
 
+
+
         physx::PxCookingParams params(m_Physics->getTolerancesScale());
         params.meshWeldTolerance = meshWeldTolerance;
         params.meshPreprocessParams = physx::PxMeshPreprocessingFlags(physx::PxMeshPreprocessingFlag::eWELD_VERTICES);
