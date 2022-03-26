@@ -31,7 +31,7 @@ namespace Project
 	void RendererComponent::Render()
 	{
 
-		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
+		if( m_Model != nullptr && m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
 			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
 
@@ -47,10 +47,8 @@ namespace Project
 			dx11Renderer->GetDeviceContext()->OMSetDepthStencilState(m_DepthStencilState, 0);
 			dx11Renderer->GetDeviceContext()->RSSetState(m_RasterizerState);
 
-			if (m_Model != nullptr)
-			{
-				m_Model->Render();
-			}
+			m_Model->Render();
+
 		}
 	}
 

@@ -11,7 +11,7 @@ namespace Project
             return false;
 
         m_Pvd = physx::PxCreatePvd(*m_Foundation);
-        physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5424, 10);
+        physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
         m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
         if (!m_Pvd)
             return false;
@@ -25,7 +25,6 @@ namespace Project
             return false;
 
 
-
         physx::PxCookingParams params(m_Physics->getTolerancesScale());
         params.meshWeldTolerance = meshWeldTolerance;
         params.meshPreprocessParams = physx::PxMeshPreprocessingFlags(physx::PxMeshPreprocessingFlag::eWELD_VERTICES);
@@ -34,6 +33,8 @@ namespace Project
         m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, params);
         if (!m_Cooking)
             return false;
+
+        
 
         physx::PxSceneDesc desc(scale);
         desc.gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
@@ -53,6 +54,8 @@ namespace Project
         m_Scene = m_Physics->createScene(desc);
         if (!m_Scene)
             return false;
+        
+        
 
         return true;
     }
@@ -78,4 +81,5 @@ namespace Project
     {
         return EPhysicsType::PhysX4;
     }
+
 }

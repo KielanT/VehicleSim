@@ -40,15 +40,21 @@ namespace Project
 
 	bool TempSceneThree::InitGeometry()
 	{
-		
 		m_EntityManager = new EntityManager(m_Renderer);
 		
 		m_SceneCamera = new Camera();
 		
 		std::string path = "media/";
-		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
+		//m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
+		m_EntityManager->CreateModelEntity("Floor", path + "Grid.x", path + "grid.jpg");
+		//m_EntityManager->CreateModelEntity("Floor", path + "Grid.x", path + "grid2.jpg");
+
 		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", path + "brick1.jpg");
+		//m_EntityManager->CreateModelEntity("Car", path + "Hatchback/untitled.obj", path + "Hatchback/HatchbackYellow.png");
+		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", path + "Compact/CompactBlue.png");
+
 		
+
 		if (m_EnablePhysics)
 		{
 			m_PhysicsSystem = NewPhysics(m_sceneManager->GetWindowsProperties().PhysicsType);
@@ -62,12 +68,19 @@ namespace Project
 			physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
 			physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eVELOCITY_CHANGE);
 
-
-
 			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0, 0, 0);
 
+
+
+			// Create vehicle
+			VehicleDesc vehicleDesc = InitVehicleDesc();
+			m_VehicleDrive4W = CreateVehicle4W(vehicleDesc, m_PhysicsSystem->GetPhysics(), m_PhysicsSystem->GetCooking());
+			physx::PxTransform startTransform(physx::PxVec3(0, /*(vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f)*/10.0f, 0), physx::PxQuat(physx::PxIdentity));
+			m_VehicleDrive4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+			
+
 			// Set Actors and shapes here
-			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 00.0f, 40.0f, 0.0f }));
+			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 50.0f, 40.0f, 50.0f }));
 			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
 
 			m_FloorActor = m_PhysicsSystem->GetPhysics()->createRigidStatic({ 0.0f, 0.0f, 0.0f });
@@ -75,7 +88,9 @@ namespace Project
 
 			m_PhysicsSystem->GetScene()->addActor(*m_BoxActor);
 			m_PhysicsSystem->GetScene()->addActor(*m_FloorActor);
+			m_PhysicsSystem->GetScene()->addActor(*m_VehicleDrive4W->getRigidDynamicActor());
 			
+
 		}
 
 		return true;
@@ -88,15 +103,38 @@ namespace Project
 		{
 			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Test Cube")->GetComponent("Transform"));
 
-			CVector3 vect;
-			vect.x = m_BoxActor->getGlobalPose().p.x;
-			vect.y = m_BoxActor->getGlobalPose().p.y;
-			vect.z = m_BoxActor->getGlobalPose().p.z;
-			comp->SetPosition(vect);
+			CVector3 vectPos;
+			vectPos.x = m_BoxActor->getGlobalPose().p.x;
+			vectPos.y = m_BoxActor->getGlobalPose().p.y;
+			vectPos.z = m_BoxActor->getGlobalPose().p.z;
+			comp->SetPosition(vectPos);
+
+			CVector3 vectRot;
+			vectRot.x = m_BoxActor->getGlobalPose().q.x;
+			vectRot.y = m_BoxActor->getGlobalPose().q.y;
+			vectRot.z = m_BoxActor->getGlobalPose().q.z;
+			comp->SetRotation(vectRot);
+			
 		}
+		if (m_EnablePhysics && m_EntityManager->GetEntity("Car")->GetComponent("Transform"))
+		{
+			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Transform"));
 
+			CVector3 vect;
+			vect.x = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().p.x;
+			vect.y = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().p.y;
+			vect.z = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().p.z;
+			comp->SetPosition(vect);
+			CVector3 vectRot;
+			vectRot.x = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().q.x;
+			vectRot.y = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().q.y;
+			vectRot.z = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().q.z;
+			comp->SetRotation(vectRot);
+		}
+		
+		
 
-		m_SceneCamera->SetPosition({ 0, 10, -50 });
+		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 		return true;
 	}
@@ -111,21 +149,45 @@ namespace Project
 		if (m_EnablePhysics)
 		{
 			m_PhysicsSystem->GetScene()->simulate(frameTime);
+			m_PhysicsSystem->GetScene()->fetchResults(true);
 
 			if (m_EntityManager->GetEntity("Test Cube")->GetComponent("Transform"))
 			{
 
 				TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Test Cube")->GetComponent("Transform"));
-
 				CVector3 vect;
 				vect.x = m_BoxActor->getGlobalPose().p.x;
 				vect.y = m_BoxActor->getGlobalPose().p.y;
 				vect.z = m_BoxActor->getGlobalPose().p.z;
 				comp->SetPosition(vect);
+				CVector3 vectRot;
+				vectRot.x = m_BoxActor->getGlobalPose().q.x;
+				vectRot.y = m_BoxActor->getGlobalPose().q.y;
+				vectRot.z = m_BoxActor->getGlobalPose().q.z;
+				comp->SetRotation(vectRot);
+
+			}
+			if (m_EntityManager->GetEntity("Car")->GetComponent("Transform"))
+			{
+
+				TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Transform"));
+
+				CVector3 vect;
+				vect.x = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().p.x;
+				vect.y = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().p.y;
+				vect.z = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().p.z;
+				comp->SetPosition(vect);
+				CVector3 vectRot;
+				vectRot.x = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().q.x;
+				vectRot.y = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().q.y;
+				vectRot.z = m_VehicleDrive4W->getRigidDynamicActor()->getGlobalPose().q.z;
+				comp->SetRotation(vectRot);
 			}
 			
-			m_PhysicsSystem->GetScene()->fetchResults(true);
+			
 		}
+
+
 
 		m_EntityManager->UpdateAllEntities(frameTime);
 
@@ -144,6 +206,7 @@ namespace Project
 	void TempSceneThree::ReleaseResources()
 	{
 		
+
 		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)    m_EntityManager->DestroyAllEntities();
@@ -160,21 +223,6 @@ namespace Project
 		
 	}
 
-	void TempSceneThree::VehicleCreation()
-	{
-		//m_WheelsSimData = physx::PxVehicleWheelsSimData::allocate(numWheels);
-		////SetupWheelsSimulationData();
-
-		//// SetupDriveSimData function here
-
-		//m_VehicleActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic({ 10.0f, 10.0f, 10.0f });
-		//// SetupVehicle actor function here
-		//m_PhysicsSystem->GetScene()->addActor(*m_VehicleActor);
-
-		//m_VehicleDrive4W = physx::PxVehicleDrive4W::allocate(numWheels);
-		//m_VehicleDrive4W->setup(m_PhysicsSystem->GetPhysics(), m_VehicleActor, *m_WheelsSimData, m_DriveSimData, numWheels - 4);
-
-	}
 
 	void TempSceneThree::SetupWheelsSimulationData(const physx::PxF32 wheelMass, const physx::PxF32 wheelMOI, 
 		const physx::PxF32 wheelRadius, const physx::PxF32 wheelWidth, const physx::PxU32 numberWheels, 
@@ -355,7 +403,7 @@ namespace Project
 		physx::PxRigidDynamic* veh4Actor = NULL;
 		{
 			// Construct a convex mesh for a cylindrical wheel
-			physx::PxConvexMesh* wheelMesh = CreateWheelMesh(wheelWidth, wheelRadius, *physics, *cooking);
+			//physx::PxConvexMesh* wheelMesh = 
 			// Assume all wheels are identical for simplicity
 			physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
 			physx::PxMaterial* wheelMaterials[PX_MAX_NB_WHEELS];
@@ -363,19 +411,20 @@ namespace Project
 			// Set the meshes and materials for driven wheels
 			for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT; ++i)
 			{
-				wheelConvexMeshes[i] = wheelMesh;
+				wheelConvexMeshes[i] = CreateWheelMesh(i, wheelWidth, wheelRadius, *physics, *cooking);
 				wheelMaterials[i] = vehicle4WDesc.wheelMaterial;
 			}
 
 			// Set the meshes and materials for the non driven wheels
 			for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT + 1; i < numberWheels; ++i)
 			{
-				wheelConvexMeshes[i] = wheelMesh;
+				wheelConvexMeshes[i] = CreateWheelMesh(i, wheelWidth, wheelRadius, *physics, *cooking);;
 				wheelMaterials[i] = vehicle4WDesc.wheelMaterial;
 			}
 
+
 			// Chassis just has a single convex shape for simplicity 
-			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(chassisDims, *physics, *cooking);
+			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(4, chassisDims, *physics, *cooking);
 			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
 			physx::PxMaterial* chassisMaterials[1] = { vehicle4WDesc.chassisMaterial };
 
@@ -396,8 +445,8 @@ namespace Project
 		{
 			// Compute the wheel centre offsets from the origin
 			physx::PxVec3 wheelCentreActorOffsets[PX_MAX_NB_WHEELS];
-			const physx::PxF32 frontZ = chassisDims.z * 3.0f;
-			const physx::PxF32 rearZ = -chassisDims.z * 3.0f;
+			const physx::PxF32 frontZ = chassisDims.z * 0.3f;
+			const physx::PxF32 rearZ = -chassisDims.z * 0.3f;
 			ComputeWheelCenterActorOffsets4W(frontZ, rearZ, chassisDims, wheelWidth, wheelRadius, numberWheels, wheelCentreActorOffsets);
 
 			SetupWheelsSimulationData(vehicle4WDesc.wheelMass, vehicle4WDesc.wheelMOI, wheelRadius, wheelWidth,
@@ -478,40 +527,52 @@ namespace Project
 		return convexMesh;
 	}
 
-	physx::PxConvexMesh* TempSceneThree::CreateWheelMesh(const physx::PxF32 width, const physx::PxF32 radius, physx::PxPhysics& physics, physx::PxCooking& cooking)
+	physx::PxConvexMesh* TempSceneThree::CreateWheelMesh(int index, const physx::PxF32 width, const physx::PxF32 radius, physx::PxPhysics& physics, physx::PxCooking& cooking)
 	{
-		physx::PxVec3 points[2 * 16];
-		for (physx::PxU32 i = 0; i < 16; i++)
+		physx::PxU32 vertexCount;
+		std::vector<physx::PxVec3> vertices;
+		if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
 		{
-			const physx::PxF32 cosTheta = physx::PxCos(i * physx::PxPi * 2.0f / 16.0f);
-			const physx::PxF32 sinTheta = physx::PxSin(i * physx::PxPi * 2.0f / 16.0f);
-			const physx::PxF32 y = radius * cosTheta;
-			const physx::PxF32 z = radius * sinTheta;
-			points[2 * i + 0] = physx::PxVec3(-width / 2.0f, y, z);
-			points[2 * i + 1] = physx::PxVec3(+width / 2.0f, y, z);
+			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			vertexCount = comp->GetNumberOfVertices(index);
+
+			std::vector<CVector3> nChassis = comp->GetVertices(index);
+
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ nChassis[i].x,  nChassis[i].y, nChassis[i].z });
+			}
 		}
 
-		return CreateConvexMesh(points, 32, physics, cooking);
+		physx::PxVec3* v = vertices.data();
+
+
+		return CreateConvexMesh(v, vertexCount, physics, cooking);
 	}
 
-	physx::PxConvexMesh* TempSceneThree::CreateChassisMesh(const physx::PxVec3 dims, physx::PxPhysics& physics, physx::PxCooking& cooking)
+	physx::PxConvexMesh* TempSceneThree::CreateChassisMesh(int index, const physx::PxVec3 dims, physx::PxPhysics& physics, physx::PxCooking& cooking)
 	{
-		const physx::PxF32 x = dims.x * 0.5f;
+		/*const physx::PxF32 x = dims.x * 0.5f;
 		const physx::PxF32 y = dims.y * 0.5f;
-		const physx::PxF32 z = dims.z * 0.5f;
-		physx::PxVec3 verts[8] =
+		const physx::PxF32 z = dims.z * 0.5f;*/
+		physx::PxU32 vertexCount;
+		std::vector<physx::PxVec3> vertices;
+		if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
 		{
-			physx::PxVec3(x,y,-z),
-			physx::PxVec3(x,y,z),
-			physx::PxVec3(x,-y,z),
-			physx::PxVec3(x,-y,-z),
-			physx::PxVec3(-x,y,-z),
-			physx::PxVec3(-x,y,z),
-			physx::PxVec3(-x,-y,z),
-			physx::PxVec3(-x,-y,-z)
-		};
+			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			vertexCount = comp->GetNumberOfVertices(index);
 
-		return CreateConvexMesh(verts, 8, physics, cooking);
+			std::vector<CVector3> Chassis = comp->GetVertices(index);
+			
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ Chassis[i].x /** dims.x*/,  Chassis[i].y /** dims.y*/, Chassis[i].z /** dims.z*/ });
+			}
+		}
+
+		physx::PxVec3* v = vertices.data();
+
+		return CreateConvexMesh(v, vertexCount, physics, cooking);
 	}
 
 	void TempSceneThree::ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims, const physx::PxF32 wheelWidth, const physx::PxF32 wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets)
@@ -525,8 +586,8 @@ namespace Project
 		//Set the outside of the left and right wheels to be flush with the chassis.
 		//Set the top of the wheel to be just touching the underside of the chassis.
 		//Begin by setting the rear-left/rear-right/front-left,front-right wheels.
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =	  physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =	  physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.1f);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.1f);
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + (numLeftWheels - 1) * deltaZ);
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + (numLeftWheels - 1) * deltaZ);
 		//Set the remaining wheels.
@@ -535,6 +596,47 @@ namespace Project
 			wheelCentreOffsets[wheelCount + 0] = physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
 			wheelCentreOffsets[wheelCount + 1] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
 		}
+	}
+
+	TempSceneThree::VehicleDesc TempSceneThree::InitVehicleDesc()
+	{
+		//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
+		//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
+		//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
+		const physx::PxF32 chassisMass = 1500.0f;
+		const physx::PxVec3 chassisDims(2.5f, 1.0f, 5.0f);
+		const physx::PxVec3 chassisMOI
+		((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
+			(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
+			(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
+		const physx::PxVec3 chassisCMOffset(0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f);
+
+		//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
+		//Moment of inertia is just the moment of inertia of a cylinder.
+		const physx::PxF32 wheelMass = 20.0f;
+		const physx::PxF32 wheelRadius = 1.5f;
+		const physx::PxF32 wheelWidth = 1.0f;
+		const physx::PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
+		const physx::PxU32 nbWheels = 4;
+
+		VehicleDesc vehicleDesc;
+
+		vehicleDesc.chassisMass = chassisMass;
+		vehicleDesc.chassisDims = chassisDims;
+		vehicleDesc.chassisMOI = chassisMOI;
+		vehicleDesc.chassisCMOffset = chassisCMOffset;
+		vehicleDesc.chassisMaterial = m_Material;
+		vehicleDesc.chassisSimFilterData = physx::PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
+
+		vehicleDesc.wheelMass = wheelMass;
+		vehicleDesc.wheelRadius = wheelRadius;
+		vehicleDesc.wheelWidth = wheelWidth;
+		vehicleDesc.wheelMOI = wheelMOI;
+		vehicleDesc.numWheels = nbWheels;
+		vehicleDesc.wheelMaterial = m_Material;
+		vehicleDesc.chassisSimFilterData = physx::PxFilterData(COLLISION_FLAG_WHEEL, COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
+
+		return vehicleDesc;
 	}
 
 	void TempSceneThree::ConfigureUserData(physx::PxVehicleWheels* vehicle, ActorUserData* actorUserData, ShapeUserData* shapeUserDatas)

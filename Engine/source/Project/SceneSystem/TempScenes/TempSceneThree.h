@@ -75,7 +75,6 @@ namespace Project
 
 	private:
 		// Physx temp function
-		void VehicleCreation();
 		void SetupWheelsSimulationData(const physx::PxF32 wheelMass, const physx::PxF32 wheelMOI, const physx::PxF32 wheelRadius,
 			const physx::PxF32 wheelWidth, const physx::PxU32 numberWheels, const physx::PxVec3* wheelCenterActorOffsets,
 			const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass, physx::PxVehicleWheelsSimData* wheelsSimData);
@@ -180,15 +179,35 @@ namespace Project
 			ActorUserData* actorUserData;
 			ShapeUserData* shapeUserDatas;
 		};
+		enum
+		{
+			COLLISION_FLAG_GROUND = 1 << 0,
+			COLLISION_FLAG_WHEEL = 1 << 1,
+			COLLISION_FLAG_CHASSIS = 1 << 2,
+			COLLISION_FLAG_OBSTACLE = 1 << 3,
+			COLLISION_FLAG_DRIVABLE_OBSTACLE = 1 << 4,
+
+			COLLISION_FLAG_GROUND_AGAINST = COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE,
+			COLLISION_FLAG_WHEEL_AGAINST = COLLISION_FLAG_WHEEL | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE,
+			COLLISION_FLAG_CHASSIS_AGAINST = COLLISION_FLAG_GROUND | COLLISION_FLAG_WHEEL | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE,
+			COLLISION_FLAG_OBSTACLE_AGAINST = COLLISION_FLAG_GROUND | COLLISION_FLAG_WHEEL | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE,
+			COLLISION_FLAG_DRIVABLE_OBSTACLE_AGAINST = COLLISION_FLAG_GROUND | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE
+		};
 
 		physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc, physx::PxPhysics* physics, physx::PxCooking* cooking);
 		
 		static physx::PxConvexMesh* CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		physx::PxConvexMesh* CreateWheelMesh(const physx::PxF32 width, const physx::PxF32 radius, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		physx::PxConvexMesh* CreateChassisMesh(const physx::PxVec3 dims, physx::PxPhysics& physics, physx::PxCooking& cooking);
+		physx::PxConvexMesh* CreateWheelMesh(int index, const physx::PxF32 width, const physx::PxF32 radius, physx::PxPhysics& physics, physx::PxCooking& cooking);
+		physx::PxConvexMesh* CreateChassisMesh(int index, const physx::PxVec3 dims, physx::PxPhysics& physics, physx::PxCooking& cooking);
 		void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims,
 			const physx::PxF32 wheelWidth, const physx::PxF32 wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets);
 		void ConfigureUserData(physx::PxVehicleWheels* vehicle, ActorUserData* actorUserData, ShapeUserData* shapeUserDatas);
+
+		VehicleDesc InitVehicleDesc();
+
+
+		/*physx::PxI32 vertexCountWheel;
+		std::vector<physx::PxVec3> verticesWheel;*/
 	};
 }
 

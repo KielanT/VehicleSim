@@ -119,7 +119,17 @@ project "Engine"
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/KielansVehicleSim")
 		}
 
-		filter "configurations:Debug"
+	filter "configurations:Debug"
+		defines "P_DEBUG"
+		runtime "Debug"
+		symbols "On"
+		
+	filter "configurations:checked"
+		defines "P_DEBUG"
+		runtime "Debug"
+		symbols "On"
+		
+	filter "configurations:profile"
 		defines "P_DEBUG"
 		runtime "Debug"
 		symbols "On"
@@ -164,6 +174,16 @@ project "KielansVehicleSim"
 		}
 
 	filter "configurations:Debug"
+		defines "P_DEBUG"
+		runtime "Debug"
+		symbols "On"
+		
+	filter "configurations:checked"
+		defines "P_DEBUG"
+		runtime "Debug"
+		symbols "On"
+		
+	filter "configurations:profile"
 		defines "P_DEBUG"
 		runtime "Debug"
 		symbols "On"

@@ -16,6 +16,7 @@ namespace Project
 		virtual const EPhysicsType GetPhysicsType() override;
 
 		virtual physx::PxPhysics* GetPhysics() override { return m_Physics; } // TODO Remove this from here and interface
+		virtual physx::PxCooking* GetCooking() override { return m_Cooking; } // TODO Remove this from here and interface
 		virtual physx::PxScene* GetScene() override { return m_Scene; } // TODO Remove this from here and interface
 		
 

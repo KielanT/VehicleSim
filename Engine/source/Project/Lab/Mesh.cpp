@@ -116,7 +116,6 @@ namespace Project
             std::string subMeshName = assimpMesh->mName.C_Str();
             auto& subMesh = mSubMeshes[m]; // Short name for the submesh we're currently preparing - makes code below more readable
 
-
             //-----------------------------------
 
             // Check for presence of position and normal data. Tangents and UVs are optional.
@@ -179,8 +178,9 @@ namespace Project
             subMesh.numIndices = assimpMesh->mNumFaces * 3;
             auto vertices = std::make_unique<unsigned char[]>(subMesh.numVertices * subMesh.vertexSize);
             auto indices = std::make_unique<unsigned char[]>(subMesh.numIndices * 4); // Using 32 bit indexes (4 bytes) for each indeex
+            
 
-
+           
             //-----------------------------------
 
             // Copy mesh data from assimp to our CPU-side vertex buffer
@@ -191,6 +191,7 @@ namespace Project
             while (position != positionEnd)
             {
                 *(CVector3*)position = *assimpPosition;
+                verticesArray.push_back(*(CVector3*)assimpPosition);
                 position += subMesh.vertexSize;
                 ++assimpPosition;
             }
@@ -357,9 +358,12 @@ namespace Project
             bufferDesc.MiscFlags = 0;
             initData.pSysMem = indices.get(); // Fill the new index buffer with data loaded by assimp
 
+            
+
             hr = m_Renderer->GetDevice()->CreateBuffer(&bufferDesc, &initData, &subMesh.indexBuffer);
             if (FAILED(hr))  throw std::runtime_error("Failure creating index buffer for " + fileName);
         }
+
     }
 
 
@@ -397,6 +401,9 @@ namespace Project
         m_Renderer->GetDeviceContext()->DrawIndexed(subMesh.numIndices, 0, 0);
     }
 
+   
+   
+
 
 
     // Render the mesh with the given matrices
@@ -404,6 +411,7 @@ namespace Project
     // LIMITATION: The mesh must use a single texture throughout
     void Mesh::Render(std::vector<CMatrix4x4>& modelMatrices)
     {
+        
         // Skinning needs all matrices available in the shader at the same time, so first calculate all the absolute
         // matrices before rendering anything
         std::vector<CMatrix4x4> absoluteMatrices(modelMatrices.size());

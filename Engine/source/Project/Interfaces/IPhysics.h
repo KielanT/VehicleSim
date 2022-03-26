@@ -15,8 +15,9 @@ namespace Project
 
 		virtual const EPhysicsType GetPhysicsType() = 0;
 
+		// TODO remove these functions
 		virtual physx::PxPhysics* GetPhysics() = 0;
-
+		virtual physx::PxCooking* GetCooking() = 0;
 		virtual physx::PxScene* GetScene() = 0;
 	};
 

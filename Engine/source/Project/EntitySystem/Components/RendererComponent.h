@@ -92,6 +92,9 @@ namespace Project
 		void SetRasterizerState(ID3D11RasterizerState* rs) { m_RasterizerState = rs; }
 		void SetSamplerState(ID3D11SamplerState* ss) { m_SamplerState = ss; }
 
+		unsigned int GetNumberOfVertices(int index) { return m_Mesh->GetNumberVertices(index); }
+		std::vector<CVector3> GetVertices(int index) { return m_Mesh->GetVertices(index); }
+
 	private:
 		IRenderer* m_Renderer;
 

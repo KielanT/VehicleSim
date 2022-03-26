@@ -97,11 +97,10 @@ namespace Project
         void RenderSubMesh(const SubMesh& subMesh);
 
 
-
         //--------------------------------------------------------------------------------------
         // Member data
         //--------------------------------------------------------------------------------------
-    private:
+    protected:
 
         std::vector<SubMesh> mSubMeshes; // The mesh geometry. Nodes refer to sub-meshes in this vector
         std::vector<Node>    mNodes;     // The mesh hierarchy. First entry is root. remainder aree stored in depth-first order
@@ -109,6 +108,21 @@ namespace Project
         bool mHasBones; // If any submesh has bones, then all submeshes are given bones - makes rendering easier (one shader for the whole mesh)
 
         DirectX11Renderer* m_Renderer;
+        std::vector<CVector3> verticesArray;
+    public:
+
+
+        unsigned int GetNumberVertices(int index)
+        {
+            int i = mSubMeshes.size();
+           return mSubMeshes[index].numVertices;// vertex[index];
+        }
+
+        std::vector<CVector3> GetVertices(int index)
+        {
+            return verticesArray;
+        }
+
     };
 
 
