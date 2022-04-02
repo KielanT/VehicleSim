@@ -73,11 +73,13 @@ namespace Project
 		physx::PxRigidDynamic* m_BoxActor = nullptr;
 		physx::PxRigidActor* m_FloorActor = nullptr;
 
+		physx::PxVec3 m_ChassisDims;
+
 	private:
 		// Physx temp function
-		void SetupWheelsSimulationData(const physx::PxF32 wheelMass, const physx::PxF32 wheelMOI, const physx::PxF32 wheelRadius,
-			const physx::PxF32 wheelWidth, const physx::PxU32 numberWheels, const physx::PxVec3* wheelCenterActorOffsets,
-			const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass, physx::PxVehicleWheelsSimData* wheelsSimData);
+		void SetupWheelsSimulationData(
+			const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass,
+			physx::PxVehicleWheelsSimData* wheelsSimData);
 
 		physx::PxRigidDynamic* CreateVehicleActor
 		(const physx::PxVehicleChassisData& chassisData,
@@ -146,34 +148,20 @@ namespace Project
 		struct VehicleDesc
 		{
 			VehicleDesc()
-				: chassisMass(0.0f),
-				chassisDims(physx::PxVec3(0.0f, 0.0f, 0.0f)),
-				chassisMOI(physx::PxVec3(0.0f, 0.0f, 0.0f)),
-				chassisCMOffset(physx::PxVec3(0.0f, 0.0f, 0.0f)),
-				chassisMaterial(NULL),
-				wheelMass(0.0f),
-				wheelWidth(0.0f),
-				wheelRadius(0.0f),
-				wheelMOI(0.0f),
-				wheelMaterial(NULL),
+				:
+
+				chassisMass(1500.0f),
 				actorUserData(NULL),
 				shapeUserDatas(NULL)
 			{
 			}
 
 			physx::PxF32 chassisMass;
-			physx::PxVec3 chassisDims;
-			physx::PxVec3 chassisMOI;
-			physx::PxVec3 chassisCMOffset;
-			physx::PxMaterial* chassisMaterial;
+
 			physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
-			physx::PxF32 wheelMass;
-			physx::PxF32 wheelWidth;
-			physx::PxF32 wheelRadius;
-			physx::PxF32 wheelMOI;
-			physx::PxMaterial* wheelMaterial;
-			physx::PxU32 numWheels;
+
+			
 			physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
 			ActorUserData* actorUserData;
@@ -197,14 +185,18 @@ namespace Project
 		physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc, physx::PxPhysics* physics, physx::PxCooking* cooking);
 		
 		static physx::PxConvexMesh* CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		physx::PxConvexMesh* CreateWheelMesh(int index, const physx::PxF32 width, const physx::PxF32 radius, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		physx::PxConvexMesh* CreateChassisMesh(int index, const physx::PxVec3 dims, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims,
-			const physx::PxF32 wheelWidth, const physx::PxF32 wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets);
-		void ConfigureUserData(physx::PxVehicleWheels* vehicle, ActorUserData* actorUserData, ShapeUserData* shapeUserDatas);
+		physx::PxConvexMesh* CreateWheelMesh(int index, physx::PxPhysics& physics, physx::PxCooking& cooking);
+		physx::PxConvexMesh* CreateChassisMesh(int index, physx::PxPhysics& physics, physx::PxCooking& cooking);
 
 		VehicleDesc InitVehicleDesc();
 
+		physx::PxVec3 MakeChassis(physx::PxConvexMesh* mesh); //computeChassisAABBDimensions function from SampleVehicle_VehicleManager
+		
+		void MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii); // computeWheelWidthsAndRadii function from SampleVehicle_VehicleManager
+
+		physx::PxVehicleChassisData m_ChassisData;
+		physx::PxVehicleWheelData m_Wheels[4];
+		physx::PxVec3 m_WheelCentreOffsets[4];
 
 		/*physx::PxI32 vertexCountWheel;
 		std::vector<physx::PxVec3> verticesWheel;*/

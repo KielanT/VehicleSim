@@ -61,9 +61,9 @@ namespace Project
 		auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		scene = new TempSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
-		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
-		m_Scenes.insert(pos, scene); // Adds scene to the array
+		//scene = new TempSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
+		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		//m_Scenes.insert(pos, scene); // Adds scene to the array
 
 		//scene = new TempSceneTwo(this, m_Renderer, 2); // Creates a new temp scene
 		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
