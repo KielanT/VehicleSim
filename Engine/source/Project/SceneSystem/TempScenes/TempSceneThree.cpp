@@ -27,8 +27,6 @@ namespace Project
 		m_Renderer = renderer;
 		m_SceneIndex = sceneIndex;
 		m_EnablePhysics = enablePhysics;
-		m_EnablePhysics = false;
-
 
 		m_AmbientColour = ambientColour;
 		m_SpecularPower = specularPower;
@@ -56,7 +54,7 @@ namespace Project
 
 		
 
-		if (true)
+		if (m_EnablePhysics)
 		{
 			m_PhysicsSystem = NewPhysics(m_sceneManager->GetWindowsProperties().PhysicsType);
 
@@ -509,7 +507,7 @@ namespace Project
 		physx::PxVehicleDrive4W* vehDrive4W = physx::PxVehicleDrive4W::allocate(4);
 
 	
-		vehDrive4W->setup(physics, veh4Actor, *wheelsSimData, driveSimData, 4 - 4);
+		vehDrive4W->setup(physics, veh4Actor, *wheelsSimData, driveSimData, 0);
 		vehDrive4W->mWheelsSimData.setWheelShapeMapping(0, 0);
 		vehDrive4W->mWheelsSimData.setWheelShapeMapping(1, 1);
 		vehDrive4W->mWheelsSimData.setWheelShapeMapping(2, 2);

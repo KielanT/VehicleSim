@@ -5,6 +5,7 @@
 #include "Project/SceneSystem/TempScenes/TempSceneOne.h"
 #include "Project/SceneSystem/TempScenes/TempSceneTwo.h"
 #include "Project/SceneSystem/TempScenes/TempSceneThree.h"
+#include "Project/SceneSystem/TempScenes/TempSceneFour.h"
 
 
 #include "imgui.h"
@@ -57,9 +58,13 @@ namespace Project
 		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		//m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		IScene* scene = new TempSceneThree(this, m_Renderer, true, 0); // Creates a new temp scene
+		IScene* scene = new TempSceneFour(this, m_Renderer, true, 0); // Creates a new temp scene
 		auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
+
+		//IScene* scene = new TempSceneThree(this, m_Renderer, true, 0); // Creates a new temp scene
+		//auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		//m_Scenes.insert(pos, scene); // Adds scene to the array
 
 		//scene = new TempSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
 		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
