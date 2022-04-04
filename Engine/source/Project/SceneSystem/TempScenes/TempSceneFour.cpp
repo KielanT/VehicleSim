@@ -45,6 +45,12 @@ namespace Project
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 
 		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", path + "brick1.jpg");
+		
+		m_EntityManager->CreateModelEntity("Car Cube", path + "Cube.x", path + "BasicTexWhite.png");
+		m_EntityManager->CreateModelEntity("WheelOne", path + "wheel.fbx", path + "BasicTexWhite.png");
+		m_EntityManager->CreateModelEntity("WheelTwo", path + "wheel.fbx", path + "BasicTexWhite.png");
+		m_EntityManager->CreateModelEntity("WheelThree", path + "wheel.fbx", path + "BasicTexWhite.png");
+		m_EntityManager->CreateModelEntity("WheelFour", path + "wheel.fbx", path + "BasicTexWhite.png");
 
 
 		if (m_EnablePhysics)
@@ -65,11 +71,10 @@ namespace Project
 			// Create a basic vehicle
 			VehicleDesc vehicleDesc = InitVehicleDesc();
 			m_Vehicle4W = CreateVehicle4W(vehicleDesc);
-			physx::PxTransform startTransform(physx::PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
-			m_Vehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+			m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ 0.0f, 5.0f, 0.0f });
 
 			// Set Actors and shapes here
-			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 40.0f, 50.0f }));
+			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 40.0f, 0.0f }));
 			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
 
 			m_FloorActor = m_PhysicsSystem->GetPhysics()->createRigidStatic({ 0.0f, 0.0f, 0.0f });
@@ -96,15 +101,101 @@ namespace Project
 			comp->SetPosition(vectPos);
 
 			CVector3 vectRot;
-			vectRot.x = m_BoxActor->getGlobalPose().q.x;
-			vectRot.y = m_BoxActor->getGlobalPose().q.y;
-			vectRot.z = m_BoxActor->getGlobalPose().q.z;
+			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
+			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
+			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
 			comp->SetRotation(vectRot);
+		}
+
+		if (m_EnablePhysics && m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"))
+		{
+			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"));
+
+			CVector3 vectPos;
+			vectPos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
+			vectPos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y;
+			vectPos.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
+			comp->SetPosition(vectPos);
+
+			CVector3 vectRot;
+			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
+			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
+			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
+			comp->SetRotation(vectRot);
+
+			comp->SetScale({ 2.5f / 10.0f, 2.0f / 10.0f, 5.0f / 10.0f });
+		}
+
+		if (m_EnablePhysics && m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform") 
+			&& m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform")
+			&& m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform")
+			&& m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"))
+		{
+			TransformComponent* comp1 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform"));
+			TransformComponent* comp2 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform"));
+			TransformComponent* comp3 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform"));
+			TransformComponent* comp4 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"));
+
+			CVector3 vectPos;
+			CVector3 vectRot;
+			physx::PxShape* carShapes[4];
+			m_Vehicle4W->getRigidDynamicActor()->getShapes(carShapes, 4);
+
+			// Wheel One
+			vectPos.x = carShapes[0]->getLocalPose().p.x;
+			vectPos.y = carShapes[0]->getLocalPose().p.y + 2.0f;
+			vectPos.z = carShapes[0]->getLocalPose().p.z;
+			comp1->SetPosition(vectPos);
+			vectRot.x = carShapes[0]->getLocalPose().q.x;
+			vectRot.y = carShapes[0]->getLocalPose().q.y ;
+			vectRot.z = carShapes[0]->getLocalPose().q.z;
+			comp1->SetRotation(vectRot);
+
+			// Wheel Two
+			vectPos.x = carShapes[1]->getLocalPose().p.x;
+			vectPos.y = carShapes[1]->getLocalPose().p.y + 2.0f;
+			vectPos.z = carShapes[1]->getLocalPose().p.z;
+			comp2->SetPosition(vectPos);
+			vectRot.x = carShapes[1]->getLocalPose().q.x;
+			vectRot.y = carShapes[1]->getLocalPose().q.y;
+			vectRot.z = carShapes[1]->getLocalPose().q.z;
+			comp2->SetRotation(vectRot);
+
+			// Wheel Three
+			vectPos.x = carShapes[2]->getLocalPose().p.x;
+			vectPos.y = carShapes[2]->getLocalPose().p.y + 2.0f;
+			vectPos.z = carShapes[2]->getLocalPose().p.z;
+			comp3->SetPosition(vectPos);
+			vectRot.x = carShapes[2]->getLocalPose().q.x;
+			vectRot.y = carShapes[2]->getLocalPose().q.y;
+			vectRot.z = carShapes[2]->getLocalPose().q.z;
+			comp3->SetRotation(vectRot);
+
+			// Wheel Four
+			vectPos.x = carShapes[3]->getLocalPose().p.x;
+			vectPos.y = carShapes[3]->getLocalPose().p.y + 2.0f;
+			vectPos.z = carShapes[3]->getLocalPose().p.z;
+			comp4->SetPosition(vectPos);
+			vectRot.x = carShapes[3]->getLocalPose().q.x;
+			vectRot.y = carShapes[3]->getLocalPose().q.y;
+			vectRot.z = carShapes[3]->getLocalPose().q.z;
+			comp4->SetRotation(vectRot);
+
+			comp1->SetScale({ comp1->GetScale().x / 10.0f, comp1->GetScale().y / 10.0f , comp1->GetScale().z / 10.0f });
+			comp2->SetScale({ comp2->GetScale().x / 10.0f, comp2->GetScale().y / 10.0f , comp2->GetScale().z / 10.0f });
+			comp3->SetScale({ comp3->GetScale().x / 10.0f, comp3->GetScale().y / 10.0f , comp3->GetScale().z / 10.0f });
+			comp4->SetScale({ comp4->GetScale().x / 10.0f, comp4->GetScale().y / 10.0f , comp4->GetScale().z / 10.0f });
 
 		}
 
+		// Pos 1
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
+
+		// Pos 2
+		//m_SceneCamera->SetPosition({ -40, 10, 0 });
+		//m_SceneCamera->SetRotation({ 0, ToRadians(90), 0 });
+
 		return true;
 	}
 
@@ -119,6 +210,8 @@ namespace Project
 		{
 			m_PhysicsSystem->GetScene()->simulate(frameTime);
 			m_PhysicsSystem->GetScene()->fetchResults(true);
+
+
 
 			if (m_EntityManager->GetEntity("Test Cube")->GetComponent("Transform"))
 			{
@@ -136,19 +229,91 @@ namespace Project
 				comp->SetRotation(vectRot);
 
 			}
+
+			if (m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"))
+			{
+				TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"));
+
+				CVector3 vectPos;
+				vectPos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
+				vectPos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y;
+				vectPos.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
+				comp->SetPosition(vectPos);
+
+				CVector3 vectRot;
+				vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
+				vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
+				vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
+				comp->SetRotation(vectRot);
+			}
+
+			if (m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform")
+				&& m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform")
+				&& m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform")
+				&& m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"))
+			{
+				TransformComponent* comp1 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform"));
+				TransformComponent* comp2 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform"));
+				TransformComponent* comp3 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform"));
+				TransformComponent* comp4 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"));
+
+				CVector3 vectPos;
+				CVector3 vectRot;
+				physx::PxShape* carShapes[4];
+				m_Vehicle4W->getRigidDynamicActor()->getShapes(carShapes, 4);
+
+				// Wheel One
+				vectPos.x = carShapes[0]->getLocalPose().p.x;
+				vectPos.y = carShapes[0]->getLocalPose().p.y + 2.0f;
+				vectPos.z = carShapes[0]->getLocalPose().p.z;
+				comp1->SetPosition(vectPos);
+				vectRot.x = carShapes[0]->getLocalPose().q.x;
+				vectRot.y = carShapes[0]->getLocalPose().q.y;
+				vectRot.z = carShapes[0]->getLocalPose().q.z;
+				comp1->SetRotation(vectRot);
+
+				// Wheel Two
+				vectPos.x = carShapes[1]->getLocalPose().p.x;
+				vectPos.y = carShapes[1]->getLocalPose().p.y + 2.0f;
+				vectPos.z = carShapes[1]->getLocalPose().p.z;
+				comp2->SetPosition(vectPos);
+				vectRot.x = carShapes[1]->getLocalPose().q.x;
+				vectRot.y = carShapes[1]->getLocalPose().q.y;
+				vectRot.z = carShapes[1]->getLocalPose().q.z;
+				comp2->SetRotation(vectRot);
+
+				// Wheel Three
+				vectPos.x = carShapes[2]->getLocalPose().p.x;
+				vectPos.y = carShapes[2]->getLocalPose().p.y + 2.0f;
+				vectPos.z = carShapes[2]->getLocalPose().p.z;
+				comp3->SetPosition(vectPos);
+				vectRot.x = carShapes[2]->getLocalPose().q.x;
+				vectRot.y = carShapes[2]->getLocalPose().q.y;
+				vectRot.z = carShapes[2]->getLocalPose().q.z;
+				comp3->SetRotation(vectRot);
+
+				// Wheel Four
+				vectPos.x = carShapes[3]->getLocalPose().p.x;
+				vectPos.y = carShapes[3]->getLocalPose().p.y + 2.0f;
+				vectPos.z = carShapes[3]->getLocalPose().p.z;
+				comp4->SetPosition(vectPos);
+				vectRot.x = carShapes[3]->getLocalPose().q.x;
+				vectRot.y = carShapes[3]->getLocalPose().q.y;
+				vectRot.z = carShapes[3]->getLocalPose().q.z;
+				comp4->SetRotation(vectRot);
+
+			}
+			
 		}
 
 		m_EntityManager->UpdateAllEntities(frameTime);
 
 		m_SceneCamera->Control(frameTime);
-		/*if (KeyHit(Key_L))
+		if (KeyHit(Key_L))
 		{
-
-			m_sceneManager->RemoveSceneAtIndex(0);
-
-			m_sceneManager->LoadScene(1);
-
-		}*/
+			//m_sceneManager->RemoveSceneAtIndex(0);
+			//m_sceneManager->LoadScene(1);
+		}
 	}
 
 	void TempSceneFour::ReleaseResources()
