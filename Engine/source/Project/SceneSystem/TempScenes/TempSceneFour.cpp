@@ -101,9 +101,9 @@ namespace Project
 			comp->SetPosition(vectPos);
 
 			CVector3 vectRot;
-			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
-			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
-			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
+			vectRot.x = m_BoxActor->getGlobalPose().q.x;
+			vectRot.y = m_BoxActor->getGlobalPose().q.y;
+			vectRot.z = m_BoxActor->getGlobalPose().q.z;
 			comp->SetRotation(vectRot);
 		}
 

@@ -118,6 +118,43 @@ namespace Project
 		return m_NextUID++;
 	}
 
+	TEntityUID EntityManager::CreateBasicPhysxVehicleEntity(const std::string& name, std::string chassisMeshPath, std::string wheelMeshPath, 
+		std::string chassisTexturePath /*= "media/BasicTexWhite.png"*/, std::string wheelTexturePath /*= "media/BasicTexWhite.png"*/, 
+		SEntityTransform transform /*= SEntityTransform()*/, EPixelShader pixelShader /*= EPixelShader::PixelLightingPixelShader*/, 
+		EVertexShader vertexShader /*= EVertexShader::PixelLightingVertexShader*/, EBlendState blendState /*= EBlendState::NoBlendingState*/, 
+		EDepthStencilState depthStencilState /*= EDepthStencilState::UseDepthBufferState*/, 
+		ERasterizerState rasterizerState /*= ERasterizerState::CullNoneState*/, ESamplerState samplerState /*= ESamplerState::Anisotropic4xSampler*/)
+	{
+		// Create new entity with next UID
+		Entity* newEntity = new Entity(m_NextUID, name);
+
+		// Add transform component to all entities 
+		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
+		newEntity->AddComponent(comp);
+
+		comp = new MeshComponent(chassisMeshPath, newEntity, GetNewUID());
+		newEntity->AddComponent(comp);
+
+		comp = new MeshComponent(wheelMeshPath, newEntity, GetNewUID(), 1);
+		newEntity->AddComponent(comp);
+
+		comp = new RendererComponent(m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, chassisTexturePath, pixelShader,
+			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
+		newEntity->AddComponent(comp);
+
+		// Get vector index for new entity and add it to vector
+		TUInt32 entityIndex = static_cast<TUInt32>(m_Entities.size());
+		m_Entities.push_back(newEntity);
+
+		// Add mapping from UID to entity index into hash map
+		m_EntityUIDMap->SetKeyValue(m_NextUID, entityIndex);
+
+		m_IsEnumerating = false; // Cancel any entity enumeration (entity list has changed)
+
+		// Return UID of new entity then increase it ready for next entity
+		return m_NextUID++;
+	}
+
 	bool EntityManager::DestroyEntity(TEntityUID UID)
 	{
 		TUInt32 entityIndex;

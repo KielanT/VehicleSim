@@ -43,6 +43,15 @@ namespace Project
 
 		TEntityUID CreateLightEntity(const std::string& name);
 
+		TEntityUID CreateBasicPhysxVehicleEntity(const std::string& name, std::string chassisMeshPath, std::string wheelMeshPath, 
+			std::string chassisTexturePath = "media/BasicTexWhite.png", std::string wheelTexturePath = "media/BasicTexWhite.png",
+			SEntityTransform transform = SEntityTransform(), EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
+			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
+			EBlendState blendState = EBlendState::NoBlendingState,
+			EDepthStencilState depthStencilState = EDepthStencilState::UseDepthBufferState,
+			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
+			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
+
 		bool DestroyEntity(TEntityUID UID);
 
 		void DestroyAllEntities();
