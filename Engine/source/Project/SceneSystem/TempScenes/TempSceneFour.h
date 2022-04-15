@@ -107,24 +107,16 @@ namespace Project
 		{
 			VehicleDesc()
 				: chassisMass(0.0f),
-				chassisDims(physx::PxVec3(0.0f, 0.0f, 0.0f)),
-				chassisMOI(physx::PxVec3(0.0f, 0.0f, 0.0f)),
-				chassisCMOffset(physx::PxVec3(0.0f, 0.0f, 0.0f)),
 				chassisMaterial(NULL),
 				wheelMass(0.0f),
 				wheelWidth(0.0f),
 				wheelRadius(0.0f),
 				wheelMOI(0.0f),
 				wheelMaterial(NULL)
-				//actorUserData(NULL),
-				//shapeUserDatas(NULL)
 			{
 			}
 
 			physx::PxF32 chassisMass;
-			physx::PxVec3 chassisDims;
-			physx::PxVec3 chassisMOI;
-			physx::PxVec3 chassisCMOffset;
 			physx::PxMaterial* chassisMaterial;
 			physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
@@ -135,9 +127,6 @@ namespace Project
 			physx::PxMaterial* wheelMaterial;
 			physx::PxU32 numWheels;
 			physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
-
-			/*physx::ActorUserData* actorUserData;
-			physx::ShapeUserData* shapeUserDatas;*/
 		};
 
 
@@ -175,6 +164,8 @@ namespace Project
 			const physx::PxU32 numWheels, const physx::PxVec3* wheelCenterActorOffsets,
 			const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass,
 			physx::PxVehicleWheelsSimData* wheelsSimData);
+
+		physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
 	};
 
 }

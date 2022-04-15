@@ -151,11 +151,7 @@ namespace Project
 		m_EntityManager->UpdateAllEntities(frameTime);
 
 		m_SceneCamera->Control(frameTime);
-		if (KeyHit(Key_L))
-		{
-			//m_sceneManager->RemoveSceneAtIndex(0);
-			//m_sceneManager->LoadScene(1);
-		}
+
 	}
 
 	void TempSceneFour::ReleaseResources()
@@ -175,12 +171,6 @@ namespace Project
 	TempSceneFour::VehicleDesc TempSceneFour::InitVehicleDesc()
 	{
 		const physx::PxF32 chassisMass = 1500.0f;
-		const physx::PxVec3 chassisDims(2.5f, 2.0f, 5.0f);
-		const physx::PxVec3 chassisMOI
-		((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
-			(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
-			(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
-		const physx::PxVec3 chassisCMOffset(0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f);
 
 		const physx::PxF32 wheelMass = 20.0f;
 		const physx::PxF32 wheelRadius = 0.5f;
@@ -191,9 +181,6 @@ namespace Project
 		VehicleDesc vehicleDesc;
 
 		vehicleDesc.chassisMass = chassisMass;
-		vehicleDesc.chassisDims = chassisDims;
-		vehicleDesc.chassisMOI = chassisMOI;
-		vehicleDesc.chassisCMOffset = chassisCMOffset;
 		vehicleDesc.chassisMaterial = m_Material;
 		vehicleDesc.chassisSimFilterData = physx::PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
 
@@ -210,7 +197,9 @@ namespace Project
 
 	physx::PxVehicleDrive4W* TempSceneFour::CreateVehicle4W(const VehicleDesc& vehicle4WDesc)
 	{
-		const physx::PxVec3 chassisDims = vehicle4WDesc.chassisDims;
+		
+		physx::PxVec3 chassisCMOffset = { 0.0f, 0.0f, 0.0f };
+		
 		const physx::PxF32 wheelWidth = vehicle4WDesc.wheelWidth;
 		const physx::PxF32 wheelRadius = vehicle4WDesc.wheelRadius;
 		const physx::PxU32 numWheels = vehicle4WDesc.numWheels;
@@ -250,11 +239,20 @@ namespace Project
 			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
 			physx::PxMaterial* chassisMaterials[1] = { vehicle4WDesc.chassisMaterial };
 
+			physx::PxVec3 chassisDims = MakeChassis(chassisConvexMeshes[0]);
+
+			physx::PxVec3 chassisMOI
+			((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * vehicle4WDesc.chassisMass / 12.0f,
+				(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * vehicle4WDesc.chassisMass / 12.0f,
+				(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * vehicle4WDesc.chassisMass / 12.0f);
+
+			chassisCMOffset = { 0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f };
+			
 			//Rigid body data.
 			physx::PxVehicleChassisData rigidBodyData;
-			rigidBodyData.mMOI = vehicle4WDesc.chassisMOI;
+			rigidBodyData.mMOI = chassisMOI;// vehicle4WDesc.chassisMOI;
 			rigidBodyData.mMass = vehicle4WDesc.chassisMass;
-			rigidBodyData.mCMOffset = vehicle4WDesc.chassisCMOffset;
+			rigidBodyData.mCMOffset = chassisCMOffset; // vehicle4WDesc.chassisCMOffset;
 
 			veh4WActor = CreateVehicleActor
 			(rigidBodyData,
@@ -267,15 +265,15 @@ namespace Project
 		{
 			//Compute the wheel center offsets from the origin.
 			physx::PxVec3 wheelCenterActorOffsets[PX_MAX_NB_WHEELS];
-			const physx::PxF32 frontZ = chassisDims.z * 0.3f;
-			const physx::PxF32 rearZ = -chassisDims.z * 0.3f;
-			ComputeWheelCenterActorOffsets4W(frontZ, rearZ, chassisDims, wheelWidth, wheelRadius, numWheels, wheelCenterActorOffsets);
+			const physx::PxF32 frontZ = 5.0f * 0.3f;//chassisDims.z * 0.3f;
+			const physx::PxF32 rearZ =  -5.0f * 0.3f;//-chassisDims.z * 0.3f;
+			ComputeWheelCenterActorOffsets4W(frontZ, rearZ, { 2.5f, 2.0f, 5.0f }, wheelWidth, wheelRadius, numWheels, wheelCenterActorOffsets);
 
 			//Set up the simulation data for all wheels.
 			SetupWheelsSimulationData
 			(vehicle4WDesc.wheelMass, vehicle4WDesc.wheelMOI, wheelRadius, wheelWidth,
 				numWheels, wheelCenterActorOffsets,
-				vehicle4WDesc.chassisCMOffset, vehicle4WDesc.chassisMass,
+				chassisCMOffset, vehicle4WDesc.chassisMass,
 				wheelsSimData);
 		}
 
@@ -453,12 +451,6 @@ namespace Project
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + (numLeftWheels - 1) * deltaZ);
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + (numLeftWheels - 1) * deltaZ);
-		//Set the remaining wheels.
-		for (auto i = 2, wheelCount = 4; i < numWheels - 2; i += 2, wheelCount += 2)
-		{
-			wheelCentreOffsets[wheelCount + 0] = physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
-			wheelCentreOffsets[wheelCount + 1] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
-		}
 	}
 
 	void TempSceneFour::SetupWheelsSimulationData(const physx::PxF32 wheelMass, const physx::PxF32 wheelMOI, const physx::PxF32 wheelRadius, 
@@ -588,6 +580,25 @@ namespace Project
 		barRear.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
 		barRear.mStiffness = 10000.0f;
 		wheelsSimData->addAntiRollBarData(barRear);
+	}
+
+	physx::PxVec3 TempSceneFour::MakeChassis(physx::PxConvexMesh* chassisConvexMesh)
+	{
+		const physx::PxU32 numChassisVerts = chassisConvexMesh->getNbVertices();
+		const physx::PxVec3* chassisVerts = chassisConvexMesh->getVertices();
+		physx::PxVec3 chassisMin(PX_MAX_F32, PX_MAX_F32, PX_MAX_F32);
+		physx::PxVec3 chassisMax(-PX_MAX_F32, -PX_MAX_F32, -PX_MAX_F32);
+		for (physx::PxU32 i = 0; i < numChassisVerts; i++)
+		{
+			chassisMin.x = physx::PxMin(chassisMin.x, chassisVerts[i].x);
+			chassisMin.y = physx::PxMin(chassisMin.y, chassisVerts[i].y);
+			chassisMin.z = physx::PxMin(chassisMin.z, chassisVerts[i].z);
+			chassisMax.x = physx::PxMax(chassisMax.x, chassisVerts[i].x);
+			chassisMax.y = physx::PxMax(chassisMax.y, chassisVerts[i].y);
+			chassisMax.z = physx::PxMax(chassisMax.z, chassisVerts[i].z);
+		}
+		const physx::PxVec3 chassisDims = chassisMax - chassisMin;
+		return chassisDims;
 	}
 
 }
