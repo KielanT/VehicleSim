@@ -73,11 +73,11 @@ namespace Project
 		physx::PxRigidDynamic* m_BoxActor = nullptr;
 		physx::PxRigidActor* m_FloorActor = nullptr;
 
-		//physx::PxVec3 m_ChassisDims;
+		physx::PxVec3 m_ChassisDims;
 
 	private:
 		// Physx temp function
-		/*void SetupWheelsSimulationData(
+		void SetupWheelsSimulationData(
 			const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass,
 			physx::PxVehicleWheelsSimData* wheelsSimData);
 
@@ -92,16 +92,16 @@ namespace Project
 		void SetupNonDrivableSurface(physx::PxFilterData& filterData)
 		{
 			filterData.word3 = UNDRIVABLE_SURFACE;
-		}*/
+		}
 
 	private:
 		// Physx temp vars
-		//const physx::PxU32 numWheels = 4;
+		const physx::PxU32 numWheels = 4;
 
-		//physx::PxVehicleWheelsSimData* m_WheelsSimData = nullptr;
-		//physx::PxVehicleDriveSimData4W m_DriveSimData;
-		//physx::PxRigidDynamic* m_VehicleActor = nullptr;
-		//physx::PxVehicleDrive4W* m_VehicleDrive4W = nullptr;
+		physx::PxVehicleWheelsSimData* m_WheelsSimData = nullptr;
+		physx::PxVehicleDriveSimData4W m_DriveSimData;
+		physx::PxRigidDynamic* m_VehicleActor = nullptr;
+		physx::PxVehicleDrive4W* m_VehicleDrive4W = nullptr;
 
 		// Taking form SampleVehicle_VehicleManager.h and SnippetVehicletTireFriction.h
 		enum
@@ -115,59 +115,59 @@ namespace Project
 			MAX_NUM_TIRE_TYPES
 		};
 
-		//enum
-		//{
-		//	DRIVABLE_SURFACE = 0xffff0000,
-		//	UNDRIVABLE_SURFACE = 0x0000ffff
-		//};
+		enum
+		{
+			DRIVABLE_SURFACE = 0xffff0000,
+			UNDRIVABLE_SURFACE = 0x0000ffff
+		};
 
-		//struct ActorUserData
-		//{
-		//	ActorUserData()
-		//		: vehicle(NULL),
-		//		actor(NULL)
-		//	{
-		//	}
+		struct ActorUserData
+		{
+			ActorUserData()
+				: vehicle(NULL),
+				actor(NULL)
+			{
+			}
 
-		//	const physx::PxVehicleWheels* vehicle;
-		//	const physx::PxActor* actor;
-		//};
+			const physx::PxVehicleWheels* vehicle;
+			const physx::PxActor* actor;
+		};
 
-		//struct ShapeUserData
-		//{
-		//	ShapeUserData()
-		//		: isWheel(false),
-		//		wheelId(0xffffffff)
-		//	{
-		//	}
+		struct ShapeUserData
+		{
+			ShapeUserData()
+				: isWheel(false),
+				wheelId(0xffffffff)
+			{
+			}
 
-		//	bool isWheel;
-		//	physx::PxU32 wheelId;
-		//};
+			bool isWheel;
+			physx::PxU32 wheelId;
+		};
 
-		//struct VehicleDesc
-		//{
-		//	VehicleDesc()
-		//		:
+		struct VehicleDesc
+		{
+			VehicleDesc()
+				:
 
-		//		chassisMass(1500.0f),
-		//		actorUserData(NULL),
-		//		shapeUserDatas(NULL)
-		//	{
-		//	}
+				chassisMass(1500.0f),
+				actorUserData(NULL),
+				shapeUserDatas(NULL)
+			{
+			}
 
-		//	physx::PxF32 chassisMass;
+			physx::PxF32 chassisMass;
 
-		//	physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
+			physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
 
-		//	
-		//	physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
+			
+			physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
-		//	ActorUserData* actorUserData;
-		//	ShapeUserData* shapeUserDatas;
-		//};
-		// 
+			ActorUserData* actorUserData;
+			ShapeUserData* shapeUserDatas;
+		};
+		 
 		//Collision types and flags describing collision interactions of each collision type.
 		enum
 		{
@@ -184,40 +184,40 @@ namespace Project
 			COLLISION_FLAG_DRIVABLE_OBSTACLE_AGAINST = COLLISION_FLAG_GROUND | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE,
 		};
 
-		//physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc, physx::PxPhysics* physics, physx::PxCooking* cooking);
+		physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc);
 		
 		static physx::PxConvexMesh* CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		physx::PxConvexMesh* CreateWheelMesh(int index, physx::PxPhysics& physics, physx::PxCooking& cooking);
-		physx::PxConvexMesh* CreateChassisMesh(int index, physx::PxPhysics& physics, physx::PxCooking& cooking);
+		physx::PxConvexMesh* CreateWheelMesh(int index);
+		physx::PxConvexMesh* CreateChassisMesh(int index);
 
-		//VehicleDesc InitVehicleDesc();
+		VehicleDesc InitVehicleDesc();
 
 		physx::PxVec3 MakeChassis(physx::PxConvexMesh* mesh); //computeChassisAABBDimensions function from SampleVehicle_VehicleManager
 		
 		void MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii); // computeWheelWidthsAndRadii function from SampleVehicle_VehicleManager
 
-		/*physx::PxVehicleChassisData m_ChassisData;
+		physx::PxVehicleChassisData m_ChassisData;
 		physx::PxVehicleWheelData m_Wheels[4];
-		physx::PxVec3 m_WheelCentreOffsets[4];*/
+		physx::PxVec3 m_WheelCentreOffsets[4];
 
-		/*physx::PxI32 vertexCountWheel;
-		std::vector<physx::PxVec3> verticesWheel;*/
+		physx::PxI32 vertexCountWheel;
+		std::vector<physx::PxVec3> verticesWheel;
 
 		physx::PxConvexMesh* m_ChassisConvexMesh;
 		physx::PxConvexMesh* m_WheelConvexMeshes[4];
 		physx::PxVec3 m_WheelCentreOffsets4[4];
 
-		physx::PxVehicleDrive4W* m_Car;
+		//physx::PxVehicleDrive4W* m_Car;
 
 		// Retry implementation
-		physx::PxVehicleDrive4W* Create4WVehicle(); // Example from SampleVehicle_VehicleManager 
-		void CreateVehicle4WSimulationData(physx::PxF32 chassisMass, physx::PxVehicleChassisData& chassisData, physx::PxVec3* wheelCentreOffsets, 
-			physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32 wheelMass, physx::PxVehicleWheelsSimData& wheelsData, physx::PxVehicleDriveSimData4W& driveData);
-		physx::PxRigidDynamic* CreateVehicleActor4W(physx::PxConvexMesh** wheelConvexMeshes, physx::PxConvexMesh* chassisConvexMesh, 
-			physx::PxVehicleChassisData& chassisData);
-		void SetupActor(physx::PxRigidDynamic* vehActor, physx::PxGeometry** wheelGeometries, physx::PxFilterData& vehQryFilterData, 
-			physx::PxFilterData& wheelCollFilterData, physx::PxTransform* wheelLocalPoses, physx::PxGeometry** chassisGeometries, 
-			physx::PxFilterData& chassisCollFilterData, physx::PxTransform* chassisLocalPoses, physx::PxVehicleChassisData& chassisData);
+		//physx::PxVehicleDrive4W* Create4WVehicle(); // Example from SampleVehicle_VehicleManager 
+		//void CreateVehicle4WSimulationData(physx::PxF32 chassisMass, physx::PxVehicleChassisData& chassisData, physx::PxVec3* wheelCentreOffsets, 
+		//	physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32 wheelMass, physx::PxVehicleWheelsSimData& wheelsData, physx::PxVehicleDriveSimData4W& driveData);
+		//physx::PxRigidDynamic* CreateVehicleActor4W(physx::PxConvexMesh** wheelConvexMeshes, physx::PxConvexMesh* chassisConvexMesh, 
+		//	physx::PxVehicleChassisData& chassisData);
+		//void SetupActor(physx::PxRigidDynamic* vehActor, physx::PxGeometry** wheelGeometries, physx::PxFilterData& vehQryFilterData, 
+		//	physx::PxFilterData& wheelCollFilterData, physx::PxTransform* wheelLocalPoses, physx::PxGeometry** chassisGeometries, 
+		//	physx::PxFilterData& chassisCollFilterData, physx::PxTransform* chassisLocalPoses, physx::PxVehicleChassisData& chassisData);
 
 	};
 }

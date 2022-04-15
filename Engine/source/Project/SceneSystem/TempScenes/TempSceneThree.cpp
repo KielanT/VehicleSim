@@ -62,24 +62,25 @@ namespace Project
 				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Failed to Initialise Physics");
 
 			// Serialise may not be needed
-			//physx::PxSerializationRegistry* mSerializationRegistry = physx::PxSerialization::createSerializationRegistry(*m_PhysicsSystem->GetPhysics());
-			physx::PxInitVehicleSDK(*m_PhysicsSystem->GetPhysics()/*, mSerializationRegistry*/);
+			physx::PxSerializationRegistry* mSerializationRegistry = physx::PxSerialization::createSerializationRegistry(*m_PhysicsSystem->GetPhysics());
+			physx::PxInitVehicleSDK(*m_PhysicsSystem->GetPhysics(), mSerializationRegistry);
 			physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
 			physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eVELOCITY_CHANGE);
 
 			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0, 0, 0);
 
 
-
 			// Create vehicle
-			//VehicleDesc vehicleDesc = InitVehicleDesc();
-			//m_VehicleDrive4W = CreateVehicle4W(vehicleDesc, m_PhysicsSystem->GetPhysics(), m_PhysicsSystem->GetCooking());
-			//physx::PxTransform startTransform(physx::PxVec3(0, /*(vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f)*/10.0f, 0), physx::PxQuat(physx::PxIdentity));
+			VehicleDesc vehicleDesc = InitVehicleDesc();
+			m_VehicleDrive4W = CreateVehicle4W(vehicleDesc);
+			physx::PxTransform startTransform(physx::PxVec3(0, /*(vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f)*/10.0f, 0), physx::PxQuat(physx::PxIdentity));
+			if (m_VehicleDrive4W == nullptr)
+				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 1 line 79");
+			
+			if (m_VehicleDrive4W->getRigidDynamicActor() == nullptr)
+				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Cant get rigid dynamic actor");
 
-			//m_VehicleDrive4W->getRigidDynamicActor()->setGlobalPose({ 0, 0, 0 });
-
-			m_Car = Create4WVehicle();
-			m_Car->getRigidDynamicActor()->setGlobalPose({ 0, 0, 0 });
+			//m_VehicleDrive4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 
 			// Set Actors and shapes here
 			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 40.0f, 50.0f }));
@@ -88,10 +89,10 @@ namespace Project
 			m_FloorActor = m_PhysicsSystem->GetPhysics()->createRigidStatic({ 0.0f, 0.0f, 0.0f });
 			m_FloorBoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_FloorActor, physx::PxBoxGeometry(1000.0f, 0.01f, 1000.0f), *m_Material);
 
+			
 			m_PhysicsSystem->GetScene()->addActor(*m_BoxActor);
 			m_PhysicsSystem->GetScene()->addActor(*m_FloorActor);
-			//m_PhysicsSystem->GetScene()->addActor(*m_Car->getRigidDynamicActor());
-			
+			//m_PhysicsSystem->GetScene()->addActor(*m_VehicleDrive4W->getRigidDynamicActor());
 
 		}
 
@@ -223,311 +224,328 @@ namespace Project
 	}
 
 
-	//void TempSceneThree::SetupWheelsSimulationData(
-	//	const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass, 
-	//	physx::PxVehicleWheelsSimData* wheelsSimData)
-	//{
-	//	m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].x = -m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].x;
-	//	m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].x = -m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].x;
-	//	m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].y = m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].y;
-	//	m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].y = m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].y;
+	void TempSceneThree::SetupWheelsSimulationData(
+		const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass, 
+		physx::PxVehicleWheelsSimData* wheelsSimData)
+	{
+		m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].x = -m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].x;
+		m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].x = -m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].x;
+		m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].y = m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].y;
+		m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].y = m_WheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].y;
 
-	//	
-	//	// Enable the handbrake for the rear wheels only
-	//	m_Wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxBrakeTorque = 4000.0f;
-	//	m_Wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxBrakeTorque = 4000.0f;
-	//	// Enable seteering for the front wheels only
-	//	m_Wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxSteer = physx::PxPi * 0.3333f;
-	//	m_Wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxSteer = physx::PxPi * 0.3333f;
+		// Enable the handbrake for the rear wheels only
+		m_Wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxBrakeTorque = 4000.0f;
+		m_Wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxBrakeTorque = 4000.0f;
+		// Enable seteering for the front wheels only
+		m_Wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxSteer = physx::PxPi * 0.3333f;
+		m_Wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxSteer = physx::PxPi * 0.3333f;
 
-	//	// Setup the tires
-	//	physx::PxVehicleTireData tires[PX_MAX_NB_WHEELS];
-	//	{
-	//		for (physx::PxU32 i = 0; i < 4; ++i)
-	//		{
-	//			tires[i].mType = TIRE_TYPE_NORMAL;
-	//		}
-	//	}
+		// Setup the tires
+		physx::PxVehicleTireData tires[PX_MAX_NB_WHEELS];
+		{
+			for (physx::PxU32 i = 0; i < 4; ++i)
+			{
+				tires[i].mType = TIRE_TYPE_NORMAL;
+			}
+		}
 
-	//	// Setup the suspensions
-	//	physx::PxVehicleSuspensionData suspensions[PX_MAX_NB_WHEELS];
-	//	{
-	//		// Compute the mass supported by each suspension spring
-	//		physx::PxF32 suspSprungMasses[PX_MAX_NB_WHEELS];
-	//		physx::PxVehicleComputeSprungMasses(4, m_WheelCentreOffsets, chassisCMOffset, chassisMass, 1, suspSprungMasses);
+		// Setup the suspensions
+		physx::PxVehicleSuspensionData suspensions[PX_MAX_NB_WHEELS];
+		{
+			// Compute the mass supported by each suspension spring
+			physx::PxF32 suspSprungMasses[PX_MAX_NB_WHEELS];
+			physx::PxVehicleComputeSprungMasses(4, m_WheelCentreOffsets, chassisCMOffset, chassisMass, 1, suspSprungMasses);
 
-	//		// Set the suspension data
-	//		for (physx::PxU32 i = 0; i < 4; ++i)
-	//		{
-	//			suspensions[i].mMaxCompression = 0.3f;
-	//			suspensions[i].mMaxDroop = 0.1f;
-	//			suspensions[i].mSpringStrength = 35000.0f;
-	//			suspensions[i].mSpringDamperRate = 4500.0f;
-	//			suspensions[i].mSprungMass = suspSprungMasses[i];
-	//		}
+			// Set the suspension data
+			for (physx::PxU32 i = 0; i < 4; ++i)
+			{
+				suspensions[i].mMaxCompression = 0.3f;
+				suspensions[i].mMaxDroop = 0.1f;
+				suspensions[i].mSpringStrength = 35000.0f;
+				suspensions[i].mSpringDamperRate = 4500.0f;
+				suspensions[i].mSprungMass = suspSprungMasses[i];
+			}
 
-	//		// Set the camber angles
-	//		const physx::PxF32 camberAngleAtRest = 0.0f;
-	//		const physx::PxF32 camberAngleAtMaxDroop = 0.01f;
-	//		const physx::PxF32 camberAngleAtMaxCompression = 0.1f;
+			// Set the camber angles
+			const physx::PxF32 camberAngleAtRest = 0.0f;
+			const physx::PxF32 camberAngleAtMaxDroop = 0.01f;
+			const physx::PxF32 camberAngleAtMaxCompression = 0.1f;
 
-	//		for (physx::PxU32 i = 0; i < 4; i += 2)
-	//		{
-	//			suspensions[i + 0].mCamberAtRest = camberAngleAtRest;
-	//			suspensions[i + 1].mCamberAtRest = -camberAngleAtRest;
-	//			suspensions[i + 0].mCamberAtMaxDroop = camberAngleAtRest;
-	//			suspensions[i + 1].mCamberAtMaxDroop = -camberAngleAtRest;
-	//			suspensions[i + 0].mCamberAtMaxCompression = camberAngleAtRest;
-	//			suspensions[i + 1].mCamberAtMaxCompression = -camberAngleAtRest;
-	//		}
-	//	}
+			for (physx::PxU32 i = 0; i < 4; i += 2)
+			{
+				suspensions[i + 0].mCamberAtRest = camberAngleAtRest;
+				suspensions[i + 1].mCamberAtRest = -camberAngleAtRest;
+				suspensions[i + 0].mCamberAtMaxDroop = camberAngleAtRest;
+				suspensions[i + 1].mCamberAtMaxDroop = -camberAngleAtRest;
+				suspensions[i + 0].mCamberAtMaxCompression = camberAngleAtRest;
+				suspensions[i + 1].mCamberAtMaxCompression = -camberAngleAtRest;
+			}
+		}
 
-	//	// Setup the wheel geometry
-	//	physx::PxVec3 suspTravelDirections[PX_MAX_NB_WHEELS];
-	//	physx::PxVec3 wheelCentreCMOffsets[PX_MAX_NB_WHEELS];
-	//	physx::PxVec3 suspForceAppCMOffsets[PX_MAX_NB_WHEELS];
-	//	physx::PxVec3 tireForceAppCMOffsets[PX_MAX_NB_WHEELS];
-	//	{
-	//		for (physx::PxU32 i = 0; i < 4; i++)
-	//		{
-	//			// Vertical suspension Travel
-	//			suspTravelDirections[i] = physx::PxVec3(0, -1, 0);
+		// Setup the wheel geometry
+		physx::PxVec3 suspTravelDirections[PX_MAX_NB_WHEELS];
+		physx::PxVec3 wheelCentreCMOffsets[PX_MAX_NB_WHEELS];
+		physx::PxVec3 suspForceAppCMOffsets[PX_MAX_NB_WHEELS];
+		physx::PxVec3 tireForceAppCMOffsets[PX_MAX_NB_WHEELS];
+		{
+			for (physx::PxU32 i = 0; i < 4; i++)
+			{
+				// Vertical suspension Travel
+				suspTravelDirections[i] = physx::PxVec3(0, -1, 0);
 
-	//			// Wheel centre offset is Offset from rigid body centre of mass
-	//			wheelCentreCMOffsets[i] = m_WheelCentreOffsets[i] - chassisCMOffset;
+				// Wheel centre offset is Offset from rigid body centre of mass
+				wheelCentreCMOffsets[i] = m_WheelCentreOffsets[i] - chassisCMOffset;
 
-	//			// Suspension force application point 0.3 metres below rigid body centre of mass
-	//			suspForceAppCMOffsets[i] = physx::PxVec3(wheelCentreCMOffsets[i].x, -0.3f, wheelCentreCMOffsets[i].z);
+				// Suspension force application point 0.3 metres below rigid body centre of mass
+				suspForceAppCMOffsets[i] = physx::PxVec3(wheelCentreCMOffsets[i].x, -0.3f, wheelCentreCMOffsets[i].z);
 
-	//			// Tire Force application point 0.3 metres below rigid body centre of mass
-	//			tireForceAppCMOffsets[i] = physx::PxVec3(wheelCentreCMOffsets[i].x, -0.3f, wheelCentreCMOffsets[i].z);
-	//		}
-	//	}
+				// Tire Force application point 0.3 metres below rigid body centre of mass
+				tireForceAppCMOffsets[i] = physx::PxVec3(wheelCentreCMOffsets[i].x, -0.3f, wheelCentreCMOffsets[i].z);
+			}
+		}
 
-	//	physx::PxFilterData qryFilterData;
-	//	SetupNonDrivableSurface(qryFilterData);
+		physx::PxFilterData qryFilterData;
+		SetupNonDrivableSurface(qryFilterData);
 
-	//	// Set the wheel, tire and suspension data
-	//	// Set the geomtry data
-	//	// Set the query filter data
-	//	for (physx::PxU32 i = 0; i < 4; ++i)
-	//	{
-	//		wheelsSimData->setWheelData(i, m_Wheels[i]);
-	//		wheelsSimData->setTireData(i, tires[i]);
-	//		wheelsSimData->setSuspensionData(i, suspensions[i]);
-	//		wheelsSimData->setSuspTravelDirection(i, suspTravelDirections[i]);
-	//		wheelsSimData->setWheelCentreOffset(i, wheelCentreCMOffsets[i]);
-	//		wheelsSimData->setSuspForceAppPointOffset(i, suspForceAppCMOffsets[i]);
-	//		wheelsSimData->setTireForceAppPointOffset(i, tireForceAppCMOffsets[i]);
-	//	}
+		// Set the wheel, tire and suspension data
+		// Set the geomtry data
+		// Set the query filter data
+		for (physx::PxU32 i = 0; i < 4; ++i)
+		{
+			wheelsSimData->setWheelData(i, m_Wheels[i]);
+			wheelsSimData->setTireData(i, tires[i]);
+			wheelsSimData->setSuspensionData(i, suspensions[i]);
+			wheelsSimData->setSuspTravelDirection(i, suspTravelDirections[i]);
+			wheelsSimData->setWheelCentreOffset(i, wheelCentreCMOffsets[i]);
+			wheelsSimData->setSuspForceAppPointOffset(i, suspForceAppCMOffsets[i]);
+			wheelsSimData->setTireForceAppPointOffset(i, tireForceAppCMOffsets[i]);
+		}
 
-	//	//Add a front and rear anti-roll bar
-	//	physx::PxVehicleAntiRollBarData barFront;
-	//	barFront.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT;
-	//	barFront.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT;
-	//	barFront.mStiffness = 10000.0f;
-	//	wheelsSimData->addAntiRollBarData(barFront);
-	//	physx::PxVehicleAntiRollBarData barRear;
-	//	barRear.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT;
-	//	barRear.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
-	//	barRear.mStiffness = 10000.0f;
-	//	wheelsSimData->addAntiRollBarData(barRear);
-	//}
+		wheelsSimData->setWheelShapeMapping(0, 0);
+		wheelsSimData->setWheelShapeMapping(1, 1);
+		wheelsSimData->setWheelShapeMapping(2, 2);
+		wheelsSimData->setWheelShapeMapping(3, 3);
 
-	//physx::PxRigidDynamic* TempSceneThree::CreateVehicleActor(const physx::PxVehicleChassisData& chassisData, 
-	//	physx::PxMaterial** wheelMaterials, physx::PxConvexMesh** wheelConvexMeshes, const physx::PxU32 numberWheels,
-	//	const physx::PxFilterData& wheelSimFilterData, physx::PxMaterial** chassisMaterials, physx::PxConvexMesh** chassisConvexMeshes, 
-	//	const physx::PxU32 numChassisMeshes, const physx::PxFilterData& chassisSimFilterData, physx::PxPhysics& physics)
-	//{
-	//	// We need a rigid body actor for the vehicle
-	//	// Don't forget to add the actor to the scene after setting up the associated vehicle
-	//	physx::PxRigidDynamic* actor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform(physx::PxIdentity));
+		physx::PxFilterData vehQryFilterData;
+		SetupNonDrivableSurface(vehQryFilterData);
+		wheelsSimData->setSceneQueryFilterData(0, vehQryFilterData);
+		wheelsSimData->setSceneQueryFilterData(1, vehQryFilterData);
+		wheelsSimData->setSceneQueryFilterData(2, vehQryFilterData);
+		wheelsSimData->setSceneQueryFilterData(3, vehQryFilterData);
 
-	//	
+		//Add a front and rear anti-roll bar
+		physx::PxVehicleAntiRollBarData barFront;
+		barFront.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT;
+		barFront.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT;
+		barFront.mStiffness = 10000.0f;
+		wheelsSimData->addAntiRollBarData(barFront);
+		physx::PxVehicleAntiRollBarData barRear;
+		barRear.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT;
+		barRear.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
+		barRear.mStiffness = 10000.0f;
+		wheelsSimData->addAntiRollBarData(barRear);
+	}
 
-	//	// Wheels and chassis query filter data
-	//	// Optional: cars don't drive on other cars
-	//	physx::PxFilterData wheelQryFilterData;
-	//	// TODO setupNonDrivableSurface function
-	//	physx::PxFilterData chassisQryFilterData;
-	//	// setupNonDrivableSurface function
+	physx::PxRigidDynamic* TempSceneThree::CreateVehicleActor(const physx::PxVehicleChassisData& chassisData, 
+		physx::PxMaterial** wheelMaterials, physx::PxConvexMesh** wheelConvexMeshes, const physx::PxU32 numberWheels,
+		const physx::PxFilterData& wheelSimFilterData, physx::PxMaterial** chassisMaterials, physx::PxConvexMesh** chassisConvexMeshes, 
+		const physx::PxU32 numChassisMeshes, const physx::PxFilterData& chassisSimFilterData, physx::PxPhysics& physics)
+	{
+		// We need a rigid body actor for the vehicle
+		// Don't forget to add the actor to the scene after setting up the associated vehicle
+		physx::PxRigidDynamic* actor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform(physx::PxIdentity));
+		if (actor == nullptr)
+			m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 2 line 346");
+		
 
-	//	// Add all the wheels shape to the actor.
-	//	for (physx::PxU32 i = 0; i < numberWheels; ++i)
-	//	{
-	//		physx::PxConvexMeshGeometry geom(wheelConvexMeshes[i]);
-	//		physx::PxShape* wheelShape = physx::PxRigidActorExt::createExclusiveShape(*actor, geom, *wheelMaterials[i]);
-	//		wheelShape->setQueryFilterData(wheelQryFilterData);
-	//		wheelShape->setSimulationFilterData(wheelSimFilterData);
-	//		wheelShape->setLocalPose(physx::PxTransform(physx::PxIdentity));
-	//	}
+		// Wheels and chassis query filter data
+		// Optional: cars don't drive on other cars
+		physx::PxFilterData wheelQryFilterData;
+		// TODO setupNonDrivableSurface function
+		physx::PxFilterData chassisQryFilterData;
+		// setupNonDrivableSurface function
 
-	//	// Add the chassis shapes to the actor
-	//	for (physx::PxU32 i = 0; i < numChassisMeshes; ++i)
-	//	{
-	//		physx::PxShape* chassisShape = physx::PxRigidActorExt::createExclusiveShape(*actor, physx::PxConvexMeshGeometry(chassisConvexMeshes[i]), 
-	//			*chassisMaterials[i]);
-	//		chassisShape->setQueryFilterData(chassisQryFilterData);
-	//		chassisShape->setSimulationFilterData(chassisSimFilterData);
-	//		chassisShape->setLocalPose(physx::PxTransform(physx::PxIdentity));
-	//	}
+		// Add all the wheels shape to the actor.
+		for (physx::PxU32 i = 0; i < numberWheels; ++i)
+		{
+			physx::PxConvexMeshGeometry geom(wheelConvexMeshes[i]);
+			physx::PxShape* wheelShape = physx::PxRigidActorExt::createExclusiveShape(*actor, geom, *wheelMaterials[i]);
+			
+			if (wheelShape == nullptr)
+				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 3 line 362");
+			
+			wheelShape->setQueryFilterData(wheelQryFilterData);
+			wheelShape->setSimulationFilterData(wheelSimFilterData);
+			wheelShape->setLocalPose(physx::PxTransform(physx::PxIdentity));
+		}
 
-	//	actor->setMass(chassisData.mMass);
-	//	actor->setMassSpaceInertiaTensor(chassisData.mMOI);
-	//	actor->setCMassLocalPose(physx::PxTransform(chassisData.mCMOffset, physx::PxQuat(physx::PxIdentity)));
+		// Add the chassis shapes to the actor
+		for (physx::PxU32 i = 0; i < numChassisMeshes; ++i)
+		{
+			physx::PxShape* chassisShape = physx::PxRigidActorExt::createExclusiveShape(*actor, physx::PxConvexMeshGeometry(chassisConvexMeshes[i]), 
+				*chassisMaterials[i]);
 
+			if (chassisShape == nullptr)
+				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 4 line 377");
+			
+			chassisShape->setQueryFilterData(chassisQryFilterData);
+			chassisShape->setSimulationFilterData(chassisSimFilterData);
+			chassisShape->setLocalPose(physx::PxTransform(physx::PxIdentity));
+		}
 
-	//	return actor;
-	//}
-
-	//physx::PxVehicleDrive4W* TempSceneThree::CreateVehicle4W(const VehicleDesc& vehicle4WDesc, physx::PxPhysics* physics, physx::PxCooking* cooking)
-	//{
-	//	const physx::PxFilterData& chassisSimFilterData = vehicle4WDesc.chassisSimFilterData;
-	//	const physx::PxFilterData& wheelSimFilterData = vehicle4WDesc.wheelSimFilterData;
-
-	//	// Construct a physx actor with shapes for the chassis and wheels
-	//	// Set the rigid body mass, moment of inertia and centre of mass offset
-	//	physx::PxRigidDynamic* veh4Actor = NULL;
-	//	{
-	//		// Construct a convex mesh for a cylindrical wheel
-	//		//physx::PxConvexMesh* wheelMesh = 
-	//		// Assume all wheels are identical for simplicity
-	//		physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
-	//		physx::PxMaterial* wheelMaterials[PX_MAX_NB_WHEELS];
-
-	//		physx::PxF32 wheelWidths[4];
-	//		physx::PxF32 wheelRadii[4];
-
-	//		// Set the meshes and materials for driven wheels
-	//		for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT; ++i)
-	//		{
-	//			wheelConvexMeshes[i] = CreateWheelMesh(i, *physics, *cooking);
-
-	//			wheelMaterials[i] = m_Material;
-	//			
-	//		}
-
-	//		MakeWheelWithsAndRadii(wheelConvexMeshes, wheelWidths, wheelRadii);
-	//		physx::PxF32 wheelMOIs[4];
-	//		physx::PxF32 wheelMass = 20.0f;
-	//		
-	//		for (physx::PxU32 i = 0; i < 4; ++i)
-	//		{
-	//			wheelMOIs[i] = 0.5f * wheelMass * wheelRadii[i] * wheelRadii[i];
-	//		}
-
-	//		for (physx::PxU32 i = 0; i < 4; ++i)
-	//		{
-	//			m_Wheels[i].mRadius = wheelRadii[i];
-	//			m_Wheels[i].mMass = wheelMass;
-	//			m_Wheels[i].mMOI = wheelMOIs[i];
-	//			m_Wheels[i].mWidth = wheelWidths[i];
-	//		}
+		actor->setMass(chassisData.mMass);
+		actor->setMassSpaceInertiaTensor(chassisData.mMOI);
+		actor->setCMassLocalPose(physx::PxTransform(chassisData.mCMOffset, physx::PxQuat(physx::PxIdentity)));
 
 
-	//		// Chassis just has a single convex shape for simplicity 
-	//		physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(4, *physics, *cooking);
-	//		physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
-	//		physx::PxMaterial* chassisMaterials[1] = { m_Material };
-	//		physx::PxVec3 chassisDims = MakeChassis(chassisConvexMesh);
-	//		m_ChassisDims = chassisDims;
+		return actor;
+	}
 
-	//		//The origin is at the center of the chassis mesh.
-	//		//Set the center of mass to be below this point and a little towards the front.
-	//		m_ChassisData.mCMOffset = physx::PxVec3(0.0f, -chassisDims.y * 0.5f + 0.65, 0.25f);
-
-	//		//Now compute the chassis mass and moment of inertia.
-	//		//Use the moment of inertia of a cuboid as an approximate value for the chassis moi.
-	//		physx::PxVec3 chassisMOI
-	//		((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * vehicle4WDesc.chassisMass / 12.0f,
-	//			(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * vehicle4WDesc.chassisMass / 12.0f,
-	//			(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * vehicle4WDesc.chassisMass / 12.0f);
-
-	//		//A bit of tweaking here.  The car will have more responsive turning if we reduce the 	
-	//		//y-component of the chassis moment of inertia.
-	//		chassisMOI.y *= 0.8f;
-	//		m_ChassisData.mMOI = chassisMOI;
+	physx::PxVehicleDrive4W* TempSceneThree::CreateVehicle4W(const VehicleDesc& vehicle4WDesc)
+	{
+		const physx::PxFilterData& chassisSimFilterData = vehicle4WDesc.chassisSimFilterData;
+		const physx::PxFilterData& wheelSimFilterData = vehicle4WDesc.wheelSimFilterData;
 
 
-	//		veh4Actor = CreateVehicleActor(m_ChassisData,
-	//			wheelMaterials, wheelConvexMeshes, 4, wheelSimFilterData,
-	//			chassisMaterials, chassisConvexMeshes, 1, chassisSimFilterData,
-	//			*physics);
+		// Construct a physx actor with shapes for the chassis and wheels
+		// Set the rigid body mass, moment of inertia and centre of mass offset
+		physx::PxRigidDynamic* veh4Actor = nullptr;
+		{
+			// Construct a convex mesh for a cylindrical wheel
+			//physx::PxConvexMesh* wheelMesh = 
+			// Assume all wheels are identical for simplicity
+			physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
+			physx::PxMaterial* wheelMaterials[PX_MAX_NB_WHEELS];
 
-	//		
+			physx::PxF32 wheelWidths[4];
+			physx::PxF32 wheelRadii[4];
 
-	//	}
+			// Set the meshes and materials for driven wheels
+			for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT; ++i)
+			{
+				wheelConvexMeshes[i] = CreateWheelMesh(i);
 
-	//	// Setup the sim data for the wheels
-	//	physx::PxVehicleWheelsSimData* wheelsSimData = physx::PxVehicleWheelsSimData::allocate(4);
-	//	{
-	//		SetupWheelsSimulationData(m_ChassisData.mCMOffset, m_ChassisData.mMass, wheelsSimData);
-	//	}
+				if (wheelConvexMeshes[i] == nullptr)
+					m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 5 line 416");
 
-	//	// Setup sim data for the vehicle drive model
-	//	physx::PxVehicleDriveSimData4W driveSimData;
-	//	{
-	//		// Diff
-	//		physx::PxVehicleDifferential4WData diff;
-	//		diff.mType = physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD;
-	//		driveSimData.setDiffData(diff);
+				wheelMaterials[i] = m_Material;
+				
+			}
 
-	//		// Engine
-	//		physx::PxVehicleEngineData engine;
-	//		engine.mPeakTorque = 500.0f;
-	//		engine.mMaxOmega = 600.0f; //Approx 6000rpm
-	//		driveSimData.setEngineData(engine);
+			MakeWheelWithsAndRadii(wheelConvexMeshes, wheelWidths, wheelRadii);
+			physx::PxF32 wheelMOIs[4];
+			physx::PxF32 wheelMass = 20.0f;
+			
+			for (physx::PxU32 i = 0; i < 4; ++i)
+			{
+				wheelMOIs[i] = 0.5f * wheelMass * wheelRadii[i] * wheelRadii[i];
+			}
 
-	//		// Gears
-	//		physx::PxVehicleGearsData gears;
-	//		gears.mSwitchTime = 0.5f;
-	//		driveSimData.setGearsData(gears);
-
-	//		// Clutch
-	//		physx::PxVehicleClutchData clutch;
-	//		clutch.mStrength = 10.0f;
-	//		driveSimData.setClutchData(clutch);
-
-	//		// Ackerman steer accuracy
-	//		physx::PxVehicleAckermannGeometryData ackermann;
-	//		ackermann.mAccuracy = 1.0f;
-	//		ackermann.mAxleSeparation =
-	//			wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT).z -
-	//			wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT).z;
-	//		ackermann.mFrontWidth =
-	//			wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT).x -
-	//			wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT).x;
-	//		ackermann.mRearWidth =
-	//			wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT).x -
-	//			wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT).x;
-	//		driveSimData.setAckermannGeometryData(ackermann);
-	//	}
-
-	//	// Create a vehicle from the wheels and drive sim data;
-	//	physx::PxVehicleDrive4W* vehDrive4W = physx::PxVehicleDrive4W::allocate(4);
-
-	//
-	//	vehDrive4W->setup(physics, veh4Actor, *wheelsSimData, driveSimData, 4 - 4);
-	//	vehDrive4W->mWheelsSimData.setWheelShapeMapping(0, 0);
-	//	vehDrive4W->mWheelsSimData.setWheelShapeMapping(1, 1);
-	//	vehDrive4W->mWheelsSimData.setWheelShapeMapping(2, 2);
-	//	vehDrive4W->mWheelsSimData.setWheelShapeMapping(3, 3);
-	//	
-	//	physx::PxFilterData vehQryFilterData;
-	//	SetupNonDrivableSurface(vehQryFilterData);
-	//	vehDrive4W->mWheelsSimData.setSceneQueryFilterData(0, vehQryFilterData);
-	//	vehDrive4W->mWheelsSimData.setSceneQueryFilterData(1, vehQryFilterData);
-	//	vehDrive4W->mWheelsSimData.setSceneQueryFilterData(2, vehQryFilterData);
-	//	vehDrive4W->mWheelsSimData.setSceneQueryFilterData(3, vehQryFilterData);
-
-	//	vehDrive4W->getRigidDynamicActor()->setGlobalPose({ 0, 0, 0 });
+			for (physx::PxU32 i = 0; i < 4; ++i)
+			{
+				m_Wheels[i].mRadius = wheelRadii[i];
+				m_Wheels[i].mMass = wheelMass;
+				m_Wheels[i].mMOI = wheelMOIs[i];
+				m_Wheels[i].mWidth = wheelWidths[i];
+			}
 
 
-	//	// Free the sim data because its not needed anymore
-	//	wheelsSimData->free();
+			// Chassis just has a single convex shape for simplicity 
+			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(4);
+			if (chassisConvexMesh == nullptr)
+				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 5 line 443");
+			
+			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
+			physx::PxMaterial* chassisMaterials[1] = { m_Material };
+			physx::PxVec3 chassisDims = MakeChassis(chassisConvexMesh);
 
-	//	return vehDrive4W;
-	//}
+			m_ChassisDims = chassisDims;
+
+			//The origin is at the center of the chassis mesh.
+			//Set the center of mass to be below this point and a little towards the front.
+			m_ChassisData.mCMOffset = physx::PxVec3(0.0f, -chassisDims.y * 0.5f + 0.65, 0.25f);
+
+			//Now compute the chassis mass and moment of inertia.
+			//Use the moment of inertia of a cuboid as an approximate value for the chassis moi.
+			physx::PxVec3 chassisMOI
+			((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * vehicle4WDesc.chassisMass / 12.0f,
+				(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * vehicle4WDesc.chassisMass / 12.0f,
+				(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * vehicle4WDesc.chassisMass / 12.0f);
+
+			//A bit of tweaking here.  The car will have more responsive turning if we reduce the 	
+			//y-component of the chassis moment of inertia.
+			chassisMOI.y *= 0.8f;
+			m_ChassisData.mMOI = chassisMOI;
+
+
+			veh4Actor = CreateVehicleActor(m_ChassisData,
+				wheelMaterials, wheelConvexMeshes, 4, wheelSimFilterData,
+				chassisMaterials, chassisConvexMeshes, 1, chassisSimFilterData,
+				*m_PhysicsSystem->GetPhysics());
+
+			if (veh4Actor == nullptr)
+				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 6 line 474");
+
+		}
+
+		// Setup the sim data for the wheels
+		physx::PxVehicleWheelsSimData* wheelsSimData = physx::PxVehicleWheelsSimData::allocate(4);
+		{
+			SetupWheelsSimulationData(m_ChassisData.mCMOffset, m_ChassisData.mMass, wheelsSimData);
+		}
+
+		// Setup sim data for the vehicle drive model
+		physx::PxVehicleDriveSimData4W driveSimData;
+		{
+			// Diff
+			physx::PxVehicleDifferential4WData diff;
+			diff.mType = physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD;
+			driveSimData.setDiffData(diff);
+
+			// Engine
+			physx::PxVehicleEngineData engine;
+			engine.mPeakTorque = 500.0f;
+			engine.mMaxOmega = 600.0f; //Approx 6000rpm
+			driveSimData.setEngineData(engine);
+
+			// Gears
+			physx::PxVehicleGearsData gears;
+			gears.mSwitchTime = 0.5f;
+			driveSimData.setGearsData(gears);
+
+			// Clutch
+			physx::PxVehicleClutchData clutch;
+			clutch.mStrength = 10.0f;
+			driveSimData.setClutchData(clutch);
+
+			// Ackerman steer accuracy
+			physx::PxVehicleAckermannGeometryData ackermann;
+			ackermann.mAccuracy = 1.0f;
+			ackermann.mAxleSeparation =
+				wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT).z -
+				wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT).z;
+			ackermann.mFrontWidth =
+				wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT).x -
+				wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT).x;
+			ackermann.mRearWidth =
+				wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT).x -
+				wheelsSimData->getWheelCentreOffset(physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT).x;
+			driveSimData.setAckermannGeometryData(ackermann);
+		}
+		int numWheels = 4;
+		// Create a vehicle from the wheels and drive sim data;
+		physx::PxVehicleDrive4W* vehDrive4W = physx::PxVehicleDrive4W::allocate(4);
+		if (vehDrive4W == nullptr)
+			m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Error 7 line 526");
+	
+		vehDrive4W->setup(m_PhysicsSystem->GetPhysics(), veh4Actor, *wheelsSimData, driveSimData, 0);
+		
+
+		// Free the sim data because its not needed anymore
+		wheelsSimData->free();
+
+		return vehDrive4W;
+	}
 
 	physx::PxConvexMesh* TempSceneThree::CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts, physx::PxPhysics& physics, physx::PxCooking& cooking)
 	{
@@ -545,11 +563,12 @@ namespace Project
 			physx::PxDefaultMemoryInputData id(buf.getData(), buf.getSize());
 			convexMesh = physics.createConvexMesh(id);
 		}
+		
 
 		return convexMesh;
 	}
 
-	physx::PxConvexMesh* TempSceneThree::CreateWheelMesh(int index, physx::PxPhysics& physics, physx::PxCooking& cooking)
+	physx::PxConvexMesh* TempSceneThree::CreateWheelMesh(int index)
 	{
 		physx::PxU32 vertexCount;
 		std::vector<physx::PxVec3> vertices;
@@ -569,10 +588,10 @@ namespace Project
 		physx::PxVec3* v = vertices.data();
 
 
-		return CreateConvexMesh(v, vertexCount, physics, cooking);
+		return CreateConvexMesh(v, vertexCount, *m_PhysicsSystem->GetPhysics(), *m_PhysicsSystem->GetCooking());
 	}
 
-	physx::PxConvexMesh* TempSceneThree::CreateChassisMesh(int index, physx::PxPhysics& physics, physx::PxCooking& cooking)
+	physx::PxConvexMesh* TempSceneThree::CreateChassisMesh(int index)
 	{
 		physx::PxU32 vertexCount;
 		std::vector<physx::PxVec3> vertices;
@@ -591,7 +610,7 @@ namespace Project
 
 		physx::PxVec3* v = vertices.data();
 
-		return CreateConvexMesh(v, vertexCount, physics, cooking);
+		return CreateConvexMesh(v, vertexCount, *m_PhysicsSystem->GetPhysics(), *m_PhysicsSystem->GetCooking());
 	}
 
 	void TempSceneThree::MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii)
@@ -616,7 +635,7 @@ namespace Project
 		}
 	}
 
-	physx::PxVehicleDrive4W* TempSceneThree::Create4WVehicle()
+	/*physx::PxVehicleDrive4W* TempSceneThree::Create4WVehicle()
 	{
 		physx::PxVehicleWheelsSimData* wheelSimData = physx::PxVehicleWheelsSimData::allocate(4);
 		physx::PxVehicleDriveSimData4W driveSimData;
@@ -666,9 +685,9 @@ namespace Project
 		car->mDriveDynData.setUseAutoGears(true);
 
 		return car;
-	}
+	}*/
 
-	void TempSceneThree::CreateVehicle4WSimulationData(physx::PxF32 chassisMass, physx::PxVehicleChassisData& chassisData, 
+	/*void TempSceneThree::CreateVehicle4WSimulationData(physx::PxF32 chassisMass, physx::PxVehicleChassisData& chassisData,
 		physx::PxVec3* wheelCentreOffsets, physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32 wheelMass, physx::PxVehicleWheelsSimData& wheelsData,
 		physx::PxVehicleDriveSimData4W& driveData)
 	{
@@ -811,9 +830,9 @@ namespace Project
 		ackermann.mRearWidth = wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].x - wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].x;
 		driveData.setAckermannGeometryData(ackermann);
 		
-	}
+	}*/
 
-	physx::PxRigidDynamic* TempSceneThree::CreateVehicleActor4W(physx::PxConvexMesh** wheelConvexMeshes, physx::PxConvexMesh* chassisConvexMesh, 
+	/*physx::PxRigidDynamic* TempSceneThree::CreateVehicleActor4W(physx::PxConvexMesh** wheelConvexMeshes, physx::PxConvexMesh* chassisConvexMesh,
 		physx::PxVehicleChassisData& chassisData)
 	{
 		physx::PxRigidDynamic* vehActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform(physx::PxIdentity));
@@ -845,9 +864,9 @@ namespace Project
 
 		return vehActor;
 		
-	}
+	}*/
 
-	void TempSceneThree::SetupActor(physx::PxRigidDynamic* vehActor, physx::PxGeometry** wheelGeometries, physx::PxFilterData& vehQryFilterData, 
+	/*void TempSceneThree::SetupActor(physx::PxRigidDynamic* vehActor, physx::PxGeometry** wheelGeometries, physx::PxFilterData& vehQryFilterData,
 		physx::PxFilterData& wheelCollFilterData, physx::PxTransform* wheelLocalPoses, physx::PxGeometry** chassisGeometries, 
 		physx::PxFilterData& chassisCollFilterData, physx::PxTransform* chassisLocalPoses, physx::PxVehicleChassisData& chassisData)
 	{
@@ -867,7 +886,7 @@ namespace Project
 		vehActor->setMass(chassisData.mMass);
 		vehActor->setMassSpaceInertiaTensor(chassisData.mMOI);
 		vehActor->setCMassLocalPose(physx::PxTransform(chassisData.mCMOffset, physx::PxQuat(physx::PxIdentity)));
-	}
+	}*/
 
 	physx::PxVec3 TempSceneThree::MakeChassis(physx::PxConvexMesh* chassisConvexMesh)
 	{
@@ -888,7 +907,7 @@ namespace Project
 		return chassisDims;
 	}
 
-	/*TempSceneThree::VehicleDesc TempSceneThree::InitVehicleDesc()
+	TempSceneThree::VehicleDesc TempSceneThree::InitVehicleDesc()
 	{
 		VehicleDesc vehicleDesc;
 
@@ -898,7 +917,7 @@ namespace Project
 		vehicleDesc.chassisSimFilterData = physx::PxFilterData(COLLISION_FLAG_WHEEL, COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
 
 		return vehicleDesc;
-	}*/
+	}
 
 	
 }
