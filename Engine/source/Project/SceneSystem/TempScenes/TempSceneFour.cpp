@@ -46,12 +46,7 @@ namespace Project
 
 		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", path + "brick1.jpg");
 		
-		m_EntityManager->CreateModelEntity("Car Cube", path + "Cube.x", path + "BasicTexWhite.png");
-		m_EntityManager->CreateModelEntity("WheelOne", path + "wheel.fbx", path + "BasicTexWhite.png");
-		m_EntityManager->CreateModelEntity("WheelTwo", path + "wheel.fbx", path + "BasicTexWhite.png");
-		m_EntityManager->CreateModelEntity("WheelThree", path + "wheel.fbx", path + "BasicTexWhite.png");
-		m_EntityManager->CreateModelEntity("WheelFour", path + "wheel.fbx", path + "BasicTexWhite.png");
-
+		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", path + "Compact/CompactBlue.png");
 
 		if (m_EnablePhysics)
 		{
@@ -107,87 +102,9 @@ namespace Project
 			comp->SetRotation(vectRot);
 		}
 
-		if (m_EnablePhysics && m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"))
-		{
-			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"));
+		
 
-			CVector3 vectPos;
-			vectPos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
-			vectPos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y;
-			vectPos.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
-			comp->SetPosition(vectPos);
-
-			CVector3 vectRot;
-			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
-			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
-			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
-			comp->SetRotation(vectRot);
-
-			comp->SetScale({ 2.5f / 10.0f, 2.0f / 10.0f, 5.0f / 10.0f });
-		}
-
-		if (m_EnablePhysics && m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform") 
-			&& m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform")
-			&& m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform")
-			&& m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"))
-		{
-			TransformComponent* comp1 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform"));
-			TransformComponent* comp2 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform"));
-			TransformComponent* comp3 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform"));
-			TransformComponent* comp4 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"));
-
-			CVector3 vectPos;
-			CVector3 vectRot;
-			physx::PxShape* carShapes[4];
-			m_Vehicle4W->getRigidDynamicActor()->getShapes(carShapes, 4);
-
-			// Wheel One
-			vectPos.x = carShapes[0]->getLocalPose().p.x;
-			vectPos.y = carShapes[0]->getLocalPose().p.y + 2.0f;
-			vectPos.z = carShapes[0]->getLocalPose().p.z;
-			comp1->SetPosition(vectPos);
-			vectRot.x = carShapes[0]->getLocalPose().q.x;
-			vectRot.y = carShapes[0]->getLocalPose().q.y ;
-			vectRot.z = carShapes[0]->getLocalPose().q.z;
-			comp1->SetRotation(vectRot);
-
-			// Wheel Two
-			vectPos.x = carShapes[1]->getLocalPose().p.x;
-			vectPos.y = carShapes[1]->getLocalPose().p.y + 2.0f;
-			vectPos.z = carShapes[1]->getLocalPose().p.z;
-			comp2->SetPosition(vectPos);
-			vectRot.x = carShapes[1]->getLocalPose().q.x;
-			vectRot.y = carShapes[1]->getLocalPose().q.y;
-			vectRot.z = carShapes[1]->getLocalPose().q.z;
-			comp2->SetRotation(vectRot);
-
-			// Wheel Three
-			vectPos.x = carShapes[2]->getLocalPose().p.x;
-			vectPos.y = carShapes[2]->getLocalPose().p.y + 2.0f;
-			vectPos.z = carShapes[2]->getLocalPose().p.z;
-			comp3->SetPosition(vectPos);
-			vectRot.x = carShapes[2]->getLocalPose().q.x;
-			vectRot.y = carShapes[2]->getLocalPose().q.y;
-			vectRot.z = carShapes[2]->getLocalPose().q.z;
-			comp3->SetRotation(vectRot);
-
-			// Wheel Four
-			vectPos.x = carShapes[3]->getLocalPose().p.x;
-			vectPos.y = carShapes[3]->getLocalPose().p.y + 2.0f;
-			vectPos.z = carShapes[3]->getLocalPose().p.z;
-			comp4->SetPosition(vectPos);
-			vectRot.x = carShapes[3]->getLocalPose().q.x;
-			vectRot.y = carShapes[3]->getLocalPose().q.y;
-			vectRot.z = carShapes[3]->getLocalPose().q.z;
-			comp4->SetRotation(vectRot);
-
-			comp1->SetScale({ comp1->GetScale().x / 10.0f, comp1->GetScale().y / 10.0f , comp1->GetScale().z / 10.0f });
-			comp2->SetScale({ comp2->GetScale().x / 10.0f, comp2->GetScale().y / 10.0f , comp2->GetScale().z / 10.0f });
-			comp3->SetScale({ comp3->GetScale().x / 10.0f, comp3->GetScale().y / 10.0f , comp3->GetScale().z / 10.0f });
-			comp4->SetScale({ comp4->GetScale().x / 10.0f, comp4->GetScale().y / 10.0f , comp4->GetScale().z / 10.0f });
-
-		}
-
+		
 		// Pos 1
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
@@ -229,81 +146,6 @@ namespace Project
 				comp->SetRotation(vectRot);
 
 			}
-
-			if (m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"))
-			{
-				TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car Cube")->GetComponent("Transform"));
-
-				CVector3 vectPos;
-				vectPos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
-				vectPos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y;
-				vectPos.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
-				comp->SetPosition(vectPos);
-
-				CVector3 vectRot;
-				vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
-				vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
-				vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
-				comp->SetRotation(vectRot);
-			}
-
-			if (m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform")
-				&& m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform")
-				&& m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform")
-				&& m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"))
-			{
-				TransformComponent* comp1 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelOne")->GetComponent("Transform"));
-				TransformComponent* comp2 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelTwo")->GetComponent("Transform"));
-				TransformComponent* comp3 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelThree")->GetComponent("Transform"));
-				TransformComponent* comp4 = static_cast<TransformComponent*>(m_EntityManager->GetEntity("WheelFour")->GetComponent("Transform"));
-
-				CVector3 vectPos;
-				CVector3 vectRot;
-				physx::PxShape* carShapes[4];
-				m_Vehicle4W->getRigidDynamicActor()->getShapes(carShapes, 4);
-
-				// Wheel One
-				vectPos.x = carShapes[0]->getLocalPose().p.x;
-				vectPos.y = carShapes[0]->getLocalPose().p.y + 2.0f;
-				vectPos.z = carShapes[0]->getLocalPose().p.z;
-				comp1->SetPosition(vectPos);
-				vectRot.x = carShapes[0]->getLocalPose().q.x;
-				vectRot.y = carShapes[0]->getLocalPose().q.y;
-				vectRot.z = carShapes[0]->getLocalPose().q.z;
-				comp1->SetRotation(vectRot);
-
-				// Wheel Two
-				vectPos.x = carShapes[1]->getLocalPose().p.x;
-				vectPos.y = carShapes[1]->getLocalPose().p.y + 2.0f;
-				vectPos.z = carShapes[1]->getLocalPose().p.z;
-				comp2->SetPosition(vectPos);
-				vectRot.x = carShapes[1]->getLocalPose().q.x;
-				vectRot.y = carShapes[1]->getLocalPose().q.y;
-				vectRot.z = carShapes[1]->getLocalPose().q.z;
-				comp2->SetRotation(vectRot);
-
-				// Wheel Three
-				vectPos.x = carShapes[2]->getLocalPose().p.x;
-				vectPos.y = carShapes[2]->getLocalPose().p.y + 2.0f;
-				vectPos.z = carShapes[2]->getLocalPose().p.z;
-				comp3->SetPosition(vectPos);
-				vectRot.x = carShapes[2]->getLocalPose().q.x;
-				vectRot.y = carShapes[2]->getLocalPose().q.y;
-				vectRot.z = carShapes[2]->getLocalPose().q.z;
-				comp3->SetRotation(vectRot);
-
-				// Wheel Four
-				vectPos.x = carShapes[3]->getLocalPose().p.x;
-				vectPos.y = carShapes[3]->getLocalPose().p.y + 2.0f;
-				vectPos.z = carShapes[3]->getLocalPose().p.z;
-				comp4->SetPosition(vectPos);
-				vectRot.x = carShapes[3]->getLocalPose().q.x;
-				vectRot.y = carShapes[3]->getLocalPose().q.y;
-				vectRot.z = carShapes[3]->getLocalPose().q.z;
-				comp4->SetRotation(vectRot);
-
-			}
-			
 		}
 
 		m_EntityManager->UpdateAllEntities(frameTime);
@@ -381,7 +223,11 @@ namespace Project
 		physx::PxRigidDynamic* veh4WActor = NULL;
 		{
 			//Construct a convex mesh for a cylindrical wheel.
-			physx::PxConvexMesh* wheelMesh = CreateWheelMesh(wheelWidth, wheelRadius);
+			physx::PxConvexMesh* wheelMesh[4];
+			for (int i = 0; i < 4; ++i) 
+			{
+				wheelMesh[i] = CreateWheelMesh(i, wheelWidth, wheelRadius);
+			}
 			//Assume all wheels are identical for simplicity.
 			physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
 			physx::PxMaterial* wheelMaterials[PX_MAX_NB_WHEELS];
@@ -389,18 +235,18 @@ namespace Project
 			//Set the meshes and materials for the driven wheels.
 			for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT; i++)
 			{
-				wheelConvexMeshes[i] = wheelMesh;
+				wheelConvexMeshes[i] = wheelMesh[i];
 				wheelMaterials[i] = vehicle4WDesc.wheelMaterial;
 			}
 			//Set the meshes and materials for the non-driven wheels
 			for (auto i = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT + 1; i < numWheels; i++)
 			{
-				wheelConvexMeshes[i] = wheelMesh;
+				wheelConvexMeshes[i] = wheelMesh[i];
 				wheelMaterials[i] = vehicle4WDesc.wheelMaterial;
 			}
 
 			//Chassis just has a single convex shape for simplicity.
-			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(chassisDims);
+			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(4);
 			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
 			physx::PxMaterial* chassisMaterials[1] = { vehicle4WDesc.chassisMaterial };
 
@@ -505,40 +351,48 @@ namespace Project
 		return convexMesh;
 	}
 
-	physx::PxConvexMesh* TempSceneFour::CreateWheelMesh(const physx::PxF32 width, const physx::PxF32 radius)
+	physx::PxConvexMesh* TempSceneFour::CreateWheelMesh(int index, const physx::PxF32 width, const physx::PxF32 radius)
 	{
-		physx::PxVec3 points[2 * 16];
-		for (auto i = 0; i < 16; i++)
+		physx::PxU32 vertexCount;
+		std::vector<physx::PxVec3> vertices;
+		if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
 		{
-			const physx::PxF32 cosTheta = physx::PxCos(i * physx::PxPi * 2.0f / 16.0f);
-			const physx::PxF32 sinTheta = physx::PxSin(i * physx::PxPi * 2.0f / 16.0f);
-			const physx::PxF32 y = radius * cosTheta;
-			const physx::PxF32 z = radius * sinTheta;
-			points[2 * i + 0] = physx::PxVec3(-width / 2.0f, y, z);
-			points[2 * i + 1] = physx::PxVec3(+width / 2.0f, y, z);
+			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			vertexCount = comp->GetNumberOfVertices(index);
+
+			std::vector<CVector3> nChassis = comp->GetVertices(index);
+
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ nChassis[i].x,  nChassis[i].y, nChassis[i].z });
+			}
 		}
 
-		return CreateConvexMesh(points, 32);
+		physx::PxVec3* v = vertices.data();
+
+		return CreateConvexMesh(v, vertexCount);
 	}
 
-	physx::PxConvexMesh* TempSceneFour::CreateChassisMesh(const physx::PxVec3 dims)
+	physx::PxConvexMesh* TempSceneFour::CreateChassisMesh(int index)
 	{
-		const physx::PxF32 x = dims.x * 0.5f;
-		const physx::PxF32 y = dims.y * 0.5f;
-		const physx::PxF32 z = dims.z * 0.5f;
-		physx::PxVec3 verts[8] =
+		physx::PxU32 vertexCount;
+		std::vector<physx::PxVec3> vertices;
+		if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
 		{
-			physx::PxVec3(x,y,-z),
-			physx::PxVec3(x,y,z),
-			physx::PxVec3(x,-y,z),
-			physx::PxVec3(x,-y,-z),
-			physx::PxVec3(-x,y,-z),
-			physx::PxVec3(-x,y,z),
-			physx::PxVec3(-x,-y,z),
-			physx::PxVec3(-x,-y,-z)
-		};
+			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			vertexCount = comp->GetNumberOfVertices(index);
 
-		return CreateConvexMesh(verts, 8);
+			std::vector<CVector3> Chassis = comp->GetVertices(index);
+
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ Chassis[i].x,  Chassis[i].y, Chassis[i].z });
+			}
+		}
+
+		physx::PxVec3* v = vertices.data();
+
+		return CreateConvexMesh(v, vertexCount);
 	}
 
 	physx::PxRigidDynamic* TempSceneFour::CreateVehicleActor(const physx::PxVehicleChassisData& chassisData, physx::PxMaterial** wheelMaterials, 

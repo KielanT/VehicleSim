@@ -149,8 +149,8 @@ namespace Project
 		physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc);
 
 		physx::PxConvexMesh* CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts);
-		physx::PxConvexMesh* CreateWheelMesh(const physx::PxF32 width, const physx::PxF32 radius);
-		physx::PxConvexMesh* CreateChassisMesh(const physx::PxVec3 dims);
+		physx::PxConvexMesh* CreateWheelMesh(int index, const physx::PxF32 width, const physx::PxF32 radius);
+		physx::PxConvexMesh* CreateChassisMesh(int index);
 
 		physx::PxRigidDynamic* CreateVehicleActor(const physx::PxVehicleChassisData& chassisData,
 			physx::PxMaterial** wheelMaterials, physx::PxConvexMesh** wheelConvexMeshes, const physx::PxU32 numWheels, const physx::PxFilterData& wheelSimFilterData,
