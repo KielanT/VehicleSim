@@ -109,9 +109,6 @@ namespace Project
 				: chassisMass(0.0f),
 				chassisMaterial(NULL),
 				wheelMass(0.0f),
-				wheelWidth(0.0f),
-				wheelRadius(0.0f),
-				wheelMOI(0.0f),
 				wheelMaterial(NULL)
 			{
 			}
@@ -121,9 +118,6 @@ namespace Project
 			physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
 			physx::PxF32 wheelMass;
-			physx::PxF32 wheelWidth;
-			physx::PxF32 wheelRadius;
-			physx::PxF32 wheelMOI;
 			physx::PxMaterial* wheelMaterial;
 			physx::PxU32 numWheels;
 			physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
@@ -138,7 +132,7 @@ namespace Project
 		physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc);
 
 		physx::PxConvexMesh* CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts);
-		physx::PxConvexMesh* CreateWheelMesh(int index, const physx::PxF32 width, const physx::PxF32 radius);
+		physx::PxConvexMesh* CreateWheelMesh(int index);
 		physx::PxConvexMesh* CreateChassisMesh(int index);
 
 		physx::PxRigidDynamic* CreateVehicleActor(const physx::PxVehicleChassisData& chassisData,
@@ -156,16 +150,18 @@ namespace Project
 		}
 		
 
-		void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims, const physx::PxF32 wheelWidth,
-			const physx::PxF32 wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets);
+		void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims, const physx::PxF32* wheelWidth,
+			const physx::PxF32* wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets);
 
 		void SetupWheelsSimulationData
-		(const physx::PxF32 wheelMass, const physx::PxF32 wheelMOI, const physx::PxF32 wheelRadius, const physx::PxF32 wheelWidth,
+		(const physx::PxF32 wheelMass, const physx::PxF32* wheelMOI, const physx::PxF32* wheelRadius, const physx::PxF32* wheelWidth,
 			const physx::PxU32 numWheels, const physx::PxVec3* wheelCenterActorOffsets,
 			const physx::PxVec3& chassisCMOffset, const physx::PxF32 chassisMass,
 			physx::PxVehicleWheelsSimData* wheelsSimData);
 
 		physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
+
+		void MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
 	};
 
 }
