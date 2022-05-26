@@ -48,6 +48,8 @@ namespace Project
 		
 		//m_EntityManager->CreateModelEntity("Car", path + "Hatchback/untitled.obj", path + "Hatchback/HatchbackYellow.png");
 		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", path + "Compact/CompactBlue.png");
+		//m_EntityManager->CreateModelEntity("Car", path + "VerySimpleCar.obj", path + "Compact/CompactBlue.png");
+		//m_EntityManager->CreateModelEntity("Car", path + "VerySimpleCar.fbx", path + "Compact/CompactBlue.png");
 		
 
 		if (m_EnablePhysics)
@@ -71,7 +73,7 @@ namespace Project
 			m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ 0.0f, 5.0f, 0.0f });
 
 			// Set Actors and shapes here
-			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ -7.0f, 10.0f, 0.0f }));
+			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 50.0f, 0.0f }));
 			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
 			m_BoxActor->setActorFlags(physx::PxActorFlag::eDISABLE_GRAVITY);
 
