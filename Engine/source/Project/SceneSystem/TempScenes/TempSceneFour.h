@@ -5,9 +5,25 @@
 #include "Project/Interfaces/IPhysics.h"
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
+#include "Physics/PhysX4.1/VehicleSceneQueryData.h"
 
 namespace Project
 {
+	
+
+	enum
+	{
+		TIRE_TYPE_NORMAL = 0,
+		TIRE_TYPE_WORN,
+		MAX_NUM_TIRE_TYPES
+	};
+
+	enum
+	{
+		SURFACE_TYPE_TARMAC = 0,
+		MAX_NUM_SURFACE_TYPES
+	};
+	
 	class TempSceneFour : public IScene
 	{
 	public:
@@ -72,6 +88,7 @@ namespace Project
 
 		physx::PxRigidDynamic* m_BoxActor = nullptr;
 		physx::PxRigidActor* m_FloorActor = nullptr;
+		physx::PxRigidStatic* m_FloorPlane;
 
 	// Vehicle setup from snippet
 	private:
@@ -90,18 +107,7 @@ namespace Project
 			COLLISION_FLAG_DRIVABLE_OBSTACLE_AGAINST = COLLISION_FLAG_GROUND | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE
 		};
 
-		enum
-		{
-			DRIVABLE_SURFACE = 0xffff0000,
-			UNDRIVABLE_SURFACE = 0x0000ffff
-		};
-
-		enum
-		{
-			TIRE_TYPE_NORMAL = 0,
-			TIRE_TYPE_WORN,
-			MAX_NUM_TIRE_TYPES
-		};
+		
 
 		struct VehicleDesc
 		{
@@ -122,7 +128,24 @@ namespace Project
 			physx::PxU32 numWheels;
 			physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 		};
-
+		
+		physx::PxVehicleKeySmoothingData keySmoothingData =
+		{
+			{
+				3.0f,	//rise rate eANALOG_INPUT_ACCEL		
+				3.0f,	//rise rate eANALOG_INPUT_BRAKE		
+				10.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
+				2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT	
+				2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT	
+			},
+			{
+				5.0f,	//fall rate eANALOG_INPUT__ACCEL		
+				5.0f,	//fall rate eANALOG_INPUT__BRAKE		
+				10.0f,	//fall rate eANALOG_INPUT__HANDBRAKE	
+				5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT	
+				5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT	
+			}
+		};
 
 
 		VehicleDesc InitVehicleDesc();
@@ -162,6 +185,23 @@ namespace Project
 		physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
 
 		void MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
+
+		// Get vehicle Moving
+		float modeTimer = 0.0f; 
+		int vehicleOrder = 0;
+		bool gVehicleOrderComplete = false;
+		VehicleSceneQueryData* m_VehicleSceneQueryData = NULL;
+		physx::PxBatchQuery* m_BatchQuery = NULL;
+		physx::PxDefaultAllocator m_Allocator;
+		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* frictionPairs;
+
+		bool IsVehicleInAir = true; // Spawns in the air
+		
+		void AutoDrive(float frameTime);
+		void MoveVehicle(float frameTime);
+		void ReleaseAllControls();
+		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial);
+		physx::PxRigidStatic* CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics);
 	};
 
 }

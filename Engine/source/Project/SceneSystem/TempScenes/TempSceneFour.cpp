@@ -5,6 +5,21 @@
 
 namespace Project
 {
+	physx::PxF32 SteerVsForwardSpeedData[2 * 8] =
+	{
+		0.0f,		0.75f,
+		5.0f,		0.75f,
+		30.0f,		0.125f,
+		120.0f,		0.1f,
+		PX_MAX_F32, PX_MAX_F32,
+		PX_MAX_F32, PX_MAX_F32,
+		PX_MAX_F32, PX_MAX_F32,
+		PX_MAX_F32, PX_MAX_F32
+	};
+	physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTable(SteerVsForwardSpeedData, 4);
+
+	physx::PxVehicleDrive4WRawInputData gVehicleInputData;
+	
 	TempSceneFour::TempSceneFour(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour /*= CVector3(1.0f, 1.0f, 1.0f)*/, float specularPower /*= 256.0f*/, ColourRGBA backgroundColour /*= ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f)*/, bool vsyncOn /*= true*/)
 	{
 		m_Renderer = renderer;
@@ -65,23 +80,40 @@ namespace Project
 			physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
 			physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eVELOCITY_CHANGE);
 
-			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0, 0, 0);
+			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
+		
+			frictionPairs = CreateFrictionPairs(m_Material);
+			
+			m_VehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, WheelSceneQueryPreFilterBlocking, NULL, m_Allocator);
+			m_BatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *m_VehicleSceneQueryData, m_PhysicsSystem->GetScene());
 
 			// Create a basic vehicle
 			VehicleDesc vehicleDesc = InitVehicleDesc();
 			m_Vehicle4W = CreateVehicle4W(vehicleDesc);
 			m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ 0.0f, 5.0f, 0.0f });
 
+			m_Vehicle4W->setToRestState();
+			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+			m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
+
+			modeTimer = 0.0f;
+			vehicleOrder = 0;
+			gVehicleInputData.setDigitalBrake(true);
+
 			// Set Actors and shapes here
 			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 20.0f, 0.0f }));
 			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
 			m_BoxActor->setActorFlags(physx::PxActorFlag::eDISABLE_GRAVITY);
 
-			m_FloorActor = m_PhysicsSystem->GetPhysics()->createRigidStatic({ 0.0f, 0.0f, 0.0f });
-			m_FloorBoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_FloorActor, physx::PxBoxGeometry(1000.0f, 0.01f, 1000.0f), *m_Material);
+			//m_FloorActor = m_PhysicsSystem->GetPhysics()->createRigidStatic({ 0.0f, 0.0f, 0.0f });
+			//m_FloorBoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_FloorActor, physx::PxBoxGeometry(1000.0f, 0.01f, 1000.0f), *m_Material);
+			physx::PxFilterData GroundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+			m_FloorPlane = CreateDrivablePlane(GroundPlaneSimFilterData, m_Material, m_PhysicsSystem->GetPhysics());
 
+			
 			m_PhysicsSystem->GetScene()->addActor(*m_BoxActor);
-			m_PhysicsSystem->GetScene()->addActor(*m_FloorActor);
+			//m_PhysicsSystem->GetScene()->addActor(*m_FloorActor);
+			m_PhysicsSystem->GetScene()->addActor(*m_FloorPlane);
 			m_PhysicsSystem->GetScene()->addActor(*m_Vehicle4W->getRigidDynamicActor());
 		}
 
@@ -144,11 +176,7 @@ namespace Project
 	{
 		if (m_EnablePhysics)
 		{
-			m_PhysicsSystem->GetScene()->simulate(frameTime);
-			m_PhysicsSystem->GetScene()->fetchResults(true);
-
-
-
+			
 			if (m_EntityManager->GetEntity("Test Cube")->GetComponent("Transform"))
 			{
 
@@ -216,11 +244,13 @@ namespace Project
 			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
 			comp->SetRotation(vectRot);
 
+			
 		}
-	
+		MoveVehicle(frameTime);
 
 		m_EntityManager->UpdateAllEntities(frameTime);
-
+		m_PhysicsSystem->GetScene()->simulate(frameTime);
+		m_PhysicsSystem->GetScene()->fetchResults(true);
 		m_SceneCamera->Control(frameTime);
 
 	}
@@ -703,6 +733,174 @@ namespace Project
 			wheelWidths[i] = wheelMax.x - wheelMin.x;
 			wheelRadii[i] = physx::PxMax(wheelMax.y, wheelMax.z) * 0.975f;
 		}
+	}
+
+	enum DriveMode
+	{
+		eDRIVE_MODE_ACCEL_FORWARDS = 0,
+		eDRIVE_MODE_ACCEL_REVERSE,
+		eDRIVE_MODE_HARD_TURN_LEFT,
+		eDRIVE_MODE_HANDBRAKE_TURN_LEFT,
+		eDRIVE_MODE_HARD_TURN_RIGHT,
+		eDRIVE_MODE_HANDBRAKE_TURN_RIGHT,
+		eDRIVE_MODE_BRAKE,
+		eDRIVE_MODE_NONE
+	};
+
+	DriveMode gDriveModeOrder[] =
+	{
+		eDRIVE_MODE_BRAKE,
+		eDRIVE_MODE_ACCEL_FORWARDS,
+		eDRIVE_MODE_BRAKE,
+		eDRIVE_MODE_ACCEL_REVERSE,
+		eDRIVE_MODE_BRAKE,
+		eDRIVE_MODE_HARD_TURN_LEFT,
+		eDRIVE_MODE_BRAKE,
+		eDRIVE_MODE_HARD_TURN_RIGHT,
+		eDRIVE_MODE_ACCEL_FORWARDS,
+		eDRIVE_MODE_HANDBRAKE_TURN_LEFT,
+		eDRIVE_MODE_ACCEL_FORWARDS,
+		eDRIVE_MODE_HANDBRAKE_TURN_RIGHT,
+		eDRIVE_MODE_NONE
+	};
+	
+	void TempSceneFour::AutoDrive(float frameTime)
+	{
+		modeTimer += frameTime;
+		if (modeTimer > 4.0f)
+		{
+			if (eDRIVE_MODE_ACCEL_REVERSE == gDriveModeOrder[vehicleOrder])
+			{
+				m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+			}
+			modeTimer = 0.0f;
+			vehicleOrder++;
+			ReleaseAllControls();
+
+			if (eDRIVE_MODE_NONE == gDriveModeOrder[vehicleOrder])
+			{
+				vehicleOrder = 0;
+				gVehicleOrderComplete = true;
+			}
+
+			DriveMode eDriveMode = gDriveModeOrder[vehicleOrder];
+			switch (eDriveMode)
+			{
+			case eDRIVE_MODE_ACCEL_FORWARDS:
+				gVehicleInputData.setDigitalAccel(true);
+				break;
+			case eDRIVE_MODE_ACCEL_REVERSE:
+				m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+				gVehicleInputData.setDigitalAccel(true);
+				break;
+			case eDRIVE_MODE_HARD_TURN_LEFT:
+				gVehicleInputData.setDigitalAccel(true);
+				gVehicleInputData.setDigitalSteerLeft(true);
+				break;
+			case eDRIVE_MODE_HANDBRAKE_TURN_LEFT:
+				gVehicleInputData.setDigitalSteerLeft(true);
+				gVehicleInputData.setDigitalHandbrake(true);
+				break;
+			case eDRIVE_MODE_HARD_TURN_RIGHT:
+				gVehicleInputData.setDigitalAccel(true);
+				gVehicleInputData.setDigitalSteerRight(true);
+				break;
+			case eDRIVE_MODE_HANDBRAKE_TURN_RIGHT:
+				gVehicleInputData.setDigitalSteerRight(true);
+				gVehicleInputData.setDigitalHandbrake(true);
+				break;
+			case eDRIVE_MODE_BRAKE:
+				gVehicleInputData.setDigitalBrake(true);
+				break;
+			case eDRIVE_MODE_NONE:
+				break;
+			};
+
+			if (eDRIVE_MODE_ACCEL_REVERSE == gDriveModeOrder[vehicleOrder])
+			{
+				m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+			}
+		}
+	}
+
+	void TempSceneFour::MoveVehicle(float frameTime)
+	{
+		AutoDrive(frameTime);
+		physx::PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(keySmoothingData, SteerVsForwardSpeedTable, gVehicleInputData, frameTime, IsVehicleInAir, *m_Vehicle4W);
+
+		//Raycasts.
+		physx::PxVehicleWheels* vehicles[1] = { m_Vehicle4W };
+		physx::PxRaycastQueryResult* raycastResults = m_VehicleSceneQueryData->getRaycastQueryResultBuffer(0);
+		const physx::PxU32 raycastResultsSize = m_VehicleSceneQueryData->getQueryResultBufferSize();
+		PxVehicleSuspensionRaycasts(m_BatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+
+		//Vehicle update.
+		const physx::PxVec3 grav = m_PhysicsSystem->GetScene()->getGravity();
+		physx::PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
+		physx::PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, m_Vehicle4W->mWheelsSimData.getNbWheels()} };
+		PxVehicleUpdates(frameTime, grav, *frictionPairs, 1, vehicles, vehicleQueryResults);
+
+		//Work out if the vehicle is in the air.
+		IsVehicleInAir = m_Vehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+	}
+
+	void TempSceneFour::ReleaseAllControls()
+	{
+		gVehicleInputData.setDigitalAccel(false);
+		gVehicleInputData.setDigitalSteerLeft(false);
+		gVehicleInputData.setDigitalSteerRight(false);
+		gVehicleInputData.setDigitalBrake(false);
+		gVehicleInputData.setDigitalHandbrake(false);
+	}
+
+	//Tire model friction for each combination of drivable surface type and tire type.
+	static physx::PxF32 gTireFrictionMultipliers[MAX_NUM_SURFACE_TYPES][MAX_NUM_TIRE_TYPES] =
+	{
+		//NORMAL,	WORN
+		{1.00f,		0.1f}//TARMAC
+	};
+
+	physx::PxVehicleDrivableSurfaceToTireFrictionPairs* TempSceneFour::CreateFrictionPairs(const physx::PxMaterial* defaultMaterial)
+	{
+		physx::PxVehicleDrivableSurfaceType surfaceTypes[1];
+		surfaceTypes[0].mType = SURFACE_TYPE_TARMAC;
+
+		const physx::PxMaterial* surfaceMaterials[1];
+		surfaceMaterials[0] = defaultMaterial;
+
+		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* surfaceTirePairs =
+			physx::PxVehicleDrivableSurfaceToTireFrictionPairs::allocate(MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES);
+
+		surfaceTirePairs->setup(MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES, surfaceMaterials, surfaceTypes);
+
+		for (physx::PxU32 i = 0; i < MAX_NUM_SURFACE_TYPES; i++)
+		{
+			for (physx::PxU32 j = 0; j < MAX_NUM_TIRE_TYPES; j++)
+			{
+				surfaceTirePairs->setTypePairFriction(i, j, gTireFrictionMultipliers[i][j]);
+			}
+		}
+		return surfaceTirePairs;
+	}
+
+	physx::PxRigidStatic* TempSceneFour::CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics)
+	{
+		//Add a plane to the scene.
+		physx::PxRigidStatic* groundPlane = physx::PxCreatePlane(*physics, physx::PxPlane(0, 1, 0, 0), *material);
+
+		//Get the plane shape so we can set query and simulation filter data.
+		physx::PxShape* shapes[1];
+		groundPlane->getShapes(shapes, 1);
+
+		//Set the query filter data of the ground plane so that the vehicle raycasts can hit the ground.
+		physx::PxFilterData qryFilterData;
+		setupDrivableSurface(qryFilterData);
+		shapes[0]->setQueryFilterData(qryFilterData);
+
+		//Set the simulation filter data of the ground plane so that it collides with the chassis of a vehicle but not the wheels.
+		shapes[0]->setSimulationFilterData(simFilterData);
+
+		return groundPlane;
 	}
 
 }
