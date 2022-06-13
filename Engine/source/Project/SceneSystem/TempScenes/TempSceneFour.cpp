@@ -65,7 +65,8 @@ namespace Project
 		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.fbx", path + "Compact/CompactBlue.png"); // Does not work
 		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1Parented.obj", path + "Compact/CompactBlue.png");
-		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled2.obj", path + "Compact/CompactBlue.png");
+		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled2.obj", path + "Compact/CompactBlue.png");
+		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled3.obj", path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "VerySimpleCar.obj", path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "VerySimpleCar.fbx", path + "Compact/CompactBlue.png");
 		
@@ -556,15 +557,16 @@ namespace Project
 		//Set the outside of the left and right wheels to be flush with the chassis.
 		//Set the top of the wheel to be just touching the underside of the chassis.
 		//Begin by setting the rear-left/rear-right/front-left,front-right wheels.
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[2]),  wheelRearZ + 0 * deltaZ * 0.5f);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[3]),  wheelRearZ + 0 * deltaZ * 0.5f);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[0]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[1]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[2]),  wheelRearZ + 0 * deltaZ * 0.5f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[3]),  wheelRearZ + 0 * deltaZ * 0.5f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[0]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[1]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
 
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3(( -chassisDims.x + wheelWidth[2]) * 0.5f, -(chassisDims.y / 2 + wheelWidth[2]), wheelRearZ + 0 * deltaZ * 0.5f);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3( 1.2f, -(chassisDims.y / 2 +wheelWidth[3]), wheelRearZ + 0 * deltaZ * 0.5f);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -(chassisDims.y / 2 +wheelWidth[0]), wheelRearZ + (numLeftWheels - 1) * deltaZ);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3( 1.2f, -(chassisDims.y / 2 +wheelWidth[1]), wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -0.3f,  wheelRearZ + 0 * deltaZ * 0.5f);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -0.3f,  wheelRearZ + 0 * deltaZ * 0.5f);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -0.3f,  wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -0.3f,  wheelRearZ + (numLeftWheels - 1) * deltaZ);
+
 
 		// Hardcoded to work (possible needs different values per vehicle) for untitled1
 		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3(-0.0f, -0.3f, -2.0f);
@@ -573,10 +575,10 @@ namespace Project
 		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3( 1.2f, -0.3f,  0.0f);
 
 		// Hardcoded to work (possible needs different values per vehicle) for untitled1parented
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT]   = physx::PxVec3(-0.0f, -0.3f, -2.0f);
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT]  = physx::PxVec3( 1.2f, -0.3f, -2.0f);
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT]  = physx::PxVec3(-0.0f, -0.3f,  0.0f);
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3( 1.2f, -0.3f,  0.0f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT]   = physx::PxVec3(-0.0f, -0.3f, -2.0f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT]  = physx::PxVec3( 1.2f, -0.3f, -2.0f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT]  = physx::PxVec3(-0.0f, -0.3f,  0.0f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3( 1.2f, -0.3f,  0.0f);
 		
 		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3(-chassisDims.x + wheelWidth[2], chassisDims.y - 1.8f, wheelRearZ + 0 * deltaZ);
 		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3(+chassisDims.x - wheelWidth[3], chassisDims.y - 1.8f,   wheelRearZ + 0 * deltaZ);
@@ -752,6 +754,10 @@ namespace Project
 			}
 			wheelWidths[i] = wheelMax.x - wheelMin.x;
 			wheelRadii[i] = physx::PxMax(wheelMax.y, wheelMax.z) * 0.975f;
+			//wheelRadii[i] = physx::PxMax(wheelMax.x, wheelMax.y) * 0.975f;
+			//wheelRadii[i] = 200;// physx::PxMax(wheelMax.y, wheelMax.z) * 0.975f;
+			//wheelRadii[i] = 20;// physx::PxMax(wheelMax.y, wheelMax.z) * 0.975f;
+
 		}
 	}
 
