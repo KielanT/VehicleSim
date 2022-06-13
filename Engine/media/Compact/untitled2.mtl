@@ -1,0 +1,45 @@
+# Blender 3.1.0 MTL File: 'None'
+# www.blender.org
+
+newmtl Body
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd  W:\FinalYearProject\VehicleSim\Engine\media\Compact\CompactBlue.png
+
+newmtl Glass
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.105882 0.105882 0.105882
+Ks 0.280000 0.280000 0.280000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 0.600000
+illum 6
+
+newmtl Optics
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd  D:\Documents\FinalYearProject\generic-passenger-car-pack\source\lights.jpg
+
+newmtl Wheel
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.740000 0.740000 0.740000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd  D:\Documents\FinalYearProject\generic-passenger-car-pack\source\Compact\wheel_C_Diffuse.png
