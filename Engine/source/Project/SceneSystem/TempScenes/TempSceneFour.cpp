@@ -59,14 +59,16 @@ namespace Project
 		std::string path = "media/";
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 
-		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", path + "brick1.jpg");
+		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", true, path + "brick1.jpg");
 		
 		//m_EntityManager->CreateModelEntity("Car", path + "Hatchback/untitled.obj", path + "Hatchback/HatchbackYellow.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.fbx", path + "Compact/CompactBlue.png"); // Does not work
-		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1Parented.obj", path + "Compact/CompactBlue.png");
+		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1Parented.obj", true, path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled2.obj", path + "Compact/CompactBlue.png");
-		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled3.obj", path + "Compact/CompactBlue.png");
+		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled3.obj", path + "Compact/CompactBlue.png"); // Works Best
+		m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled3.obj", false, path + "Compact/CompactBlue.png"); // Works Best
+		//m_EntityManager->CreateModelEntity("Car", path + "Compact/ComparentWithCollisionBox.obj", path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "VerySimpleCar.obj", path + "Compact/CompactBlue.png");
 		//m_EntityManager->CreateModelEntity("Car", path + "VerySimpleCar.fbx", path + "Compact/CompactBlue.png");
 		
@@ -322,10 +324,17 @@ namespace Project
 				wheelMesh[i] = CreateWheelMesh(i);
 			}*/
 
+			// For the compact vehicles (untitled files)
 			wheelMesh[0] = CreateWheelMesh(0); // Front Left
 			wheelMesh[1] = CreateWheelMesh(4); // Front right
 			wheelMesh[2] = CreateWheelMesh(2); // Rear left
-			wheelMesh[3] = CreateWheelMesh(3); // Rear right
+			wheelMesh[3] = CreateWheelMesh(3); // Rear 
+
+			// For the compact box vehicle collision 
+			//wheelMesh[0] = CreateWheelMesh(1); // Front Left
+			//wheelMesh[1] = CreateWheelMesh(2); // Front right
+			//wheelMesh[2] = CreateWheelMesh(3); // Rear left
+			//wheelMesh[3] = CreateWheelMesh(4); // Rear right
 
 			MakeWheelWithsAndRadii(wheelMesh, wheelWidths, wheelRadii);
 
@@ -341,7 +350,8 @@ namespace Project
 			}
 
 			//Chassis just has a single convex shape for simplicity.
-			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(1);
+			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(1); // Default chassis for the untitled files
+			//physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(0); // Default chassis for the collision box
 			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
 			physx::PxMaterial* chassisMaterials[1] = { vehicle4WDesc.chassisMaterial };
 
@@ -463,9 +473,11 @@ namespace Project
 	{
 		physx::PxU32 vertexCount;
 		std::vector<physx::PxVec3> vertices;
-		if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
+		//if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
+		if (m_EntityManager->GetEntity("CarCol")->GetComponent("Renderer"))
 		{
-			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			//RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("CarCol")->GetComponent("Renderer"));
 			vertexCount = comp->GetNumberOfVertices(index);
 
 			std::vector<CVector3> Wheels = comp->GetVertices(index);
@@ -486,8 +498,10 @@ namespace Project
 		physx::PxU32 vertexCount;
 		std::vector<physx::PxVec3> vertices;
 		if (m_EntityManager->GetEntity("Car")->GetComponent("Renderer"))
+		//if (m_EntityManager->GetEntity("CarCol")->GetComponent("Renderer"))
 		{
-			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
+			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("CarCol")->GetComponent("Renderer"));
+			//RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
 			vertexCount = comp->GetNumberOfVertices(index);
 
 			std::vector<CVector3> Chassis = comp->GetVertices(index);

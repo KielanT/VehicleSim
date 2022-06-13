@@ -48,9 +48,9 @@ namespace Project
 		//m_EntityManager->CreateModelEntity("Floor", path + "Grid.x", path + "grid.jpg");
 		//m_EntityManager->CreateModelEntity("Floor", path + "Grid.x", path + "grid2.jpg");
 
-		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", path + "brick1.jpg");
+		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", true, path + "brick1.jpg");
 		//m_EntityManager->CreateModelEntity("Car", path + "Hatchback/untitled.obj", path + "Hatchback/HatchbackYellow.png");
-		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", path + "Compact/CompactBlue.png");
+		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1.obj", true, path + "Compact/CompactBlue.png");
 
 		
 

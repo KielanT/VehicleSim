@@ -16,7 +16,7 @@ namespace Project
 	class P_API RendererComponent : public EntityComponent
 	{
 	public:
-		RendererComponent(IRenderer* renderer, Entity* entity, TEntityUID UID, IShader* shader, IState* state,
+		RendererComponent(bool isRendered,  IRenderer* renderer, Entity* entity, TEntityUID UID, IShader* shader, IState* state,
 			std::string filePath = "media/BasicTex.png",
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
@@ -25,6 +25,7 @@ namespace Project
 			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
 			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler) : EntityComponent("Renderer", UID, entity)
 		{
+			m_isRendered = isRendered;
 			m_Renderer = renderer;
 
 			if (entity->GetComponent("Mesh") && m_Renderer->GetRenderType() == ERendererType::DirectX11)
@@ -81,6 +82,8 @@ namespace Project
 		void Render();
 		Model* GetModel() { return m_Model; }
 
+		void SetIsRendered(bool isRendered) { m_isRendered = isRendered; }
+
 		void SetTexture(std::string texturePath);
 
 		void SetShaders(ID3D11PixelShader* ps, ID3D11VertexShader* vs);
@@ -94,6 +97,8 @@ namespace Project
 
 		unsigned int GetNumberOfVertices(int index) { return m_Mesh->GetNumberVertices(index); }
 		std::vector<CVector3> GetVertices(int index) { return m_Mesh->GetVertices(index); }
+		
+		bool GetIsRendered() { return m_isRendered; }
 
 	private:
 		IRenderer* m_Renderer;
@@ -111,5 +116,7 @@ namespace Project
 		ID3D11DepthStencilState* m_DepthStencilState;
 		ID3D11RasterizerState* m_RasterizerState;
 		ID3D11SamplerState* m_SamplerState;
+
+		bool m_isRendered;
 	};
 }

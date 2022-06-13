@@ -31,7 +31,7 @@ namespace Project
 	void RendererComponent::Render()
 	{
 
-		if( m_Model != nullptr && m_Renderer->GetRenderType() == ERendererType::DirectX11)
+		if(m_isRendered && m_Model != nullptr && m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
 			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
 

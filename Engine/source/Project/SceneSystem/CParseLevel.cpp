@@ -168,7 +168,7 @@ namespace Project
 					if (attr != nullptr) sampler = GetSamplerState(child->Value());
 				}
 
-				m_EntityManager->CreateModelEntity(name, meshPath, texturePath, transform, pixelShader, vertexShader,
+				m_EntityManager->CreateModelEntity(name, meshPath, true, texturePath, transform, pixelShader, vertexShader,
 					blendState, depthStencil, rasterizer, sampler);
 				Entity* newEntity = m_EntityManager->GetEntity(name);
 

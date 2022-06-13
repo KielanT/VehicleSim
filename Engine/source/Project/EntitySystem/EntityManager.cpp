@@ -58,7 +58,7 @@ namespace Project
 		return m_NextUID++;
 	}
 
-	TEntityUID EntityManager::CreateModelEntity(const std::string& name, std::string fileMeshPath, std::string filePath, SEntityTransform transform,
+	TEntityUID EntityManager::CreateModelEntity(const std::string& name, std::string fileMeshPath, bool isRendered, std::string filePath, SEntityTransform transform,
 		EPixelShader pixelShader, EVertexShader vertexShader, EBlendState blendState, EDepthStencilState depthStencilState,
 		ERasterizerState rasterizerState, ESamplerState samplerState)
 	{
@@ -72,7 +72,7 @@ namespace Project
 		comp = new MeshComponent(fileMeshPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
-		comp = new RendererComponent(m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, filePath, pixelShader,
+		comp = new RendererComponent(isRendered, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, filePath, pixelShader,
 			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
 		newEntity->AddComponent(comp);
 
@@ -138,7 +138,7 @@ namespace Project
 		comp = new MeshComponent(wheelMeshPath, newEntity, GetNewUID(), 1);
 		newEntity->AddComponent(comp);
 
-		comp = new RendererComponent(m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, chassisTexturePath, pixelShader,
+		comp = new RendererComponent(true, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, chassisTexturePath, pixelShader,
 			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
 		newEntity->AddComponent(comp);
 

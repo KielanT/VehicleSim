@@ -62,11 +62,11 @@ namespace Project
         
         std::string path = "media/";
         
-        m_EntityManager->CreateModelEntity("Cube", path + "Cube.x");
-        m_EntityManager->CreateModelEntity("Cube2", path + "Cube.x", path + "brick1.jpg");
-        m_EntityManager->CreateModelEntity("Ground", path + "Ground.x", path + "GrassDiffuseSpecular.dds");
+        m_EntityManager->CreateModelEntity("Cube",  path + "Cube.x");
+        m_EntityManager->CreateModelEntity("Cube2", path + "Cube.x", true, path + "brick1.jpg");
+        m_EntityManager->CreateModelEntity("Ground", path + "Ground.x", true, path + "GrassDiffuseSpecular.dds");
         
-        m_EntityManager->CreateModelEntity("Crate", path + "CargoContainer.x", path + "CargoA.dds");
+        m_EntityManager->CreateModelEntity("Crate", path + "CargoContainer.x", true, path + "CargoA.dds");
         m_LightEntityManager->CreateLightEntity("LightOne");
 
 

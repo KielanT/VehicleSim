@@ -42,7 +42,7 @@ namespace Project
 
 		std::string path = "media/";
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
-		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", path + "brick1.jpg");
+		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", true, path + "brick1.jpg");
 
 		if (m_EnablePhysics)
 		{

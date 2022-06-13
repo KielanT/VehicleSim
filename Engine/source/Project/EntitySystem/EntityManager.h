@@ -32,7 +32,7 @@ namespace Project
 
 	public:
 		TEntityUID CreateEntity(const std::string& name);
-		TEntityUID CreateModelEntity(const std::string& name, std::string fileMeshPath, std::string filePath = "media/BasicTexOrange.png", 
+		TEntityUID CreateModelEntity(const std::string& name, std::string fileMeshPath, bool isRendered = true, std::string filePath = "media/BasicTexOrange.png",
 			SEntityTransform transform = SEntityTransform(),
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
