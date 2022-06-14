@@ -6,23 +6,13 @@
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
 #include "Physics/PhysX4.1/VehicleSceneQueryData.h"
+#include "Physics/PhysX4.1/VehicleHelpers.h"
 
 namespace Project
 {
 	
 
-	enum
-	{
-		TIRE_TYPE_NORMAL = 0,
-		TIRE_TYPE_WORN,
-		MAX_NUM_TIRE_TYPES
-	};
-
-	enum
-	{
-		SURFACE_TYPE_TARMAC = 0,
-		MAX_NUM_SURFACE_TYPES
-	};
+	
 	
 	class TempSceneFour : public IScene
 	{
@@ -88,7 +78,7 @@ namespace Project
 
 		physx::PxRigidDynamic* m_BoxActor = nullptr;
 		physx::PxRigidActor* m_FloorActor = nullptr;
-		physx::PxRigidStatic* m_FloorPlane;
+		physx::PxRigidStatic* m_FloorPlane = nullptr;
 
 	// Vehicle setup from snippet
 	private:
