@@ -181,12 +181,19 @@ namespace Project
 		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* frictionPairs;
 
 		bool IsVehicleInAir = true; // Spawns in the air
+		
+		bool m_Accelerate = false;
+		bool m_Left = false;
+		bool m_Right = false;
+		bool m_Brake = false;
+		bool m_HandBrake = false;
 
-		//void AutoDrive(float frameTime);
-		//void MoveVehicle(float frameTime);
-		//void ReleaseAllControls();
+		void MoveVehicle(float frameTime);
+		void Controls();
 		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial);
 		physx::PxRigidStatic* CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics);
+
+		
 
 	};
 }

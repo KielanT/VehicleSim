@@ -154,10 +154,19 @@ namespace Project
 			vect.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y;
 			vect.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
 			comp->SetPosition(vect);
+
+			physx::PxShape* carShapes[5];
+			const physx::PxVehicleWheels& vehicle = *m_Vehicle4W;
+			const physx::PxU32 numShapes = vehicle.getRigidDynamicActor()->getNbShapes();
+			const physx::PxRigidDynamic& vehicleActor = *vehicle.getRigidDynamicActor();
+			vehicleActor.getShapes(carShapes, numShapes);
 			CVector3 vectRot;
 			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
 			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
 			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
+			/*vectRot.x = physx::PxShapeExt::getGlobalPose(*carShapes[0], vehicleActor).q.x;
+			vectRot.y = physx::PxShapeExt::getGlobalPose(*carShapes[0], vehicleActor).q.y;
+			vectRot.z = physx::PxShapeExt::getGlobalPose(*carShapes[0], vehicleActor).q.z;*/
 			comp->SetRotation(vectRot);
 
 		}
@@ -816,14 +825,14 @@ namespace Project
 			modeTimer = 0.0f;
 			vehicleOrder++;
 			ReleaseAllControls();
-
+			
 			if (eDRIVE_MODE_NONE == gDriveModeOrder[vehicleOrder])
 			{
 				vehicleOrder = 0;
 				gVehicleOrderComplete = true;
 			}
 
-			DriveMode eDriveMode = gDriveModeOrder[vehicleOrder];
+			DriveMode eDriveMode = eDRIVE_MODE_ACCEL_FORWARDS;//gDriveModeOrder[vehicleOrder];
 			switch (eDriveMode)
 			{
 			case eDRIVE_MODE_ACCEL_FORWARDS:

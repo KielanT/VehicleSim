@@ -201,14 +201,15 @@ namespace Project
 				vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
 				comp->SetRotation(vectRot);
 
-
+				
 			}
 		}
-
+		MoveVehicle(frameTime);
+		
 		m_EntityManager->UpdateAllEntities(frameTime);
 		m_PhysicsSystem->GetScene()->simulate(frameTime);
 		m_PhysicsSystem->GetScene()->fetchResults(true);
-		m_SceneCamera->Control(frameTime);
+		//m_SceneCamera->Control(frameTime);
 	}
 
 	void TempSceneFive::ReleaseResources()
@@ -725,6 +726,68 @@ namespace Project
 		{1.00f,		0.1f}//TARMAC
 	};
 	
+	void TempSceneFive::MoveVehicle(float frameTime)
+	{
+		//ReleaseAllControls();
+		Controls();
+		
+		if (KeyHeld(Key_W) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIRST)
+			m_Accelerate = true;
+	
+		if (KeyHeld(Key_S) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+			m_Accelerate = true;
+
+		if (KeyHeld(Key_D))
+			m_Right = true;
+
+		if (KeyHeld(Key_A))
+			m_Left = true;
+		
+		if (KeyHeld(Key_Space))
+			m_Brake = true;
+		
+		if (KeyHeld(Key_Q))
+			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+
+		if (KeyHeld(Key_E))
+			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+
+		
+		physx::PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(keySmoothingData, SteerVsForwardSpeedTables, VehicleInputData, frameTime, IsVehicleInAir, *m_Vehicle4W);
+
+		//Raycasts.
+		physx::PxVehicleWheels* vehicles[1] = { m_Vehicle4W };
+		physx::PxRaycastQueryResult* raycastResults = m_VehicleSceneQueryData->getRaycastQueryResultBuffer(0);
+		const physx::PxU32 raycastResultsSize = m_VehicleSceneQueryData->getQueryResultBufferSize();
+		PxVehicleSuspensionRaycasts(m_BatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+
+		//Vehicle update.
+		const physx::PxVec3 grav = m_PhysicsSystem->GetScene()->getGravity();
+		physx::PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
+		physx::PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, m_Vehicle4W->mWheelsSimData.getNbWheels()} };
+		PxVehicleUpdates(frameTime, grav, *frictionPairs, 1, vehicles, vehicleQueryResults);
+
+		//Work out if the vehicle is in the air.
+		IsVehicleInAir = m_Vehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+	}
+
+	void TempSceneFive::Controls()
+	{
+		VehicleInputData.setDigitalAccel(m_Accelerate);
+		VehicleInputData.setDigitalSteerLeft(m_Left);
+		VehicleInputData.setDigitalSteerRight(m_Right);
+		VehicleInputData.setDigitalBrake(m_Brake);
+		VehicleInputData.setDigitalHandbrake(m_HandBrake);
+
+		m_Accelerate = false;
+		m_Left = false;
+		m_Right = false;
+		m_Brake = false;
+		m_HandBrake = false;
+
+				
+	}
+
 	physx::PxVehicleDrivableSurfaceToTireFrictionPairs* TempSceneFive::CreateFrictionPairs(const physx::PxMaterial* defaultMaterial)
 	{
 		physx::PxVehicleDrivableSurfaceType surfaceTypes[1];
