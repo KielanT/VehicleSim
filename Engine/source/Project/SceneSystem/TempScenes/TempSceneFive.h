@@ -75,6 +75,9 @@ namespace Project
 		physx::PxRigidActor* m_FloorActor = nullptr;
 		physx::PxRigidStatic* m_FloorPlane = nullptr;
 
+	private:
+		void Gui();
+
 		// Vehicle Setup 
 	private:
 		enum

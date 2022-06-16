@@ -9,8 +9,71 @@
     Member functions
 -----------------------------------------------------------------------------------------*/
 
+CMatrix4x4::CMatrix4x4(const CVector3& quat, const float& w, const CVector3& pos, const CVector3& scale)
+{
+	// Code from the Tank assignment
+    // Efficiently precalculate some values from the quaternion
+    float xx = 2 * quat.x;
+    float yy = 2 * quat.y;
+    float zz = 2 * quat.z;
+    float xy = xx * quat.y;
+    float yz = yy * quat.z;
+    float zx = zz * quat.x;
+    float wx = w * xx;
+    float wy = w * yy;
+    float wz = w * zz;
+    xx *= quat.x;
+    yy *= quat.y;
+    zz *= quat.z;
+
+    // Fill upper 3x3 matrix, combining scaling with rotation values from the quaternion
+    e00 = scale.x * (1 - yy - zz);
+    e01 = scale.x * (xy + wz);
+    e02 = scale.x * (zx - wy);
+    e03 = 0.0f; // Add 0's in fourth column
+
+    e10 = scale.y * (xy - wz);
+    e11 = scale.y * (1 - xx - zz);
+    e12 = scale.y * (yz + wx);
+    e13 = 0.0f;
+
+    e20 = scale.z * (zx + wy);
+    e21 = scale.z * (yz - wx);
+    e22 = scale.z * (1 - xx - yy);
+    e23 = 0.0f;
+
+    // Put pos (translation) in bottom row
+    e30 = pos.x;
+    e31 = pos.y;
+    e32 = pos.z;
+    e33 = 1.0f;
+}
+
+CMatrix4x4::CMatrix4x4(const float elt00, const float elt01, const float elt02, const float elt03, const float elt10, const float elt11, const float elt12, const float elt13, const float elt20, const float elt21, const float elt22, const float elt23, const float elt30, const float elt31, const float elt32, const float elt33)
+{
+    e00 = elt00;
+    e01 = elt01;
+    e02 = elt02;
+    e03 = elt03;
+
+    e10 = elt10;
+    e11 = elt11;
+    e12 = elt12;
+    e13 = elt13;
+
+    e20 = elt20;
+    e21 = elt21;
+    e22 = elt22;
+    e23 = elt23;
+
+    e30 = elt30;
+    e31 = elt31;
+    e32 = elt32;
+    e33 = elt33;
+}
+
 // Set a single row (range 0-3) of the matrix using a CVector3. Fourth element left unchanged
-// Can be used to set position or x,y,z axes in a matrix
+// Can be used to set pos or x,y,z axes in a matrix
 void CMatrix4x4::SetRow(int iRow, const CVector3& v)
 {
     float* pfElts = &e00 + iRow * 4;
@@ -20,7 +83,7 @@ void CMatrix4x4::SetRow(int iRow, const CVector3& v)
 }
 
 // Get a single row (range 0-3) of the matrix into a CVector3. Fourth element is ignored
-// Can be used to access position or x,y,z axes from a matrix
+// Can be used to access pos or x,y,z axes from a matrix
 CVector3 CMatrix4x4::GetRow(int iRow) const
 {
     const float* pfElts = &e00 + iRow * 4;
@@ -194,7 +257,7 @@ CMatrix4x4 MatrixScaling(const float s)
 
 
 // Return the inverse of given matrix assuming that it is an affine matrix
-// Advanced calulation needed to get the view matrix from the camera's positioning matrix
+// Advanced calulation needed to get the view matrix from the camera's posing matrix
 CMatrix4x4 InverseAffine(const CMatrix4x4& m)
 {
     CMatrix4x4 mOut;
@@ -234,7 +297,7 @@ CMatrix4x4 InverseAffine(const CMatrix4x4& m)
 }
 
 
-// Make this matrix an affine 3D transformation matrix to face from current position to given target (in the Z direction)
+// Make this matrix an affine 3D transformation matrix to face from current pos to given target (in the Z direction)
 // Will retain the matrix's current scaling
 void CMatrix4x4::FaceTarget(const CVector3& target)
 {
@@ -246,7 +309,7 @@ void CMatrix4x4::FaceTarget(const CVector3& target)
     if (IsZero(Length(axisX))) return;
     axisY = Cross(axisZ, axisX); // Will already be normalised
 
-    // Set rows of matrix, restoring existing scale. Position will be unchanged, 4th column
+    // Set rows of matrix, restoring existing scale. pos will be unchanged, 4th column
     // taken from unit matrix
     CVector3 scale = GetScale();
     SetRow(0, axisX * scale.x);

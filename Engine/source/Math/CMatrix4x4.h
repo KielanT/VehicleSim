@@ -12,13 +12,26 @@ class CMatrix4x4
 {
 // Concrete class - public access
 public:
+    CMatrix4x4() {}
+	
+	explicit CMatrix4x4(const CVector3& quat, const float& w, const CVector3& pos = { 0.0f, 0.0f, 0.0f }, 
+        const CVector3& scale = {1.0f, 1.0f, 1.0f});
+	
+    CMatrix4x4
+    (
+        const float elt00, const float elt01, const float elt02, const float elt03,
+        const float elt10, const float elt11, const float elt12, const float elt13,
+        const float elt20, const float elt21, const float elt22, const float elt23,
+        const float elt30, const float elt31, const float elt32, const float elt33
+    );
+	
 	// Matrix elements
 	float e00, e01, e02, e03;
 	float e10, e11, e12, e13;
 	float e20, e21, e22, e23;
 	float e30, e31, e32, e33;
 
- 
+    
     /*-----------------------------------------------------------------------------------------
         Member functions
     -----------------------------------------------------------------------------------------*/

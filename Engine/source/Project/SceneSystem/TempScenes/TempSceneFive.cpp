@@ -2,6 +2,10 @@
 #include "TempSceneFive.h"
 #include "Project/EntitySystem/Components/TransformComponent.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 namespace Project
 {
 	physx::PxF32 SteerVsForwardSpeedDataFive[2 * 8] =
@@ -140,10 +144,11 @@ namespace Project
 			vect.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
 			comp->SetPosition(vect);
 			CVector3 vectRot;
+			float w = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.w;
 			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
 			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
 			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
-			comp->SetRotation(vectRot);
+			comp->SetRotationFromQuat(vectRot, w);
 
 		}
 
@@ -160,6 +165,7 @@ namespace Project
 
 	void TempSceneFive::RenderScene()
 	{
+		Gui();
 		m_EntityManager->RenderAllEntities();
 	}
 
@@ -223,6 +229,24 @@ namespace Project
 		if (m_EnablePhysics && m_PhysicsSystem != nullptr) physx::PxCloseVehicleSDK();
 
 		if (m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
+	}
+
+	void TempSceneFive::Gui()
+	{
+		//ImGui::ShowDemoWindow();
+		ImGui::Begin("HUD");
+		
+		if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+		{
+			ImGui::Text("Gear: Reverse");
+		}
+		else
+		{
+			ImGui::Text("Gear: Drive");
+		}
+		
+
+		ImGui::End(); 
 	}
 
 	TempSceneFive::VehicleDesc TempSceneFive::InitVehicleDesc()

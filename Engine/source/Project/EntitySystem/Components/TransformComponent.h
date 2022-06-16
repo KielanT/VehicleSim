@@ -31,7 +31,8 @@ namespace Project
 			{
 				LightRendererComponent* comp = static_cast<LightRendererComponent*>(m_Entity->GetComponent("Light Renderer"));
 				comp->GetModel()->SetPosition(m_Position);
-				comp->GetModel()->SetRotation(m_Rotation);
+				//comp->GetModel()->SetRotation(m_Rotation);
+				comp->GetModel()->SetRotationFromQuat(m_Quat, m_W, 0);
 				comp->GetModel()->SetScale(m_Scale);
 			}
 		}
@@ -40,6 +41,7 @@ namespace Project
 
 		void SetPosition(CVector3 pos) { m_Position = pos; }
 		void SetRotation(CVector3 rot) { m_Rotation = rot; }
+		void SetRotationFromQuat(CVector3 quat, float w) { m_Quat = quat; m_W = w; }
 		void SetScale(CVector3 scale) { m_Scale = scale; }
 
 		const CVector3 GetPosition() { return m_Position; }
@@ -53,5 +55,8 @@ namespace Project
 		CVector3 m_Position;
 		CVector3 m_Rotation;
 		CVector3 m_Scale;
+
+		CVector3 m_Quat;
+		float m_W;
 	};
 }
