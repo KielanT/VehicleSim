@@ -49,6 +49,7 @@ CMatrix4x4::CMatrix4x4(const CVector3& quat, const float& w, const CVector3& pos
     e33 = 1.0f;
 }
 
+
 CMatrix4x4::CMatrix4x4(const float elt00, const float elt01, const float elt02, const float elt03, const float elt10, const float elt11, const float elt12, const float elt13, const float elt20, const float elt21, const float elt22, const float elt23, const float elt30, const float elt31, const float elt32, const float elt33)
 {
     e00 = elt00;

@@ -96,7 +96,7 @@ namespace Project
 			VehicleInputData.setDigitalBrake(true);
 
 			// Set Actors and shapes here
-			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 0.0f, 20.0f, 0.0f }));
+			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 20.0f, 20.0f, 0.0f }));
 			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
 			m_BoxActor->setActorFlags(physx::PxActorFlag::eDISABLE_GRAVITY);
 
@@ -128,10 +128,11 @@ namespace Project
 			comp->SetPosition(vectPos);
 
 			CVector3 vectRot;
+			float w = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.w;
 			vectRot.x = m_BoxActor->getGlobalPose().q.x;
 			vectRot.y = m_BoxActor->getGlobalPose().q.y;
 			vectRot.z = m_BoxActor->getGlobalPose().q.z;
-			comp->SetRotation(vectRot);
+			comp->SetRotationFromQuat(vectRot, w);
 		}
 
 		if (m_EntityManager->GetEntity("Car")->GetComponent("Transform"))
@@ -148,6 +149,7 @@ namespace Project
 			vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
 			vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
 			vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
+			
 			comp->SetRotationFromQuat(vectRot, w);
 
 		}
@@ -185,10 +187,12 @@ namespace Project
 				vect.z = m_BoxActor->getGlobalPose().p.z;
 				comp->SetPosition(vect);
 				CVector3 vectRot;
+				float w = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.w;
 				vectRot.x = m_BoxActor->getGlobalPose().q.x;
 				vectRot.y = m_BoxActor->getGlobalPose().q.y;
 				vectRot.z = m_BoxActor->getGlobalPose().q.z;
-				comp->SetRotation(vectRot);
+				comp->SetRotationFromQuat(vectRot, w);
+
 
 			}
 
@@ -202,11 +206,11 @@ namespace Project
 				vect.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
 				comp->SetPosition(vect);
 				CVector3 vectRot;
+				float w = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.w;
 				vectRot.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.x;
 				vectRot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
 				vectRot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
-				comp->SetRotation(vectRot);
-
+				comp->SetRotationFromQuat(vectRot, w);
 				
 			}
 		}

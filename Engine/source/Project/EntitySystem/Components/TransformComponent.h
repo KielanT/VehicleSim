@@ -6,6 +6,7 @@
 #include "Project/EntitySystem/Components/RendererComponent.h"
 #include "Project/EntitySystem/Components/LightRendererComponent.h"
 #include "Math/CVector3.h"
+#include "Math/CMatrix4x4.h"
 
 namespace Project
 {
@@ -31,17 +32,21 @@ namespace Project
 			{
 				LightRendererComponent* comp = static_cast<LightRendererComponent*>(m_Entity->GetComponent("Light Renderer"));
 				comp->GetModel()->SetPosition(m_Position);
-				//comp->GetModel()->SetRotation(m_Rotation);
-				comp->GetModel()->SetRotationFromQuat(m_Quat, m_W, 0);
+				comp->GetModel()->SetRotation(m_Rotation);
 				comp->GetModel()->SetScale(m_Scale);
 			}
+
 		}
 
 		~TransformComponent();
 
 		void SetPosition(CVector3 pos) { m_Position = pos; }
 		void SetRotation(CVector3 rot) { m_Rotation = rot; }
-		void SetRotationFromQuat(CVector3 quat, float w) { m_Quat = quat; m_W = w; }
+		void SetRotationFromQuat(CVector3 quat, float w) 
+		{ 
+			CMatrix4x4 m = CMatrix4x4(quat, w);
+			m_Rotation = m.GetEulerAngles();
+		}
 		void SetScale(CVector3 scale) { m_Scale = scale; }
 
 		const CVector3 GetPosition() { return m_Position; }
@@ -56,7 +61,6 @@ namespace Project
 		CVector3 m_Rotation;
 		CVector3 m_Scale;
 
-		CVector3 m_Quat;
 		float m_W;
 	};
 }

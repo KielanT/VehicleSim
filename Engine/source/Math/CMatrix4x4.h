@@ -16,6 +16,7 @@ public:
 	
 	explicit CMatrix4x4(const CVector3& quat, const float& w, const CVector3& pos = { 0.0f, 0.0f, 0.0f }, 
         const CVector3& scale = {1.0f, 1.0f, 1.0f});
+
 	
     CMatrix4x4
     (

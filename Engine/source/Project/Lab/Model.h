@@ -65,15 +65,6 @@ namespace Project
                 MatrixTranslation(Position(node));
         }
 
-        void SetRotationFromQuat(CVector3 quat, float w, int node = 0)
-        {
-            CMatrix4x4 m = CMatrix4x4(quat, w, Position(node), Scale(node));
-            // To put rotation angles into a matrix we need to build the matrix from scratch to make sure we retain existing scaling and position
-            mWorldMatrices[node] = m; /*MatrixScaling(Scale(node))*
-                MatrixRotationZ(rotation.z) * MatrixRotationX(rotation.x) * MatrixRotationY(rotation.y) *
-                MatrixTranslation(Position(node));*/
-        }
-
         // Two ways to set scale: x,y,z separately, or all to the same value
         // To set scale without affecting rotation, normalise each row, then multiply it by the scale value.
         void SetScale(CVector3 scale, int node = 0)
