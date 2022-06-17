@@ -11,6 +11,7 @@
 
 #include "Project/Core.h"
 
+
 class P_API Camera
 {
 public:
@@ -23,6 +24,8 @@ public:
            float fov = PI/3, float aspectRatio = 4.0f / 3.0f, float nearClip = 0.1f, float farClip = 10000.0f)
         : mPosition(position), mRotation(rotation), mFOVx(fov), mAspectRatio(aspectRatio), mNearClip(nearClip), mFarClip(farClip)
     {
+		SetPosition(mPosition);
+		SetRotation(mRotation);
     }
 
 
@@ -35,10 +38,15 @@ public:
 	//-------------------------------------
 
 	// Getters / setters
-	CVector3 Position()  { return mPosition; }
-	CVector3 Rotation()  { return mRotation;	}
-	void SetPosition(CVector3 position)  { mPosition = position; }
-	void SetRotation(CVector3 rotation)  { mRotation = rotation; }
+
+	//CVector3 Position() { return mPosition; }
+	CVector3 Position() { return  mWorldMatrix.GetPosition(); }
+	//CVector3 Rotation()  { return mRotation; }
+	CVector3 Rotation()  { return mWorldMatrix.GetEulerAngles(); }
+	//void SetPosition(CVector3 position)  { mPosition = position; }
+	void SetPosition(CVector3 position) { mWorldMatrix.SetRow(3, position); UpdateMatrices(); }
+	//void SetRotation(CVector3 rotation)  { mRotation = rotation;  }
+	void SetRotation(CVector3 rotation)  { mWorldMatrix = CMatrix4x4(Position(), rotation); UpdateMatrices(); }
 
 	float FOV()       { return mFOVx;     }
 	float NearClip()  { return mNearClip; }
@@ -48,12 +56,14 @@ public:
 	void SetNearClip(float nearClip)  { mNearClip = nearClip; }
 	void SetFarClip (float farClip )  { mFarClip  = farClip;  }
 
+	void FaceTarget(CVector3 target);
+	
 	// Read only access to camera matrices, updated on request from position, rotation and camera settings
 	CMatrix4x4 ViewMatrix()            { UpdateMatrices(); return mViewMatrix;           }
 	CMatrix4x4 ProjectionMatrix()      { UpdateMatrices(); return mProjectionMatrix;     }
 	CMatrix4x4 ViewProjectionMatrix()  { UpdateMatrices(); return mViewProjectionMatrix; }
 
-	
+
 //-------------------------------------
 // Private members
 //-------------------------------------

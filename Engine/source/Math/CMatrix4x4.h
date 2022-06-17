@@ -25,6 +25,24 @@ public:
         const float elt20, const float elt21, const float elt22, const float elt23,
         const float elt30, const float elt31, const float elt32, const float elt33
     );
+
+    CMatrix4x4::CMatrix4x4
+    (
+        const CVector3& position,
+        const CVector3& angles,
+        const CVector3& scale = { 1.0f, 1.0f, 1.0f }
+    );
+
+    CMatrix4x4(const CVector3& position);
+
+    CMatrix4x4
+    (
+        const CVector3& v0,
+        const CVector3& v1,
+        const CVector3& v2,
+        const CVector3& v3,
+        const bool      bRows = true
+    );
 	
 	// Matrix elements
 	float e00, e01, e02, e03;
@@ -36,6 +54,7 @@ public:
     /*-----------------------------------------------------------------------------------------
         Member functions
     -----------------------------------------------------------------------------------------*/
+    void SetRotation(CVector3 rotation);
 
 	// Set a single row (range 0-3) of the matrix using a CVector3. Fourth element left unchanged
     // Can be used to set position or x,y,z axes in a matrix
@@ -53,10 +72,12 @@ public:
     CVector3 GetXAxis() const { return GetRow(0); }
     CVector3 GetYAxis() const { return GetRow(1); }
     CVector3 GetZAxis() const { return GetRow(2); }
-    CVector3 GetPosition() const  { return GetRow(3); }
+   
     CVector3 GetEulerAngles();
     CVector3 GetScale() const  { return { Length(GetXAxis()), Length(GetYAxis()) , Length(GetZAxis()) }; }
 
+    CVector3 GetPosition() const { return GetRow(3); }
+	
     // Post-multiply this matrix by the given one
     CMatrix4x4& operator*=(const CMatrix4x4& m);
 
@@ -70,6 +91,9 @@ public:
     // Transpose the matrix (rows become columns). There are two ways to store a matrix, by rows or by columns.
     // Different apps use different methods. Use Transpose to swap when necessary.
     void Transpose();
+
+private:
+    void MakeRotation(CVector3 angles);
 };
 
 
@@ -94,6 +118,7 @@ CMatrix4x4 MatrixIdentity();
 
 // Return a translation matrix of the given vector
 CMatrix4x4 MatrixTranslation(const CVector3& t);
+
 
 
 // Return an X-axis rotation matrix of the given angle (in radians)

@@ -62,8 +62,8 @@ namespace Project
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", true, path + "brick1.jpg");
 		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1Parented.obj", true, path + "Compact/CompactBlue.png");
-		m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled3.obj", false, path + "Compact/CompactBlue.png"); // Doesn't move due to the origin be perfectly centred for wheels
-		//m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled4.obj", false, path + "Compact/CompactBlue.png"); // Moves but is very bumpy and wheels rotation off due to orgin not being centred
+		//m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled3.obj", false, path + "Compact/CompactBlue.png"); // Doesn't move due to the origin be perfectly centred for wheels
+		m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled4.obj", false, path + "Compact/CompactBlue.png"); // Moves but is very bumpy and wheels rotation off due to orgin not being centred
 		
 		if (m_EnablePhysics)
 		{
@@ -159,6 +159,7 @@ namespace Project
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
+
 		// Pos 2
 		//m_SceneCamera->SetPosition({ -40, 10, 0 });
 		//m_SceneCamera->SetRotation({ 0, ToRadians(90), 0 });
@@ -170,6 +171,8 @@ namespace Project
 	{
 		Gui();
 		m_EntityManager->RenderAllEntities();
+
+
 	}
 
 	void TempSceneFive::UpdateScene(float frameTime)
@@ -321,10 +324,17 @@ namespace Project
 			pos.x -= 0.0f;
 			pos.y += 5.0f;
 			pos.z -= 20.0f;
-			m_SceneCamera->SetPosition(pos);
+			//m_SceneCamera->SetPosition(pos);
 
-			float y = comp->GetRotation().y;
-			m_SceneCamera->SetRotation({ m_SceneCamera->Rotation().x, y, m_SceneCamera->Rotation().z });
+			CVector3 facingVector = comp->GetFacingVector();
+			facingVector.Normalise();
+			m_SceneCamera->SetPosition(comp->GetPosition() - facingVector * 15.0f + comp->GetYAxis() * 3.0f);
+			
+			m_SceneCamera->SetPosition({ m_SceneCamera->Position().x, m_SceneCamera->Position().y + 2, m_SceneCamera->Position().z });
+	
+			m_SceneCamera->FaceTarget(comp->GetPosition());
+
+			
 		}
 		else
 		{

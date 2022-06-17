@@ -54,11 +54,17 @@ void Camera::Control(float frameTime)
 }
 
 
+void Camera::FaceTarget(CVector3 target)
+{
+	mWorldMatrix.FaceTarget(target);
+	UpdateMatrices();
+}
+
 // Update the matrices used for the camera in the rendering pipeline
 void Camera::UpdateMatrices()
 {
     // "World" matrix for the camera - treat it like a model at first
-    mWorldMatrix = MatrixRotationZ(mRotation.z) * MatrixRotationX(mRotation.x) * MatrixRotationY(mRotation.y) * MatrixTranslation(mPosition);
+    mWorldMatrix = MatrixRotationZ(mWorldMatrix.GetEulerAngles().z) * MatrixRotationX(mWorldMatrix.GetEulerAngles().x) * MatrixRotationY(mWorldMatrix.GetEulerAngles().y) * MatrixTranslation(mWorldMatrix.GetPosition());
 
     // View matrix is the usual matrix used for the camera in shaders, it is the inverse of the world matrix (see lectures)
     mViewMatrix = InverseAffine(mWorldMatrix);

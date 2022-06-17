@@ -54,6 +54,36 @@ namespace Project
 		const CVector3 GetRotation() { return m_Rotation; }
 		const CVector3 GetScale() { return m_Scale; }
 
+		const CVector3 GetFacingVector(int node = 0) // Returns facing vector
+		{
+			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Renderer"))
+			{
+				RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+				return comp->GetModel()->GetWorldMatrix(node).GetZAxis();
+			}
+			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Light Renderer"))
+			{
+				LightRendererComponent* comp = static_cast<LightRendererComponent*>(m_Entity->GetComponent("Light Renderer"));
+				comp->GetModel()->GetWorldMatrix(node);
+				return comp->GetModel()->GetWorldMatrix(node).GetZAxis();
+			}
+		}
+
+		CVector3 GetYAxis(int node = 0) 
+		{
+			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Renderer"))
+			{
+				RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+				return comp->GetModel()->GetWorldMatrix(node).GetZAxis();
+			}
+			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Light Renderer"))
+			{
+				LightRendererComponent* comp = static_cast<LightRendererComponent*>(m_Entity->GetComponent("Light Renderer"));
+				comp->GetModel()->GetWorldMatrix(node);
+				return comp->GetModel()->GetWorldMatrix(node).GetZAxis();
+			}
+		}
+
 		virtual bool Update(float frameTime) override;
 
 	private:

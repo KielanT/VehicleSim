@@ -73,6 +73,111 @@ CMatrix4x4::CMatrix4x4(const float elt00, const float elt01, const float elt02, 
     e33 = elt33;
 }
 
+CMatrix4x4::CMatrix4x4(const CVector3& position, const CVector3& angles, const CVector3& scale)
+{
+    // First build rotation matrix
+    MakeRotation(angles);
+
+    // Scale matrix
+    e00 *= scale.x;
+    e01 *= scale.x;
+    e02 *= scale.x;
+
+    e10 *= scale.y;
+    e11 *= scale.y;
+    e12 *= scale.y;
+
+    e20 *= scale.z;
+    e21 *= scale.z;
+    e22 *= scale.z;
+
+    // Put position (translation) in bottom row
+    e30 = position.x;
+    e31 = position.y;
+    e32 = position.z;
+}
+
+CMatrix4x4::CMatrix4x4(const CVector3& position)
+{
+    // Take most elements from identity
+    e00 = 1.0f;
+    e01 = 0.0f;
+    e02 = 0.0f;
+    e03 = 0.0f;
+
+    e10 = 0.0f;
+    e11 = 1.0f;
+    e12 = 0.0f;
+    e13 = 0.0f;
+
+    e20 = 0.0f;
+    e21 = 0.0f;
+    e22 = 1.0f;
+    e23 = 0.0f;
+
+    // Put position (translation) in bottom row
+    e30 = position.x;
+    e31 = position.y;
+    e32 = position.z;
+    e33 = 1.0f;
+}
+
+CMatrix4x4::CMatrix4x4(const CVector3& v0, const CVector3& v1, const CVector3& v2, const CVector3& v3, const bool bRows)
+{
+    if (bRows)
+    {
+        e00 = v0.x;
+        e01 = v0.y;
+        e02 = v0.z;
+        e03 = 0.0f;
+
+        e10 = v1.x;
+        e11 = v1.y;
+        e12 = v1.z;
+        e13 = 0.0f;
+
+        e20 = v2.x;
+        e21 = v2.y;
+        e22 = v2.z;
+        e23 = 0.0f;
+
+        e30 = v3.x;
+        e31 = v3.y;
+        e32 = v3.z;
+        e33 = 1.0f;
+    }
+    else
+    {
+        e00 = v0.x;
+        e10 = v0.y;
+        e20 = v0.z;
+
+        e01 = v1.x;
+        e11 = v1.y;
+        e21 = v1.z;
+
+        e02 = v2.x;
+        e12 = v2.y;
+        e22 = v2.z;
+
+        e03 = v3.x;
+        e13 = v3.y;
+        e23 = v3.z;
+
+        e30 = 0.0f;
+        e31 = 0.0f;
+        e32 = 0.0f;
+        e33 = 1.0f;
+    }
+}
+
+void CMatrix4x4::SetRotation(CVector3 rotation)
+{
+    MatrixRotationX(GetEulerAngles().x * rotation.x);
+    MatrixRotationY(GetEulerAngles().y * rotation.y);
+    MatrixRotationZ(GetEulerAngles().z * rotation.z);
+}
+
 // Set a single row (range 0-3) of the matrix using a CVector3. Fourth element left unchanged
 // Can be used to set pos or x,y,z axes in a matrix
 void CMatrix4x4::SetRow(int iRow, const CVector3& v)
@@ -198,6 +303,28 @@ CMatrix4x4 MatrixTranslation(const CVector3& t)
                          0,   1,   0,  0,
                          0,   0,   1,  0,
                        t.x, t.y, t.z,  1 };
+}
+
+void CMatrix4x4::MakeRotation(CVector3 angles)
+{
+    float sX, cX, sY, cY, sZ, cZ;
+    SinCos(angles.x, &sX, &cX);
+    SinCos(angles.y, &sY, &cY);
+    SinCos(angles.z, &sZ, &cZ);
+
+    e00 = cZ * cY + sZ * sX * sY;
+    e01 = sZ * cX;
+    e02 = -cZ * sY + sZ * sX * cY;
+    e03 = 0.0f;
+
+    e10 = -sZ * cY + cZ * sX * sY;
+    e11 = cZ * cX;
+    e12 = sZ * sY + cZ * sX * cY;
+    e13 = 0.0f;
+
+    e20 = cX * sY;
+    e21 = -sX;
+    e22 = cX * cY;
 }
 
 
@@ -371,3 +498,4 @@ void CMatrix4x4::Transpose()
     std::swap(e13, e31);
     std::swap(e23, e32);
 }
+

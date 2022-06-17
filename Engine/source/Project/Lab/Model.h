@@ -78,7 +78,7 @@ namespace Project
 
         void SetWorldMatrix(CMatrix4x4 matrix, int node = 0) { mWorldMatrices[node] = matrix; }
 
-
+        CMatrix4x4 GetWorldMatrix(int node = 0) { return mWorldMatrices[node]; }
         //-------------------------------------
         // Private data / members
         //-------------------------------------

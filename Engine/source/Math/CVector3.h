@@ -41,7 +41,29 @@ public:
         z = pfElts[2];
     }
 
+    bool IsZero() const
+    {
+        return gen::IsZero(x * x + y * y + z * z);
+    }
 
+    void Normalise()
+    {
+        float lengthSq = x * x + y * y + z * z;
+
+        // Ensure vector is not zero length (use BaseMath.h float approx. fn with default epsilon)
+        if (gen::IsZero(lengthSq))
+        {
+            x = y = z = 0.0f;
+        }
+        else
+        {
+            float invLength = InvSqrt(lengthSq);
+            x *= invLength;
+            y *= invLength;
+            z *= invLength;
+        }
+    }
+	
     /*-----------------------------------------------------------------------------------------
         Member functions
     -----------------------------------------------------------------------------------------*/
