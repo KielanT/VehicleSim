@@ -34,6 +34,7 @@ namespace Project
 				comp->GetModel()->SetPosition(m_Position);
 				comp->GetModel()->SetRotation(m_Rotation);
 				comp->GetModel()->SetScale(m_Scale);
+				
 			}
 
 		}

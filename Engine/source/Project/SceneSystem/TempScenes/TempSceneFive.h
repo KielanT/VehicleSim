@@ -75,10 +75,12 @@ namespace Project
 		physx::PxRigidActor* m_FloorActor = nullptr;
 		physx::PxRigidStatic* m_FloorPlane = nullptr;
 
+		bool m_IsDevMode = false;
+		
 	private:
 		void Gui();
 
-		
+		void CameraControl(float frameTime);
 
 		// Vehicle Setup 
 	private:
@@ -193,12 +195,12 @@ namespace Project
 		bool m_Brake = false;
 		bool m_HandBrake = false;
 
+		
 		void MoveVehicle(float frameTime);
 		void Controls();
 		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial);
 		physx::PxRigidStatic* CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics);
 
-		
-
+		//void SetAutoBoxData(const physx::PxVehicleAutoBoxData& autobox);
 	};
 }

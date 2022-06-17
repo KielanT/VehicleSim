@@ -62,7 +62,8 @@ namespace Project
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 		m_EntityManager->CreateModelEntity("Test Cube", path + "Cube.x", true, path + "brick1.jpg");
 		m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1Parented.obj", true, path + "Compact/CompactBlue.png");
-		m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled3.obj", false, path + "Compact/CompactBlue.png"); // Works Best
+		m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled3.obj", false, path + "Compact/CompactBlue.png"); // Doesn't move due to the origin be perfectly centred for wheels
+		//m_EntityManager->CreateModelEntity("CarCol", path + "Compact/untitled4.obj", false, path + "Compact/CompactBlue.png"); // Moves but is very bumpy and wheels rotation off due to orgin not being centred
 		
 		if (m_EnablePhysics)
 		{
@@ -175,8 +176,6 @@ namespace Project
 	{
 		if (m_EnablePhysics)
 		{
-
-
 			if (m_EntityManager->GetEntity("Test Cube")->GetComponent("Transform"))
 			{
 
@@ -214,12 +213,25 @@ namespace Project
 				
 			}
 		}
-		MoveVehicle(frameTime);
 		
+
+		if (KeyHit(Key_F1))
+		{
+			m_IsDevMode = !m_IsDevMode;
+		}
+
+		if(!m_IsDevMode)
+			MoveVehicle(frameTime);
+
+		
+		CameraControl(frameTime);
+
+		
+
 		m_EntityManager->UpdateAllEntities(frameTime);
 		m_PhysicsSystem->GetScene()->simulate(frameTime);
 		m_PhysicsSystem->GetScene()->fetchResults(true);
-		//m_SceneCamera->Control(frameTime);
+		
 	}
 
 	void TempSceneFive::ReleaseResources()
@@ -238,8 +250,8 @@ namespace Project
 	void TempSceneFive::Gui()
 	{
 		//ImGui::ShowDemoWindow();
-		ImGui::Begin("HUD");
 		
+		ImGui::Begin("HUD");
 		if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
 		{
 			ImGui::Text("Gear: Reverse");
@@ -248,9 +260,76 @@ namespace Project
 		{
 			ImGui::Text("Gear: Drive");
 		}
-		
 
-		ImGui::End(); 
+		/*if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eNEUTRAL)
+		{
+			ImGui::Text("Gear: Neutral");
+		}		
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+		{
+			ImGui::Text("Gear: Reverse");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIRST)
+		{
+			ImGui::Text("Gear: First");
+		}	
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eSECOND)
+		{
+			ImGui::Text("Gear: Second");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eTHIRD)
+		{
+			ImGui::Text("Gear: Third");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFOURTH)
+		{
+			ImGui::Text("Gear: Fouth");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIFTH)
+		{
+			ImGui::Text("Gear: Fifth");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eSIXTH)
+		{
+			ImGui::Text("Gear: Sixth");
+		}
+		else
+		{
+			ImGui::Text("Gear: Other");
+		}*/
+		
+		ImGui::End();
+
+		
+		if (m_IsDevMode)
+		{
+			ImGui::Begin("Dev");
+			ImGui::Text("Dev: On");
+			ImGui::End();
+		}
+		
+		
+	}
+
+	void TempSceneFive::CameraControl(float frameTime)
+	{
+		if (!m_IsDevMode && m_EntityManager->GetEntity("Car")->GetComponent("Transform"))
+		{
+
+			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Transform"));
+			CVector3 pos = comp->GetPosition();
+			pos.x -= 0.0f;
+			pos.y += 5.0f;
+			pos.z -= 20.0f;
+			m_SceneCamera->SetPosition(pos);
+
+			float y = comp->GetRotation().y;
+			m_SceneCamera->SetRotation({ m_SceneCamera->Rotation().x, y, m_SceneCamera->Rotation().z });
+		}
+		else
+		{
+			m_SceneCamera->Control(frameTime);
+		}
 	}
 
 	TempSceneFive::VehicleDesc TempSceneFive::InitVehicleDesc()
@@ -394,13 +473,15 @@ namespace Project
 
 			//Gears
 			physx::PxVehicleGearsData gears;
-			gears.mSwitchTime = 0.5f;
+			gears.mSwitchTime = 0.1f;
 			driveSimData.setGearsData(gears);
-
+			
 			//Clutch
 			physx::PxVehicleClutchData clutch;
 			clutch.mStrength = 10.0f;
 			driveSimData.setClutchData(clutch);
+
+			
 
 			//Ackermann steer accuracy
 			physx::PxVehicleAckermannGeometryData ackermann;
@@ -545,14 +626,14 @@ namespace Project
 		//Set the outside of the left and right wheels to be flush with the chassis.
 		//Set the top of the wheel to be just touching the underside of the chassis.
 		//Begin by setting the rear-left/rear-right/front-left,front-right wheels.
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[2]),  wheelRearZ + 0 * deltaZ * 0.5f);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[3]),  wheelRearZ + 0 * deltaZ * 0.5f);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[0]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
-		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -(chassisDims.y / 4 + wheelRadius[1]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] =   physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[2]),  wheelRearZ + 0 * deltaZ * 0.5f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] =  physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[3]),  wheelRearZ + 0 * deltaZ * 0.5f);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] =  physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[0]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -(chassisDims.y / 2 + wheelRadius[1]),  wheelRearZ + (numLeftWheels - 1) * deltaZ);
 
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
-		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f,   -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f,  -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
+		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f,  -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
 
 
@@ -687,6 +768,7 @@ namespace Project
 			wheelsSimData->setSceneQueryFilterData(i, qryFilterData);
 			wheelsSimData->setWheelShapeMapping(i, physx::PxI32(i));
 		}
+		wheelsSimData->setSubStepCount(5.0f, 3, 1);
 
 		//Add a front and rear anti-roll bar
 		physx::PxVehicleAntiRollBarData barFront;
@@ -756,27 +838,24 @@ namespace Project
 	
 	void TempSceneFive::MoveVehicle(float frameTime)
 	{
-		//ReleaseAllControls();
 		Controls();
-		
-		if (KeyHeld(Key_W) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIRST)
-			m_Accelerate = true;
-	
-		if (KeyHeld(Key_S) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+
+
+		if (KeyHeld(Key_W))
 			m_Accelerate = true;
 
 		if (KeyHeld(Key_D))
 			m_Right = true;
-
+		
 		if (KeyHeld(Key_A))
 			m_Left = true;
 		
-		if (KeyHeld(Key_Space))
+		if (KeyHeld(Key_S))
 			m_Brake = true;
 		
 		if (KeyHeld(Key_Q))
 			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
-
+		
 		if (KeyHeld(Key_E))
 			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
 
@@ -858,5 +937,25 @@ namespace Project
 
 		return groundPlane;
 	}
+
+	/*void TempSceneFive::SetAutoBoxData(const physx::PxVehicleAutoBoxData& autobox)
+	{
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eREVERSE] >= 0, "Autobox gearup ratio in reverse must be greater than or equal to zero");
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eNEUTRAL] >= 0, "Autobox gearup ratio in neutral must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eFIRST] >= 0, "Autobox gearup ratio in first must be greater than or equal to zero");
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eSECOND] >= 0, "Autobox gearup ratio in second must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eTHIRD] >= 0, "Autobox gearup ratio in third must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eFOURTH] >= 0, "Autobox gearup ratio in fourth must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mUpRatios  [physx::PxVehicleGearsData::eFIFTH] >= 0, "Autobox gearup ratio in fifth must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eREVERSE] >= 0, "Autobox geardown ratio in reverse must be greater than or equal to zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eNEUTRAL] >= 0, "Autobox geardown ratio in neutral must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eFIRST] >= 0, "Autobox geardown ratio in first must be greater than or equal to zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eSECOND] >= 0, "Autobox geardown ratio in second must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eTHIRD] >= 0, "Autobox geardown ratio in third must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eFOURTH] >= 0, "Autobox geardown ratio in fourth must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eFIFTH] >= 0, "Autobox geardown ratio in fifth must be greater than zero");
+		PX_CHECK_AND_RETURN(autobox.mDownRatios[physx::PxVehicleGearsData::eSIXTH] >= 0, "Autobox geardown ratio in fifth must be greater than zero");
+		m_AutoBox = autobox;
+	}*/
 
 }

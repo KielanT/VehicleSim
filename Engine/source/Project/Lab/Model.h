@@ -65,6 +65,7 @@ namespace Project
                 MatrixTranslation(Position(node));
         }
 
+		
         // Two ways to set scale: x,y,z separately, or all to the same value
         // To set scale without affecting rotation, normalise each row, then multiply it by the scale value.
         void SetScale(CVector3 scale, int node = 0)
