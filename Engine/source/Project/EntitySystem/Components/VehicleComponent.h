@@ -148,28 +148,8 @@ namespace Project
 		
 	
 		// TEMP from scene five
-		struct VehicleDesc
-		{
-			VehicleDesc()
-				: chassisMass(0.0f),
-				chassisMaterial(NULL),
-				wheelMass(0.0f),
-				wheelMaterial(NULL)
-			{
-			}
 
-			physx::PxF32 chassisMass;
-			physx::PxMaterial* chassisMaterial;
-			physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
-
-			physx::PxF32 wheelMass;
-			physx::PxMaterial* wheelMaterial;
-			physx::PxU32 numWheels;
-			physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
-		};
-		
-		VehicleDesc InitVehicleDesc();
-		physx::PxVehicleDrive4W* CreateVehicle4W(const VehicleDesc& vehicle4WDesc);
+		physx::PxVehicleDrive4W* CreateVehicle4W();
 
 		physx::PxConvexMesh* CreateConvexMesh(const physx::PxVec3* verts, const physx::PxU32 numVerts);
 		physx::PxConvexMesh* CreateWheelMesh(int index);
