@@ -403,7 +403,7 @@ namespace Project
 			//wheelMesh[2] = CreateWheelMesh(3); // Rear left
 			//wheelMesh[3] = CreateWheelMesh(4); // Rear right
 
-			MakeWheelWithsAndRadii(wheelMesh, wheelWidths, wheelRadii);
+			MakeWheelWidthsAndRadii(wheelMesh, wheelWidths, wheelRadii);
 
 			//Assume all wheels are identical for simplicity.
 			physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
@@ -813,7 +813,7 @@ namespace Project
 		return chassisDims;
 	}
 
-	void TempSceneFive::MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii)
+	void TempSceneFive::MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii)
 	{
 		for (physx::PxU32 i = 0; i < 4; i++)
 		{

@@ -176,7 +176,7 @@ namespace Project
 
 		physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
 
-		void MakeWheelWithsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
+		void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
 
 		// Get vehicle Moving
 		float modeTimer = 0.0f;

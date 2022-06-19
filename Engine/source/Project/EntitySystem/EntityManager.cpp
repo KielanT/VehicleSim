@@ -4,13 +4,14 @@
 #include "Components/RendererComponent.h"
 #include "Components/LightRendererComponent.h"
 
+#include "Components/CollisionComponent.h"
+
 
 
 namespace Project
 {
 	EntityManager::EntityManager(IRenderer* renderer)
 	{
-		
 		m_Renderer = renderer;
 		m_Entities.reserve(1024);
 		m_EntityUIDMap = new CHashTable<TEntityUID, TUInt32>(2048, JOneAtATimeHash);
@@ -27,6 +28,31 @@ namespace Project
 		m_State = SetStates(renderer->GetRenderType());
 		m_State->InitStates(m_Renderer);
 		
+		m_IsPhysics = false;
+		m_Physics = nullptr;
+		
+	}
+
+	EntityManager::EntityManager(IRenderer* renderer, IPhysics* physics)
+	{
+		m_Renderer = renderer;
+		m_Entities.reserve(1024);
+		m_EntityUIDMap = new CHashTable<TEntityUID, TUInt32>(2048, JOneAtATimeHash);
+
+		m_NextUID = 0;
+
+		m_IsEnumerating = false;
+
+		m_Shader = SetShader(renderer->GetRenderType());
+
+		m_Shader->InitShaders(m_Renderer);
+
+
+		m_State = SetStates(renderer->GetRenderType());
+		m_State->InitStates(m_Renderer);
+		
+		m_IsPhysics = true;
+		m_Physics = physics;
 	}
 
 	EntityManager::~EntityManager()
@@ -118,8 +144,8 @@ namespace Project
 		return m_NextUID++;
 	}
 
-	TEntityUID EntityManager::CreateBasicPhysxVehicleEntity(const std::string& name, std::string chassisMeshPath, std::string wheelMeshPath, 
-		std::string chassisTexturePath /*= "media/BasicTexWhite.png"*/, std::string wheelTexturePath /*= "media/BasicTexWhite.png"*/, 
+	TEntityUID EntityManager::CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath, 
+		VehicleSettings vehicleSettings /*= VehicleSettings()*/, std::string texturePath /*= "media/BasicTexWhite.png"*/,
 		SEntityTransform transform /*= SEntityTransform()*/, EPixelShader pixelShader /*= EPixelShader::PixelLightingPixelShader*/, 
 		EVertexShader vertexShader /*= EVertexShader::PixelLightingVertexShader*/, EBlendState blendState /*= EBlendState::NoBlendingState*/, 
 		EDepthStencilState depthStencilState /*= EDepthStencilState::UseDepthBufferState*/, 
@@ -132,16 +158,19 @@ namespace Project
 		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
 		newEntity->AddComponent(comp);
 
-		comp = new MeshComponent(chassisMeshPath, newEntity, GetNewUID());
+		comp = new MeshComponent(mainMeshPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
-		comp = new MeshComponent(wheelMeshPath, newEntity, GetNewUID(), 1);
-		newEntity->AddComponent(comp);
-
-		comp = new RendererComponent(true, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, chassisTexturePath, pixelShader,
+		comp = new RendererComponent(true, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, texturePath, pixelShader,
 			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
 		newEntity->AddComponent(comp);
 
+		comp = new CollisionComponent(m_Renderer, collisionMeshPath, newEntity, GetNewUID());
+		newEntity->AddComponent(comp);
+
+		comp = new VehicleComponent(newEntity, GetNewUID(), m_Physics, vehicleSettings);
+		newEntity->AddComponent(comp);
+		
 		// Get vector index for new entity and add it to vector
 		TUInt32 entityIndex = static_cast<TUInt32>(m_Entities.size());
 		m_Entities.push_back(newEntity);

@@ -6,9 +6,12 @@
 #include "Project/Interfaces/IRenderer.h"
 #include "Project/Interfaces/IShader.h"
 #include "Project/Interfaces/IState.h"
+#include "Project/Interfaces/IPhysics.h"
 #include "Graphics/DirectX11/CDirectX11Shader.h"
 #include "Graphics/DirectX11/CDirectX11States.h"
 #include "Math/CVector3.h"
+#include "Components/VehicleComponent.h"
+
 
 namespace Project
 {
@@ -23,11 +26,11 @@ namespace Project
 		{}
 	};
 
-
 	class P_API EntityManager
 	{
 	public:
 		EntityManager(IRenderer* renderer);
+		EntityManager(IRenderer* renderer, IPhysics* physics);
 		~EntityManager();
 
 	public:
@@ -43,8 +46,8 @@ namespace Project
 
 		TEntityUID CreateLightEntity(const std::string& name);
 
-		TEntityUID CreateBasicPhysxVehicleEntity(const std::string& name, std::string chassisMeshPath, std::string wheelMeshPath, 
-			std::string chassisTexturePath = "media/BasicTexWhite.png", std::string wheelTexturePath = "media/BasicTexWhite.png",
+		TEntityUID CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath,
+			VehicleSettings vehicleSettings = VehicleSettings(), std::string TexturePath = "media/BasicTexWhite.png",
 			SEntityTransform transform = SEntityTransform(), EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
 			EBlendState blendState = EBlendState::NoBlendingState,
@@ -157,6 +160,8 @@ namespace Project
 		IShader* m_Shader;
 		IState* m_State;
 
+		bool m_IsPhysics = false;
+		IPhysics* m_Physics;
 	};
 
 }
