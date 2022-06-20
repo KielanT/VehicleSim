@@ -184,6 +184,41 @@ namespace Project
 		return m_NextUID++;
 	}
 
+	TEntityUID EntityManager::CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, PhysicsObjectType objectType, 
+		RigidBodyType m_BodyType, SEntityTransform transform, CVector3 collisionScale, std::string texturePath,
+		EPixelShader pixelShader, EVertexShader vertexShader, EBlendState blendState, EDepthStencilState depthStencilState, 
+		ERasterizerState rasterizerState, ESamplerState samplerState)
+	{
+		// Create new entity with next UID
+		Entity* newEntity = new Entity(m_NextUID, name);
+
+		// Add transform component to all entities 
+		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
+		newEntity->AddComponent(comp);
+
+		comp = new MeshComponent(mainMeshPath, newEntity, GetNewUID());
+		newEntity->AddComponent(comp);
+
+		comp = new RendererComponent(true, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, texturePath, pixelShader,
+			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
+		newEntity->AddComponent(comp);
+
+		comp = new PhysicsObjectComponent(newEntity, GetNewUID(), objectType, m_BodyType, m_Physics, collisionScale);
+		newEntity->AddComponent(comp);
+		
+		// Get vector index for new entity and add it to vector
+		TUInt32 entityIndex = static_cast<TUInt32>(m_Entities.size());
+		m_Entities.push_back(newEntity);
+
+		// Add mapping from UID to entity index into hash map
+		m_EntityUIDMap->SetKeyValue(m_NextUID, entityIndex);
+
+		m_IsEnumerating = false; // Cancel any entity enumeration (entity list has changed)
+
+		// Return UID of new entity then increase it ready for next entity
+		return m_NextUID++;
+	}
+
 	bool EntityManager::DestroyEntity(TEntityUID UID)
 	{
 		TUInt32 entityIndex;

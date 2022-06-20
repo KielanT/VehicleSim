@@ -11,6 +11,7 @@
 #include "Graphics/DirectX11/CDirectX11States.h"
 #include "Math/CVector3.h"
 #include "Components/VehicleComponent.h"
+#include "Components/PhysicsObjectComponent.h"
 
 
 namespace Project
@@ -24,6 +25,10 @@ namespace Project
 		SEntityTransform(CVector3 pos = CVector3(0.0f, 0.0f, 0.0f), CVector3 rot = CVector3(0.0f, 0.0f, 0.0f), CVector3 scale = CVector3(1.0f, 1.0f, 1.0f))
 			: Position(pos), Rotation(rot), Scale(scale)
 		{}
+		SEntityTransform(float x, float y, float z) : Position({ x, y, z }), Rotation(CVector3(0.0f, 0.0f, 0.0f)), Scale(CVector3(1.0f, 1.0f, 1.0f))
+		{
+		}
+		
 	};
 
 	class P_API EntityManager
@@ -47,8 +52,17 @@ namespace Project
 		TEntityUID CreateLightEntity(const std::string& name);
 
 		TEntityUID CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath,
-			VehicleSettings vehicleSettings = VehicleSettings(), std::string TexturePath = "media/BasicTexWhite.png",
+			VehicleSettings vehicleSettings = VehicleSettings(), std::string texturePath = "media/BasicTexWhite.png",
 			SEntityTransform transform = SEntityTransform(), EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
+			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
+			EBlendState blendState = EBlendState::NoBlendingState,
+			EDepthStencilState depthStencilState = EDepthStencilState::UseDepthBufferState,
+			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
+			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
+
+		TEntityUID CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, PhysicsObjectType objectType, RigidBodyType m_BodyType,
+			SEntityTransform transform, CVector3 collisionScale = {1.0f, 1.0f, 1.0f}, std::string texturePath = "media/BasicTexWhite.png",
+			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
 			EBlendState blendState = EBlendState::NoBlendingState,
 			EDepthStencilState depthStencilState = EDepthStencilState::UseDepthBufferState,

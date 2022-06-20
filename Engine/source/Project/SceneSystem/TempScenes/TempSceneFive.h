@@ -179,9 +179,7 @@ namespace Project
 		void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
 
 		// Get vehicle Moving
-		float modeTimer = 0.0f;
-		int vehicleOrder = 0;
-		bool gVehicleOrderComplete = false;
+
 		VehicleSceneQueryData* m_VehicleSceneQueryData = NULL;
 		physx::PxBatchQuery* m_BatchQuery = NULL;
 		physx::PxDefaultAllocator m_Allocator;

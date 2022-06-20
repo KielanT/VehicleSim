@@ -70,10 +70,6 @@ namespace Project
 
 		physx::PxMaterial* m_Material = nullptr;
 
-		physx::PxShape* m_FloorBoxShape = nullptr;
-		physx::PxShape* m_BoxShape = nullptr;
-
-		physx::PxRigidDynamic* m_BoxActor = nullptr;
 		physx::PxRigidStatic* m_FloorPlane = nullptr;
 
 		// Temp

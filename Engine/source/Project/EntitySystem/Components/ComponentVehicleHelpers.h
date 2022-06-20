@@ -16,6 +16,13 @@ namespace Project
 		MAX_NUM_SURFACE_TYPES
 	};
 	
+	//Tire model friction for each combination of drivable surface type and tire type.
+	static physx::PxF32 TireFrictionMultipliers[MAX_NUM_SURFACE_TYPES][MAX_NUM_TIRE_TYPES] =
+	{
+		//NORMAL,	WORN
+		{1.00f,		0.1f}//TARMAC
+	};
+	
 	enum
 	{
 		COLLISION_FLAG_GROUND = 1 << 0,
@@ -51,6 +58,8 @@ namespace Project
 		Both,
 		None
 	};
+
+	
 
 	class VehicleSettings
 	{
@@ -135,4 +144,8 @@ namespace Project
 	void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
 
 	physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
+
+	physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial);
+
+	physx::PxRigidStatic* CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics);
 }

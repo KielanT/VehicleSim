@@ -48,7 +48,7 @@ namespace Project
 		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
 		
 		std::string path = "media/";
-		
+		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 
 		if (m_EnablePhysics)
 		{
@@ -60,17 +60,15 @@ namespace Project
 			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj");
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
+			m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform( 0.0f, 20.0f, 40.0f ), { 5.0f, 5.0f, 5.0f });
 			
 
 			/*****************************************************/
 			/**			   Set up actors and objects            **/
 			/*****************************************************/
 			// Set Actors and shapes here
-			m_BoxActor = m_PhysicsSystem->GetPhysics()->createRigidDynamic(physx::PxTransform({ 20.0f, 40.0f, 0.0f }));
-			m_BoxShape = physx::PxRigidActorExt::createExclusiveShape(*m_BoxActor, physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
-			m_BoxActor->setActorFlags(physx::PxActorFlag::eDISABLE_GRAVITY);
-
+			
 			physx::PxFilterData GroundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
 			m_FloorPlane = CreateDrivablePlane(GroundPlaneSimFilterData, m_Material, m_PhysicsSystem->GetPhysics());
 
@@ -78,7 +76,6 @@ namespace Project
 			/**			   Add actors to the scene              **/
 			/*****************************************************/
 
-			m_PhysicsSystem->GetScene()->addActor(*m_BoxActor);
 			m_PhysicsSystem->GetScene()->addActor(*m_FloorPlane);
 		}
 
@@ -89,6 +86,7 @@ namespace Project
 	{
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
+
 		return true;
 	}
 
@@ -106,7 +104,7 @@ namespace Project
 
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
 		{
-			m_PhysicsEntityManager->RenderAllEntities();
+			m_PhysicsEntityManager->UpdateAllEntities(frameTime);
 			m_PhysicsSystem->GetScene()->simulate(frameTime);
 			m_PhysicsSystem->GetScene()->fetchResults(true);
 		}
@@ -129,13 +127,11 @@ namespace Project
 
 		SAFE_RELEASE(m_Material);
 
-		if (m_EnablePhysics && m_PhysicsSystem != nullptr) physx::PxCloseVehicleSDK();
 
 		if (m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
 	}
 	physx::PxRigidStatic* TempSceneSix::CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics)
 	{
-
 		//Add a plane to the scene.
 		physx::PxRigidStatic* groundPlane = physx::PxCreatePlane(*physics, physx::PxPlane(0, 1, 0, 0), *material);
 
@@ -145,7 +141,7 @@ namespace Project
 
 		//Set the query filter data of the ground plane so that the vehicle raycasts can hit the ground.
 		physx::PxFilterData qryFilterData;
-		//VehicleComponent::SetupDrivableSurface(qryFilterData);
+		DrivableSurface(qryFilterData);
 		shapes[0]->setQueryFilterData(qryFilterData);
 
 		//Set the simulation filter data of the ground plane so that it collides with the chassis of a vehicle but not the wheels.

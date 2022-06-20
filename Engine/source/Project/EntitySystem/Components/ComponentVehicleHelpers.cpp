@@ -260,4 +260,46 @@ namespace Project
 		const physx::PxVec3 chassisDims = chassisMax - chassisMin;
 		return chassisDims;
 	}
+	physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial)
+	{
+		physx::PxVehicleDrivableSurfaceType surfaceTypes[1];
+		surfaceTypes[0].mType = SURFACE_TYPE_TARMAC;
+
+		const physx::PxMaterial* surfaceMaterials[1];
+		surfaceMaterials[0] = defaultMaterial;
+
+		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* surfaceTirePairs =
+			physx::PxVehicleDrivableSurfaceToTireFrictionPairs::allocate(MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES);
+
+		surfaceTirePairs->setup(MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES, surfaceMaterials, surfaceTypes);
+
+		for (physx::PxU32 i = 0; i < MAX_NUM_SURFACE_TYPES; i++)
+		{
+			for (physx::PxU32 j = 0; j < MAX_NUM_TIRE_TYPES; j++)
+			{
+				surfaceTirePairs->setTypePairFriction(i, j, TireFrictionMultipliers[i][j]);
+			}
+		}
+		return surfaceTirePairs;
+	}
+	physx::PxRigidStatic* CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics)
+	{
+		//Add a plane to the scene.
+		physx::PxRigidStatic* groundPlane = physx::PxCreatePlane(*physics, physx::PxPlane(0, 1, 0, 0), *material);
+
+		//Get the plane shape so we can set query and simulation filter data.
+		physx::PxShape* shapes[1];
+		groundPlane->getShapes(shapes, 1);
+
+		//Set the query filter data of the ground plane so that the vehicle raycasts can hit the ground.
+		physx::PxFilterData qryFilterData;
+		DrivableSurface(qryFilterData);
+		shapes[0]->setQueryFilterData(qryFilterData);
+
+		//Set the simulation filter data of the ground plane so that it collides with the chassis of a vehicle but not the wheels.
+		shapes[0]->setSimulationFilterData(simFilterData);
+
+		return groundPlane;
+	}
+
 }

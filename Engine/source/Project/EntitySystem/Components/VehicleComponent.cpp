@@ -14,8 +14,10 @@ namespace Project
         if (m_Physics != nullptr)
         {
 			// Update vehicle positioning and rotation
-
+			UpdateVehiclePosAndRot();
+			
             // Move Vehicle
+			MoveVehicle(frameTime);
 
             return true;
         }
@@ -41,26 +43,24 @@ namespace Project
         // Create Material
         m_Material = m_Physics->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 
-
         // Create friction pairs
-        //m_FrictionPairs = CreateFrictionPairs();
+        m_FrictionPairs = CreateFrictionPairs(m_Material);
 
         // Create vehicle query for movement
-        //m_VehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, WheelSceneQueryPreFilterBlocking, NULL, m_Allocator);
-        //m_BatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *m_VehicleSceneQueryData, m_Physics->GetScene());
-
+        m_VehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, WheelSceneQueryPreFilterBlocking, NULL, m_Allocator);
+        m_BatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *m_VehicleSceneQueryData, m_Physics->GetScene());
 
         // Create the vehicles
-
         m_Vehicle = CreateVehicle();
         m_Vehicle->getRigidDynamicActor()->setGlobalPose({ m_Transform->GetPosition().x, m_Transform->GetPosition().y, m_Transform->GetPosition().z });
 
-       // m_Vehicle->setToRestState();
-       // m_Vehicle->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
-       // m_Vehicle->mDriveDynData.setUseAutoGears(true);
+        m_Vehicle->setToRestState();
+        m_Vehicle->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+        m_Vehicle->mDriveDynData.setUseAutoGears(true);
 
-        //VehicleInputData.setDigitalBrake(true);
-       m_Physics->GetScene()->addActor(*m_Vehicle->getRigidDynamicActor());
+        m_VehicleInputData.setDigitalBrake(true);
+		
+		m_Physics->GetScene()->addActor(*m_Vehicle->getRigidDynamicActor());
 
     }
 
@@ -282,7 +282,6 @@ namespace Project
 
 	void VehicleComponent::ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims, const physx::PxF32* wheelWidth, const physx::PxF32* wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets)
 	{
-
 		const physx::PxF32 numLeftWheels = numWheels / 2.0f;
 		const physx::PxF32 deltaZ = (wheelFrontZ - wheelRearZ) / (numLeftWheels - 1.0f);
 		
@@ -291,6 +290,79 @@ namespace Project
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
 		wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
 	}
+
+	void VehicleComponent::MoveVehicle(float frameTime)
+	{
+		UpdateInput();
+
+		if (KeyHeld(Key_W))
+			m_Accelerate = true;
+
+		if (KeyHeld(Key_D))
+			m_Right = true;
+
+		if (KeyHeld(Key_A))
+			m_Left = true;
+
+		if (KeyHeld(Key_S))
+			m_Brake = true;
+
+		if (KeyHeld(Key_Q))
+			m_Vehicle->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+
+		if (KeyHeld(Key_E))
+			m_Vehicle->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+		
+		physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTablesComp(SteerVsForwardSpeedDataComp, 4);
+		
+		physx::PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(KeySmoothingData, SteerVsForwardSpeedTablesComp, m_VehicleInputData, frameTime, IsVehicleInAir, *m_Vehicle);
+
+		//Raycasts.
+		physx::PxVehicleWheels* vehicles[1] = { m_Vehicle };
+		physx::PxRaycastQueryResult* raycastResults = m_VehicleSceneQueryData->getRaycastQueryResultBuffer(0);
+		const physx::PxU32 raycastResultsSize = m_VehicleSceneQueryData->getQueryResultBufferSize();
+		PxVehicleSuspensionRaycasts(m_BatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+
+		//Vehicle update.
+		const physx::PxVec3 grav = m_Physics->GetScene()->getGravity();
+		physx::PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
+		physx::PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, m_Vehicle->mWheelsSimData.getNbWheels()} };
+		PxVehicleUpdates(frameTime, grav, *m_FrictionPairs, 1, vehicles, vehicleQueryResults);
+
+		//Work out if the vehicle is in the air.
+		IsVehicleInAir = m_Vehicle->getRigidDynamicActor()->isSleeping() ? false : physx::PxVehicleIsInAir(vehicleQueryResults[0]);
+	}
+
+	void VehicleComponent::UpdateVehiclePosAndRot()
+	{
+		CVector3 pos;
+		pos.x = m_Vehicle->getRigidDynamicActor()->getGlobalPose().p.x;
+		pos.y = m_Vehicle->getRigidDynamicActor()->getGlobalPose().p.y;
+		pos.z = m_Vehicle->getRigidDynamicActor()->getGlobalPose().p.z;
+		m_Transform->SetPosition(pos);
+		CVector3 rot;
+		float w = m_Vehicle->getRigidDynamicActor()->getGlobalPose().q.w;
+		rot.x = m_Vehicle->getRigidDynamicActor()->getGlobalPose().q.x;
+		rot.y = m_Vehicle->getRigidDynamicActor()->getGlobalPose().q.y;
+		rot.z = m_Vehicle->getRigidDynamicActor()->getGlobalPose().q.z;
+		m_Transform->SetRotationFromQuat(rot, w);
+	}
+
+	void VehicleComponent::UpdateInput()
+	{
+		m_VehicleInputData.setDigitalAccel(m_Accelerate);
+		m_VehicleInputData.setDigitalSteerLeft(m_Left);
+		m_VehicleInputData.setDigitalSteerRight(m_Right);
+		m_VehicleInputData.setDigitalBrake(m_Brake);
+		m_VehicleInputData.setDigitalHandbrake(m_HandBrake);
+
+		m_Accelerate = false;
+		m_Left = false;
+		m_Right = false;
+		m_Brake = false;
+		m_HandBrake = false;
+	}
+
 
 
    
