@@ -23,7 +23,7 @@ namespace Project
         //-------------------------------------
 
         Model(Mesh* mesh, CVector3 position = { 0,0,0 }, CVector3 rotation = { 0,0,0 }, float scale = 1);
-
+       
 
         // The render function simply passes this model's matrices over to Mesh:Render.
         // All other per-frame constants must have been set already along with shaders, textures, samplers, states etc.

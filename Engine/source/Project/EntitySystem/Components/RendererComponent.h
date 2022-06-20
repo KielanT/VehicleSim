@@ -6,6 +6,7 @@
 #include "Project/EntitySystem/Entity.h"
 #include "Project/EntitySystem/EntityComponent.h"
 #include "Project/EntitySystem/Components/MeshComponent.h"
+//#include "Project/EntitySystem/Components/TransformComponent.h"
 #include "Project/Interfaces/IShader.h"
 #include "Graphics/DirectX11/CDirectX11Shader.h"
 #include "Project/Interfaces/IState.h"
@@ -47,7 +48,7 @@ namespace Project
 					std::filesystem::current_path(meshPath); // Sets the current path to the mesh path
 					m_Mesh = new Mesh(dx11Renderer, comp->GetMeshPath());
 
-					
+
 					m_Model = new Model(m_Mesh);
 
 
@@ -118,5 +119,7 @@ namespace Project
 		ID3D11SamplerState* m_SamplerState;
 
 		bool m_isRendered;
+
+		
 	};
 }

@@ -91,15 +91,16 @@ namespace Project
 		// Create new entity with next UID
 		Entity* newEntity = new Entity(m_NextUID, name);
 
-		// Add transform component to all entities 
-		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
-		newEntity->AddComponent(comp);
-
-		comp = new MeshComponent(fileMeshPath, newEntity, GetNewUID());
+	
+		EntityComponent* comp = new MeshComponent(fileMeshPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
 		comp = new RendererComponent(isRendered, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, filePath, pixelShader,
 			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
+		newEntity->AddComponent(comp);
+
+		// Add transform component to all entities 
+		comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
 		newEntity->AddComponent(comp);
 
 		// Get vector index for new entity and add it to vector
@@ -120,17 +121,18 @@ namespace Project
 		// Create new entity with next UID
 		Entity* newEntity = new Entity(m_NextUID, name);
 
-		// Add transform component to all entities 
-		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID());
-		newEntity->AddComponent(comp);
+		
 
 		std::string lightPath = "media/Light.x";
-		comp = new MeshComponent(lightPath, newEntity, GetNewUID());
+		EntityComponent* comp = new MeshComponent(lightPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
 		comp = new LightRendererComponent(m_Renderer, newEntity, GetNewUID(), m_Shader, m_State);
 		newEntity->AddComponent(comp);
 
+		// Add transform component to all entities 
+		 comp = new TransformComponent(newEntity, GetNewUID());
+		newEntity->AddComponent(comp);
 		// Get vector index for new entity and add it to vector
 		TUInt32 entityIndex = static_cast<TUInt32>(m_Entities.size());
 		m_Entities.push_back(newEntity);
@@ -155,14 +157,16 @@ namespace Project
 		Entity* newEntity = new Entity(m_NextUID, name);
 
 		// Add transform component to all entities 
-		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
-		newEntity->AddComponent(comp);
+		
 
-		comp = new MeshComponent(mainMeshPath, newEntity, GetNewUID());
+		EntityComponent* comp = new MeshComponent(mainMeshPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
 		comp = new RendererComponent(true, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, texturePath, pixelShader,
 			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
+		newEntity->AddComponent(comp);
+
+		 comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
 		newEntity->AddComponent(comp);
 
 		comp = new CollisionComponent(m_Renderer, collisionMeshPath, newEntity, GetNewUID());
@@ -193,14 +197,16 @@ namespace Project
 		Entity* newEntity = new Entity(m_NextUID, name);
 
 		// Add transform component to all entities 
-		EntityComponent* comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
-		newEntity->AddComponent(comp);
+		
 
-		comp = new MeshComponent(mainMeshPath, newEntity, GetNewUID());
+		EntityComponent* comp = new MeshComponent(mainMeshPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
 		comp = new RendererComponent(true, m_Renderer, newEntity, GetNewUID(), m_Shader, m_State, texturePath, pixelShader,
 			vertexShader, blendState, depthStencilState, rasterizerState, samplerState);
+		newEntity->AddComponent(comp);
+
+		comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
 		newEntity->AddComponent(comp);
 
 		comp = new PhysicsObjectComponent(newEntity, GetNewUID(), objectType, m_BodyType, m_Physics, collisionScale);

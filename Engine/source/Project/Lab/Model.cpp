@@ -15,11 +15,17 @@ namespace Project
 	Model::Model(Mesh* mesh, CVector3 position /*= { 0,0,0 }*/, CVector3 rotation /*= { 0,0,0 }*/, float scale /*= 1*/)
 		: mMesh(mesh)
 	{
+
 		// Set default matrices from mesh
 		mWorldMatrices.resize(mesh->NumberNodes());
 		for (int i = 0; i < mWorldMatrices.size(); ++i)
 			mWorldMatrices[i] = mesh->GetNodeDefaultMatrix(i);
+
+		SetPosition(position);
+		SetRotation(rotation);
+		SetScale(scale);
 	}
+
 
 
 
