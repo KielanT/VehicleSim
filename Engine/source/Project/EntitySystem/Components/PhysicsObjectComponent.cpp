@@ -21,6 +21,33 @@ namespace Project
 		
 		return shape;
 	}
+	physx::PxShape* PhysicsObjectComponent::GetConvextMeshShape()
+	{
+		physx::PxShape* shape = nullptr;
+		if (m_RigidType == RigidBodyType::Static && m_Entity->GetComponent("Renderer"))
+		{
+			RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+			physx::PxU32 vertexCount;
+			std::vector<physx::PxVec3> vertices;
+			vertexCount = comp->GetNumberOfVertices(1);
+
+			std::vector<CVector3> meshVertice = comp->GetVertices(1);
+
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ meshVertice[i].x,  meshVertice[i].y, meshVertice[i].z });
+			}
+			
+			physx::PxVec3* v = vertices.data();
+
+			physx::PxConvexMeshGeometry geom = CreateConvexMesh(v, vertexCount, m_Physics->GetPhysics(), m_Physics->GetCooking());
+			return shape = physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, geom, *m_Material);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 	physx::PxRigidStatic* PhysicsObjectComponent::CreatePlane()
 	{
 		physx::PxFilterData GroundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
@@ -41,6 +68,7 @@ namespace Project
 
 		return groundPlane;
 	}
+	
 	void PhysicsObjectComponent::UpdatePositionAndRotation()
 	{
 		if (m_RigidDynamic != nullptr)

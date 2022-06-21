@@ -12,7 +12,7 @@ namespace Project
 		Plane,
 		//Capsule,
 		//Sphere,
-		//ConvexMesh,
+		ConvexMesh,
 		//TriangleMesh,
 		//HeightField
     };
@@ -48,7 +48,7 @@ namespace Project
                 m_Actor = m_RigidDynamic;
                 break;
             case(RigidBodyType::Static):
-                //m_RigidStatic;
+                m_RigidStatic = m_Physics->GetPhysics()->createRigidStatic(physx::PxTransform({ m_Transform->GetPosition().x ,  m_Transform->GetPosition().y ,  m_Transform->GetPosition().z }));
                 break;
             }
 			
@@ -60,6 +60,10 @@ namespace Project
             case (PhysicsObjectType::Plane):
                 m_Shape = nullptr;
                 m_RigidStatic = CreatePlane();
+                m_Actor = m_RigidStatic;
+                break;
+            case(PhysicsObjectType::ConvexMesh):
+                m_Shape = GetConvextMeshShape();
                 m_Actor = m_RigidStatic;
                 break;
             }
@@ -74,7 +78,10 @@ namespace Project
         void UpdatePositionAndRotation();
     private:
         physx::PxShape* GetBoxShape();
+        physx::PxShape* GetConvextMeshShape();
+		
         physx::PxRigidStatic* CreatePlane();
+
 		
        
 

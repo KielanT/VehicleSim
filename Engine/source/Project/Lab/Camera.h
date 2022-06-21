@@ -90,6 +90,8 @@ public:
 		}
 	}
 
+	void SetIsChase(bool isChase) { m_IsChase = isChase; }
+
 	float FOV()       { return mFOVx;     }
 	float NearClip()  { return mNearClip; }
 	float FarClip()   { return mFarClip;  }
