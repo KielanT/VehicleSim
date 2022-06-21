@@ -320,11 +320,7 @@ namespace Project
 		{
 
 			TransformComponent* comp = static_cast<TransformComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Transform"));
-			CVector3 pos = comp->GetPosition();
-			pos.x -= 0.0f;
-			pos.y += 5.0f;
-			pos.z -= 20.0f;
-			//m_SceneCamera->SetPosition(pos);
+
 
 			CVector3 facingVector = comp->GetFacingVector();
 			facingVector.Normalise();
