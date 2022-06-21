@@ -9,7 +9,7 @@ namespace Project
     enum class PhysicsObjectType
     {
 		Box = 0,
-		//Plane,
+		Plane,
 		//Capsule,
 		//Sphere,
 		//ConvexMesh,
@@ -20,7 +20,7 @@ namespace Project
     enum class RigidBodyType
     {
         Dynamic = 0,
-        //Static
+        Static
     };
 	
     class PhysicsObjectComponent : public EntityComponent
@@ -45,6 +45,10 @@ namespace Project
             {
             case(RigidBodyType::Dynamic):
                 m_RigidDynamic = m_Physics->GetPhysics()->createRigidDynamic(physx::PxTransform({ m_Transform->GetPosition().x ,  m_Transform->GetPosition().y ,  m_Transform->GetPosition().z }));
+                m_Actor = m_RigidDynamic;
+                break;
+            case(RigidBodyType::Static):
+                //m_RigidStatic;
                 break;
             }
 			
@@ -53,22 +57,24 @@ namespace Project
             case (PhysicsObjectType::Box):
                 m_Shape = GetBoxShape();
                 break;
-          /*  case (PhysicsObjectType::Plane):
-                m_Shape = GetPlaneShape();
-                break;*/
+            case (PhysicsObjectType::Plane):
+                m_Shape = nullptr;
+                m_RigidStatic = CreatePlane();
+                m_Actor = m_RigidStatic;
+                break;
             }
 
           
 
             UpdatePositionAndRotation();
-            m_Physics->GetScene()->addActor(*m_RigidDynamic);
+            m_Physics->GetScene()->addActor(*m_Actor);
         }
         virtual bool Update(float frameTime) override;
-        physx::PxRigidDynamic* GetActor() {   return m_RigidDynamic; }
+        physx::PxRigidActor* GetActor() {  return m_Actor; }
         void UpdatePositionAndRotation();
     private:
         physx::PxShape* GetBoxShape();
-       // physx::PxShape* GetPlaneShape();
+        physx::PxRigidStatic* CreatePlane();
 		
        
 
@@ -84,6 +90,7 @@ namespace Project
         RigidBodyType m_RigidType;
 		
         physx::PxShape* m_Shape;
+        physx::PxRigidActor* m_Actor;
         physx::PxRigidDynamic* m_RigidDynamic = nullptr;
         physx::PxRigidStatic* m_RigidStatic = nullptr;
 		

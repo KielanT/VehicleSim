@@ -59,24 +59,17 @@ namespace Project
 
 			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 
-			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
-			m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform( 0.0f, 20.0f, 40.0f ), { 5.0f, 5.0f, 5.0f });
-			
 
 			/*****************************************************/
 			/**			   Set up actors and objects            **/
 			/*****************************************************/
 			// Set Actors and shapes here
 			
-			physx::PxFilterData GroundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
-			m_FloorPlane = CreateDrivablePlane(GroundPlaneSimFilterData, m_Material, m_PhysicsSystem->GetPhysics());
+			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
+			m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x", PhysicsObjectType::Plane, RigidBodyType::Static);
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
+			m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
 
-			/*****************************************************/
-			/**			   Add actors to the scene              **/
-			/*****************************************************/
-
-			m_PhysicsSystem->GetScene()->addActor(*m_FloorPlane);
 		}
 
 		return true;
@@ -84,6 +77,11 @@ namespace Project
 
 	bool TempSceneSix::InitScene()
 	{
+		if (m_PhysicsEntityManager->GetEntity("Plane")->GetComponent("Renderer"))
+		{
+			RendererComponent* comp = static_cast<RendererComponent*>(m_PhysicsEntityManager->GetEntity("Plane")->GetComponent("Renderer"));
+			comp->SetTexture("media/BasicTexOrange.png");
+		}
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
