@@ -146,8 +146,8 @@ namespace Project
 		return m_NextUID++;
 	}
 
-	TEntityUID EntityManager::CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath, 
-		VehicleSettings vehicleSettings /*= VehicleSettings()*/, std::string texturePath /*= "media/BasicTexWhite.png"*/,
+	TEntityUID EntityManager::CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath/*, 
+		VehicleSettings vehicleSettings*/ /*= VehicleSettings()*/, std::string texturePath /*= "media/BasicTexWhite.png"*/,
 		SEntityTransform transform /*= SEntityTransform()*/, EPixelShader pixelShader /*= EPixelShader::PixelLightingPixelShader*/, 
 		EVertexShader vertexShader /*= EVertexShader::PixelLightingVertexShader*/, EBlendState blendState /*= EBlendState::NoBlendingState*/, 
 		EDepthStencilState depthStencilState /*= EDepthStencilState::UseDepthBufferState*/, 
@@ -172,7 +172,7 @@ namespace Project
 		comp = new CollisionComponent(m_Renderer, collisionMeshPath, newEntity, GetNewUID());
 		newEntity->AddComponent(comp);
 
-		comp = new VehicleComponent(newEntity, GetNewUID(), m_Physics, vehicleSettings);
+		comp = new VehicleComponent(newEntity, GetNewUID(), m_Physics/*, vehicleSettings*/);
 		newEntity->AddComponent(comp);
 		
 		// Get vector index for new entity and add it to vector

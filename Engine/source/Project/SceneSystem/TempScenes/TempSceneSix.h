@@ -70,9 +70,6 @@ namespace Project
 
 		physx::PxMaterial* m_Material = nullptr;
 
-		physx::PxRigidStatic* m_FloorPlane = nullptr;
 
-		// Temp
-		physx::PxRigidStatic* CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics);
 	};
 }

@@ -67,7 +67,7 @@ namespace Project
 			
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
 			m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x", PhysicsObjectType::Plane, RigidBodyType::Static);
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj"/*, VehicleSettings()*/, path + "Compact/CompactBlue.png");
 			m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
 
 		}
@@ -128,23 +128,5 @@ namespace Project
 
 		if (m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
 	}
-	physx::PxRigidStatic* TempSceneSix::CreateDrivablePlane(const physx::PxFilterData& simFilterData, physx::PxMaterial* material, physx::PxPhysics* physics)
-	{
-		//Add a plane to the scene.
-		physx::PxRigidStatic* groundPlane = physx::PxCreatePlane(*physics, physx::PxPlane(0, 1, 0, 0), *material);
 
-		//Get the plane shape so we can set query and simulation filter data.
-		physx::PxShape* shapes[1];
-		groundPlane->getShapes(shapes, 1);
-
-		//Set the query filter data of the ground plane so that the vehicle raycasts can hit the ground.
-		physx::PxFilterData qryFilterData;
-		DrivableSurface(qryFilterData);
-		shapes[0]->setQueryFilterData(qryFilterData);
-
-		//Set the simulation filter data of the ground plane so that it collides with the chassis of a vehicle but not the wheels.
-		shapes[0]->setSimulationFilterData(simFilterData);
-
-		return groundPlane;
-	}
 }
