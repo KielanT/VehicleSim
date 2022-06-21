@@ -19,9 +19,6 @@ namespace Project
             // Move Vehicle
 			MoveVehicle(frameTime);
 
-			// Move Camera
-			MoveCamera();
-
             return true;
         }
         else
@@ -29,7 +26,6 @@ namespace Project
             return false;
         }
     }
-
 
     void VehicleComponent::SetupVehicle()
     {
@@ -462,21 +458,6 @@ namespace Project
 		m_Brake = false;
 		m_HandBrake = false;
 
-	}
-
-	void VehicleComponent::MoveCamera()
-	{
-		
-		if (m_Camera != nullptr)
-		{
-			CVector3 facingVector = m_Transform->GetFacingVector();
-			facingVector.Normalise();
-			m_Camera->SetPosition(m_Transform->GetPosition() - facingVector * 15.0f + m_Transform->GetYAxis() * 3.0f);
-
-			m_Camera->SetPosition({ m_Camera->Position().x, m_Camera->Position().y + 2, m_Camera->Position().z });
-
-			m_Camera->FaceTarget(m_Transform->GetPosition());
-		}
 	}
 
 

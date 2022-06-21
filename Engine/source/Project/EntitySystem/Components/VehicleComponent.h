@@ -7,7 +7,6 @@
 #include "Project/EntitySystem/Components/Vehicle/VehicleSettings.h"
 #include "Physics/PhysX4.1/VehicleSceneQueryData.h"
 #include "Physics/PhysX4.1/PhysxModelHelpers.h"
-#include "Project/Lab/Camera.h"
 
 
 namespace Project
@@ -31,9 +30,6 @@ namespace Project
 		~VehicleComponent();
 		
 		virtual bool Update(float frameTime) override;
-
-		void AttachMainCamera(Camera* camera) { m_Camera = camera; };
-		void DetachMainCamera() { m_Camera = nullptr; }
 		
 	private:
 		void SetupVehicle();
@@ -56,7 +52,7 @@ namespace Project
 		void MoveVehicle(float frameTime);
 		void UpdateVehiclePosAndRot();
 		void UpdateInput();
-		void MoveCamera();
+
 		
 		
 
@@ -73,8 +69,6 @@ namespace Project
 		physx::PxMaterial* m_Material;
 		
 		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* m_FrictionPairs;
-
-		Camera* m_Camera;
 
 		bool m_Accelerate = false;
 		bool m_Left = false;
