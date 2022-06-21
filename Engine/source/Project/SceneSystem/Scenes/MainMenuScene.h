@@ -8,14 +8,14 @@
 
 namespace Project
 {
-	class TempSceneSix : public IScene
+	class MainMenuScene : public IScene
 	{
 	public:
-		TempSceneSix(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
-		TempSceneSix(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
@@ -43,6 +43,17 @@ namespace Project
 		virtual float GetSpecularPower() override { return m_SpecularPower; }
 		virtual ColourRGBA GetBackgroundColour() override { return m_backgroundColour; }
 		virtual bool GetVSync() override { return m_VsyncOn; }
+
+	private:
+		// GUI Functions
+		void GUI();
+		void MainMenu();
+		void GameMode();
+		void LoadMaps();
+
+		bool m_ShowGameModeSelect = false;
+		bool m_IsHotLapSelected = false;
+		bool m_IsOpenWorldSelected = false;
 
 	private:
 		ErrorLogger m_Log;

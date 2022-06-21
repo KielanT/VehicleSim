@@ -64,7 +64,7 @@ namespace Project
 
 		CDirectX11SceneManager* m_sceneManager;
 
-		IPhysics* m_PhysicsSystem;
+		IPhysics* m_PhysicsSystem = nullptr;
 
 		physx::PxMaterial* m_Material = nullptr;
 
