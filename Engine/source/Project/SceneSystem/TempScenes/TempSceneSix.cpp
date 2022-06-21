@@ -77,11 +77,17 @@ namespace Project
 
 	bool TempSceneSix::InitScene()
 	{
+		if (m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"))
+		{
+			VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
+			comp->AttachMainCamera(m_SceneCamera);
+		}
 		if (m_PhysicsEntityManager->GetEntity("Plane")->GetComponent("Renderer"))
 		{
 			RendererComponent* comp = static_cast<RendererComponent*>(m_PhysicsEntityManager->GetEntity("Plane")->GetComponent("Renderer"));
 			comp->SetTexture("media/BasicTexOrange.png");
 		}
+		
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
