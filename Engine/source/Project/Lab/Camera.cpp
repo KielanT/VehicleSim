@@ -64,9 +64,15 @@ void Camera::FaceTarget(CVector3 target)
 void Camera::UpdateMatrices()
 {
     // "World" matrix for the camera - treat it like a model at first
-    mWorldMatrix = MatrixRotationZ(mWorldMatrix.GetEulerAngles().z) * MatrixRotationX(mWorldMatrix.GetEulerAngles().x) * MatrixRotationY(mWorldMatrix.GetEulerAngles().y) * MatrixTranslation(mWorldMatrix.GetPosition());
-
-    // View matrix is the usual matrix used for the camera in shaders, it is the inverse of the world matrix (see lectures)
+	if(m_IsChase)
+	{
+		mWorldMatrix = MatrixRotationZ(mWorldMatrix.GetEulerAngles().z) * MatrixRotationX(mWorldMatrix.GetEulerAngles().x) * MatrixRotationY(mWorldMatrix.GetEulerAngles().y) * MatrixTranslation(mWorldMatrix.GetPosition());
+	}
+	else
+	{
+		mWorldMatrix = MatrixRotationZ(mRotation.z) * MatrixRotationX(mRotation.x) * MatrixRotationY(mRotation.y) * MatrixTranslation(mPosition);
+	}
+   // View matrix is the usual matrix used for the camera in shaders, it is the inverse of the world matrix (see lectures)
     mViewMatrix = InverseAffine(mWorldMatrix);
 
     // Projection matrix, how to flatten the 3D world onto the screen (needs field of view, near and far clip, aspect ratio)

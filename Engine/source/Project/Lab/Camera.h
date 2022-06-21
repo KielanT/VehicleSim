@@ -20,12 +20,15 @@ public:
 	//-------------------------------------
 
 	// Constructor - initialise all settings, sensible defaults provided for everything.
-	Camera(CVector3 position = {0,0,0}, CVector3 rotation = {0,0,0}, 
+	Camera(bool isChase = false, CVector3 position = {0,0,0}, CVector3 rotation = {0,0,0}, 
            float fov = PI/3, float aspectRatio = 4.0f / 3.0f, float nearClip = 0.1f, float farClip = 10000.0f)
         : mPosition(position), mRotation(rotation), mFOVx(fov), mAspectRatio(aspectRatio), mNearClip(nearClip), mFarClip(farClip)
     {
+		m_IsChase = isChase;
+
 		SetPosition(mPosition);
 		SetRotation(mRotation);
+		
     }
 
 
@@ -40,13 +43,52 @@ public:
 	// Getters / setters
 
 	//CVector3 Position() { return mPosition; }
-	CVector3 Position() { return  mWorldMatrix.GetPosition(); }
-	//CVector3 Rotation()  { return mRotation; }
-	CVector3 Rotation()  { return mWorldMatrix.GetEulerAngles(); }
-	//void SetPosition(CVector3 position)  { mPosition = position; }
-	void SetPosition(CVector3 position) { mWorldMatrix.SetRow(3, position); UpdateMatrices(); }
+	CVector3 Position() 
+	{ 
+		if(m_IsChase)
+		{
+			return  mWorldMatrix.GetPosition();
+		}
+		else
+		{
+			return mPosition;
+		}
+	}
+	CVector3 Rotation()  
+	{ 
+		if (m_IsChase)
+		{
+			return mWorldMatrix.GetEulerAngles();
+		}
+		else
+		{
+			return mRotation;
+		}
+	}
+	void SetPosition(CVector3 position)
+	{
+		if (m_IsChase)
+		{
+			mWorldMatrix.SetRow(3, position); UpdateMatrices();
+		}
+		else
+		{
+			mPosition = position;
+		}
+	}
+	//void SetPosition(CVector3 position) { }
 	//void SetRotation(CVector3 rotation)  { mRotation = rotation;  }
-	void SetRotation(CVector3 rotation)  { mWorldMatrix = CMatrix4x4(Position(), rotation); UpdateMatrices(); }
+	void SetRotation(CVector3 rotation)
+	{
+		if (m_IsChase)
+		{
+			mWorldMatrix = CMatrix4x4(Position(), rotation); UpdateMatrices();
+		}
+		else
+		{
+			mRotation = rotation;
+		}
+	}
 
 	float FOV()       { return mFOVx;     }
 	float NearClip()  { return mNearClip; }
@@ -92,5 +134,7 @@ private:
 
 	const float ROTATION_SPEED = 2.0f;
 	const float MOVEMENT_SPEED = 50.0f;
+
+	bool m_IsChase = false;
 };
 

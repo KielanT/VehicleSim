@@ -39,7 +39,7 @@ namespace Project
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 
-		m_SceneCamera = new Camera();
+		m_SceneCamera = new Camera(false);
 
 
 		/*****************************************************/
@@ -83,6 +83,8 @@ namespace Project
 			comp->AttachMainCamera(m_SceneCamera);
 		}*/
 
+		
+
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
@@ -111,7 +113,7 @@ namespace Project
 
 
 
-
+		m_SceneCamera->Control(frameTime);
 
 		m_EntityManager->UpdateAllEntities(frameTime);
 
