@@ -191,7 +191,7 @@ namespace Project
 			ImGui::End();
 
 			if (bMapOneBtn) m_sceneManager->LoadScene(1);
-			if (bMapTwoBtn) m_sceneManager->LoadScene(2);
+			if (bMapTwoBtn) m_sceneManager->LoadScene(3);
 
 		}
 		if (m_IsOpenWorldSelected && !m_IsHotLapSelected)

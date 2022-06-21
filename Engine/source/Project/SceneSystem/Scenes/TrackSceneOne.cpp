@@ -1,10 +1,10 @@
 #include "ppch.h"
-#include "TempSceneSix.h"
+#include "TrackSceneOne.h"
 
 namespace Project
 {
 
-	TempSceneSix::TempSceneSix(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour,
+	TrackSceneOne::TrackSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour,
 		float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -20,7 +20,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 
-	TempSceneSix::TempSceneSix(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
+	TrackSceneOne::TrackSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
 		CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -35,7 +35,7 @@ namespace Project
 
 	}
 
-	bool TempSceneSix::InitGeometry()
+	bool TrackSceneOne::InitGeometry()
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 
@@ -46,7 +46,7 @@ namespace Project
 		/**			   Create the entities                  **/
 		/*****************************************************/
 		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
-		
+
 		std::string path = "media/";
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
 
@@ -64,33 +64,32 @@ namespace Project
 			/**			   Set up actors and objects            **/
 			/*****************************************************/
 			// Set Actors and shapes here
-			
+
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
-			m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x", "media/BasicTexOrange.png", PhysicsObjectType::Plane, RigidBodyType::Static);
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
-			m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", "media/BasicTexWhite.png", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
+			m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x","media/BasicTexOrange.png", PhysicsObjectType::Plane, RigidBodyType::Static);
+			//m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
+			//m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
 
 		}
 
 		return true;
 	}
 
-	bool TempSceneSix::InitScene()
+	bool TrackSceneOne::InitScene()
 	{
-		if (m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"))
+		/*if (m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"))
 		{
 			VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
 			comp->AttachMainCamera(m_SceneCamera);
-		}
+		}*/
 
-		
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
 		return true;
 	}
 
-	void TempSceneSix::RenderScene()
+	void TrackSceneOne::RenderScene()
 	{
 		if (m_PhysicsEntityManager != nullptr)
 		{
@@ -99,7 +98,7 @@ namespace Project
 		m_EntityManager->RenderAllEntities();
 	}
 
-	void TempSceneSix::UpdateScene(float frameTime)
+	void TrackSceneOne::UpdateScene(float frameTime)
 	{
 
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
@@ -110,7 +109,7 @@ namespace Project
 		}
 
 
-			
+
 
 
 
@@ -118,7 +117,7 @@ namespace Project
 
 	}
 
-	void TempSceneSix::ReleaseResources()
+	void TrackSceneOne::ReleaseResources()
 	{
 		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 

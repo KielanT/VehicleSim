@@ -60,8 +60,8 @@ namespace Project
 			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
 			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
 
-		TEntityUID CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, PhysicsObjectType objectType, RigidBodyType m_BodyType,
-			SEntityTransform transform = SEntityTransform(0.0f, 0.0f, 0.0f), CVector3 collisionScale = {1.0f, 1.0f, 1.0f}, std::string texturePath = "media/BasicTexWhite.png",
+		TEntityUID CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, std::string texturePath, PhysicsObjectType objectType, RigidBodyType m_BodyType,
+			SEntityTransform transform = SEntityTransform(0.0f, 0.0f, 0.0f), CVector3 collisionScale = {1.0f, 1.0f, 1.0f}, 
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
 			EBlendState blendState = EBlendState::NoBlendingState,

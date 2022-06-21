@@ -188,8 +188,8 @@ namespace Project
 		return m_NextUID++;
 	}
 
-	TEntityUID EntityManager::CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, PhysicsObjectType objectType, 
-		RigidBodyType m_BodyType, SEntityTransform transform, CVector3 collisionScale, std::string texturePath,
+	TEntityUID EntityManager::CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, std::string texturePath, PhysicsObjectType objectType,
+		RigidBodyType m_BodyType, SEntityTransform transform, CVector3 collisionScale, 
 		EPixelShader pixelShader, EVertexShader vertexShader, EBlendState blendState, EDepthStencilState depthStencilState, 
 		ERasterizerState rasterizerState, ESamplerState samplerState)
 	{
