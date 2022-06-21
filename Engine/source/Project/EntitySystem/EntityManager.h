@@ -51,8 +51,8 @@ namespace Project
 
 		TEntityUID CreateLightEntity(const std::string& name);
 
-		TEntityUID CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath/*,
-			VehicleSettings vehicleSettings = VehicleSettings()*/, std::string texturePath = "media/BasicTexWhite.png",
+		TEntityUID CreateVehicleEntity(const std::string& name, std::string mainMeshPath, std::string collisionMeshPath,
+			VehicleSettings vehicleSettings = VehicleSettings(), std::string texturePath = "media/BasicTexWhite.png",
 			SEntityTransform transform = SEntityTransform(), EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
 			EBlendState blendState = EBlendState::NoBlendingState,

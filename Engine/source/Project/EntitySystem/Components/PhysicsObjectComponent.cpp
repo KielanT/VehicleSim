@@ -1,6 +1,6 @@
 #include "ppch.h"
 #include "PhysicsObjectComponent.h"
-#include "ComponentVehicleHelpers.h"
+#include "Vehicle/ComponentVehicleHelpers.h"
 
 namespace Project
 {
