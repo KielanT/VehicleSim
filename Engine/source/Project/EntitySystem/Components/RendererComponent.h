@@ -97,7 +97,7 @@ namespace Project
 		void SetSamplerState(ID3D11SamplerState* ss) { m_SamplerState = ss; }
 
 		unsigned int GetNumberOfVertices(int index) { return m_Mesh->GetNumberVertices(index); }
-		std::vector<CVector3> GetVertices(int index) { return m_Mesh->GetVertices(index); }
+		std::vector<CVector3> GetVertices() { return m_Mesh->GetVertices(); }
 		
 		bool GetIsRendered() { return m_isRendered; }
 

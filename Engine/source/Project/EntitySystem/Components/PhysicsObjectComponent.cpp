@@ -29,9 +29,9 @@ namespace Project
 			RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
 			physx::PxU32 vertexCount;
 			std::vector<physx::PxVec3> vertices;
-			vertexCount = comp->GetNumberOfVertices(1);
+			vertexCount = comp->GetNumberOfVertices(0);
 
-			std::vector<CVector3> meshVertice = comp->GetVertices(1);
+			std::vector<CVector3> meshVertice = comp->GetVertices();
 
 			for (int i = 0; i < vertexCount; ++i)
 			{

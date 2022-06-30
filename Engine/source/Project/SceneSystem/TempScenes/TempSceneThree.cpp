@@ -558,7 +558,7 @@ namespace Project
 			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
 			vertexCount = comp->GetNumberOfVertices(index);
 
-			std::vector<CVector3> nChassis = comp->GetVertices(index);
+			std::vector<CVector3> nChassis = comp->GetVertices();
 
 			for (int i = 0; i < vertexCount; ++i)
 			{
@@ -581,7 +581,7 @@ namespace Project
 			RendererComponent* comp = static_cast<RendererComponent*>(m_EntityManager->GetEntity("Car")->GetComponent("Renderer"));
 			vertexCount = comp->GetNumberOfVertices(index);
 
-			std::vector<CVector3> Chassis = comp->GetVertices(index);
+			std::vector<CVector3> Chassis = comp->GetVertices();
 			
 			for (int i = 0; i < vertexCount; ++i)
 			{

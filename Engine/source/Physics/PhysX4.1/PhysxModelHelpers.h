@@ -19,6 +19,7 @@ namespace Project
 			physx::PxDefaultMemoryInputData id(buf.getData(), buf.getSize());
 			convexMesh = physics->createConvexMesh(id);
 		}
+		
 
 		return convexMesh;
 	}

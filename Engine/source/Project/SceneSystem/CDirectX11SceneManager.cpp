@@ -49,7 +49,7 @@ namespace Project
 
 	void CDirectX11SceneManager::CreateScenesFromFile()
 	{
-
+		
 	}
 
 	void CDirectX11SceneManager::CreateSceneFromObject()
@@ -93,6 +93,7 @@ namespace Project
 		m_Scenes[m_SceneIndex]->InitScene();
 
 	}
+
 
 	void CDirectX11SceneManager::RemoveCurrentScene()
 	{

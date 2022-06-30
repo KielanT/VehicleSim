@@ -53,12 +53,29 @@ namespace Project
 		const physx::PxVehicleClutchData DefaultClutch();
 		const physx::PxVehicleSuspensionData DefaultSuspension();
 
+
+		void SetChassisMass(physx::PxF32 mass) { m_ChassisMass = mass; }
+		void SetWheelMass(physx::PxF32 mass) { m_WheelMass = mass; }
+		void SetMaxSteer(physx::PxF32 steer) { m_MaxSteer = steer; }
+
+		void SetDifferential(physx::PxVehicleDifferential4WData diff) { m_Diff = diff; }
+		void SetEngine(physx::PxVehicleEngineData engine) { m_Engine = engine; }
+		void SetGears(physx::PxVehicleGearsData gears) { m_Gears = gears; }
+		void SetClutch(physx::PxVehicleClutchData clutch) { m_Clutch = clutch; }
+		void SetSuspension(physx::PxVehicleSuspensionData susp[], int size) 
+		{ 
+			for(int i = 0; i < size; ++i)
+			{
+				m_Suspension[i] = susp[i];
+			}
+		}
+		
 	private:
 
 		bool m_IsAuto;
 
 		// Main Vehicle Settings
-		physx::PxF32 m_ChassisMass;
+		physx::PxF32 m_ChassisMass; 
 
 		physx::PxVehicleDifferential4WData m_Diff;
 		physx::PxVehicleEngineData m_Engine;
@@ -66,9 +83,9 @@ namespace Project
 		physx::PxVehicleClutchData m_Clutch;
 
 		// Wheel Settings
-		physx::PxF32 m_WheelMass;
+		physx::PxF32 m_WheelMass; 
 
-		physx::PxF32 m_MaxSteer;
+		physx::PxF32 m_MaxSteer; 
 
 		int m_NumWheels;
 

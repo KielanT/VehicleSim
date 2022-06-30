@@ -191,7 +191,6 @@ namespace Project
             while (position != positionEnd)
             {
                 *(CVector3*)position = *assimpPosition;
-                verticesArray.push_back(*(CVector3*)assimpPosition);
                 position += subMesh.vertexSize;
                 ++assimpPosition;
             }
@@ -331,7 +330,22 @@ namespace Project
                 *index++ = assimpMesh->mFaces[face].mIndices[1];
                 *index++ = assimpMesh->mFaces[face].mIndices[2];
             }
+            
+            for (int i = 0; i < assimpMesh->mNumVertices; ++i)
+            {
+                verticesArray.push_back({ assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z });
+            }
+			
+            
 
+            /*int max = scene->mMeshes[0]->mNumVertices;
+
+            for (int i = 0; i < max - 1; ++i)
+            {
+                verticesArray.push_back({ scene->mMeshes[0]->mVertices[i].x, scene->mMeshes[0]->mVertices[i].y, scene->mMeshes[0]->mVertices[i].z });
+            }	
+            */	
+            
 
             //-----------------------------------
 

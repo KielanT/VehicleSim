@@ -78,6 +78,8 @@ namespace Project
 
 		ID3D11Buffer* CreateConstantBuffer(int size); // Function used for creating a constant buffer
 
+		bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
+
 	public:
 		PerFrameConstants PerFrameConstants; // Used for setting per frame constant variables and sending them to the GPU
 		ID3D11Buffer*	  PerFrameConstantBuffer;

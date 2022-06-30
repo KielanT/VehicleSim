@@ -37,7 +37,7 @@ namespace Project
 		virtual bool Update(float frameTime) override;
 
 		unsigned int GetNumberOfVertices(int index) { return m_Mesh->GetNumberVertices(index); }
-		std::vector<CVector3> GetVertices(int index) { return m_Mesh->GetVertices(index); }
+		std::vector<CVector3> GetVertices(int index) { return m_Mesh->GetVertices(); }
 
 	private:
 		IRenderer* m_Renderer;

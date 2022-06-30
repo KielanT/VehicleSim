@@ -68,6 +68,11 @@ namespace Project
 
 		physx::PxMaterial* m_Material = nullptr;
 
+		// TEMP
+		physx::PxShape* m_TrackShape = nullptr;
+		physx::PxRigidStatic* m_Track = nullptr;
+
+		physx::PxConvexMesh* MakeTrack(int index, Entity* entity);
 
 	};
 }

@@ -114,12 +114,13 @@ namespace Project
 
         unsigned int GetNumberVertices(int index)
         {
-            int i = mSubMeshes.size();
-           return mSubMeshes[index].numVertices;// vertex[index];
+           int i = mSubMeshes.size();
+           return mSubMeshes[index].numVertices;
         }
 
-        std::vector<CVector3> GetVertices(int index)
+        std::vector<CVector3> GetVertices()
         {
+            
             return verticesArray;
         }
 
