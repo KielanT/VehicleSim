@@ -66,9 +66,9 @@ namespace Project
 			// Set Actors and shapes here
 			
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
-			m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x", "media/BasicTexOrange.png", PhysicsObjectType::Plane, RigidBodyType::Static);
+			//m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x", "media/BasicTexOrange.png", PhysicsObjectType::Plane, RigidBodyType::Static);
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
-			m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", "media/BasicTexWhite.png", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
+			//m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", "media/BasicTexWhite.png", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
 
 		}
 

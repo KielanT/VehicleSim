@@ -39,7 +39,7 @@ namespace Project
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 
-		m_SceneCamera = new Camera(false);
+		m_SceneCamera = new Camera(true);
 
 
 		/*****************************************************/
@@ -48,11 +48,6 @@ namespace Project
 		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
 
 		std::string path = "media/";
-		//m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
-		//m_EntityManager->CreateModelEntity("Track", path + "TrackOneInner.obj");
-		//m_EntityManager->CreateModelEntity("Track", path + "TestCube.obj");
-		m_EntityManager->CreateModelEntity("Track", path + "TrackOneInner.obj");
-		//m_EntityManager->CreateModelEntity("Car", path + "Compact/untitled1Parented.obj", true, path + "Compact/CompactBlue.png");
 
 		if (m_EnablePhysics)
 		{
@@ -70,17 +65,10 @@ namespace Project
 			// Set Actors and shapes here
 
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
-			//m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x","media/BasicTexOrange.png", PhysicsObjectType::Plane, RigidBodyType::Static);
-			//m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
-			//m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", "media/BasicTexOrange.png", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
-			//m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "TrackOneInner.obj", "media/Compact/CompactBlue.png", PhysicsObjectType::ConvexMesh, RigidBodyType::Static, SEntityTransform(10.0f, 0.0f, 0.0f));
-
-
-			m_Track = m_PhysicsSystem->GetPhysics()->createRigidStatic(physx::PxTransform({ 10.0f, 0.0f, 0.0f }));
-			physx::PxConvexMeshGeometry geom = MakeTrack(0, m_EntityManager->GetEntity("Track"));
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 			
-			m_TrackShape = physx::PxRigidActorExt::createExclusiveShape(*m_Track, geom, *m_Material);
-			m_PhysicsSystem->GetScene()->addActor(*m_Track);
+		
 		}
 
 		return true;
@@ -88,11 +76,11 @@ namespace Project
 
 	bool TrackSceneOne::InitScene()
 	{
-		//if (m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"))
-		//{
-		//	VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
-		//	comp->AttachMainCamera(m_SceneCamera);
-		//}
+		if (m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"))
+		{
+			VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
+			comp->AttachMainCamera(m_SceneCamera);
+		}
 		
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
@@ -114,6 +102,8 @@ namespace Project
 
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
 		{
+
+			
 			m_PhysicsEntityManager->UpdateAllEntities(frameTime);
 			m_PhysicsSystem->GetScene()->simulate(frameTime);
 			m_PhysicsSystem->GetScene()->fetchResults(true);

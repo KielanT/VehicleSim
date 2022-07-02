@@ -11,7 +11,7 @@ namespace Project
 		Box = 0,
 		Plane,
 		//Capsule,
-		//Sphere,
+		Sphere,
 		ConvexMesh,
 		//TriangleMesh,
 		//HeightField
@@ -57,6 +57,9 @@ namespace Project
             case (PhysicsObjectType::Box):
                 m_Shape = GetBoxShape();
                 break;
+            case(PhysicsObjectType::Sphere):
+                m_Shape = GetSphereShape();
+                break;
             case (PhysicsObjectType::Plane):
                 m_Shape = nullptr;
                 m_RigidStatic = CreatePlane();
@@ -78,6 +81,7 @@ namespace Project
         void UpdatePositionAndRotation();
     private:
         physx::PxShape* GetBoxShape();
+        physx::PxShape* GetSphereShape();
         physx::PxShape* GetConvextMeshShape();
 		
         physx::PxRigidStatic* CreatePlane();

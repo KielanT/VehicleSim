@@ -21,6 +21,16 @@ namespace Project
 		
 		return shape;
 	}
+	physx::PxShape* PhysicsObjectComponent::GetSphereShape()
+	{
+		physx::PxShape* shape = nullptr;
+		if (m_RigidType == RigidBodyType::Dynamic)
+		{
+			shape = physx::PxRigidActorExt::createExclusiveShape(*m_RigidDynamic, physx::PxSphereGeometry(m_CollisionScale.x), *m_Material);
+		}
+
+		return shape;
+	}
 	physx::PxShape* PhysicsObjectComponent::GetConvextMeshShape()
 	{
 		physx::PxShape* shape = nullptr;

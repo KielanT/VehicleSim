@@ -11,8 +11,8 @@
 #include "Graphics/DirectX11/CDirectX11States.h"
 #include "Math/CVector3.h"
 #include "Components/VehicleComponent.h"
-#include "Components/PhysicsObjectComponent.h"
-
+#include "Components/PhysicsDynamicObjectComponent.h" 
+#include "Components/PhysicsStaticObjectComponent.h" 
 
 namespace Project
 {
@@ -59,9 +59,20 @@ namespace Project
 			EDepthStencilState depthStencilState = EDepthStencilState::UseDepthBufferState,
 			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
 			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
-
-		TEntityUID CreatePhysicsEntity(const std::string& name, std::string mainMeshPath, std::string texturePath, PhysicsObjectType objectType, RigidBodyType m_BodyType,
-			SEntityTransform transform = SEntityTransform(0.0f, 0.0f, 0.0f), CVector3 collisionScale = {1.0f, 1.0f, 1.0f}, 
+		
+		TEntityUID CreatePhysicsDynamicEntity(const std::string& name, PhysicsDynmaicObjectType objectType, std::string mainMeshPath,
+			SEntityTransform transform = SEntityTransform(), CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isDrivable = false,
+			std::string texturePath = "media/BasicTexWhite.png",
+			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
+			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
+			EBlendState blendState = EBlendState::NoBlendingState,
+			EDepthStencilState depthStencilState = EDepthStencilState::UseDepthBufferState,
+			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
+			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
+		
+		TEntityUID CreatePhysicsStaticEntity(const std::string& name, PhysicsStaticObjectType objectType, std::string mainMeshPath,
+			SEntityTransform transform = SEntityTransform(), CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isDrivable = false,
+			std::string texturePath = "media/BasicTexWhite.png",
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
 			EBlendState blendState = EBlendState::NoBlendingState,

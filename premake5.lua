@@ -15,6 +15,7 @@ workspace "VehicleSim"
 	IncludeDir["ImGui"] = "Engine/external/imgui"
 	IncludeDir["ImGuiBackends"] = "Engine/external/imgui/backends"
 	IncludeDir["PhysX"] = "Engine/external/PhysX/include"
+	IncludeDir["vhacd"] = "Engine/external/vhacd/include"
 
 
 	LibDir = {}
@@ -54,6 +55,7 @@ project "Engine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.ImGuiBackends}",
 		"%{IncludeDir.PhysX}",
+		"%{IncludeDir.vhacd}",
 
 	}
 
