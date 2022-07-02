@@ -28,6 +28,11 @@ namespace Project
 		}
 	}
 	
+	physx::PxShape* PhysicsStaticObjectComponent::GetBoxShape()
+	{
+		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, physx::PxBoxGeometry(m_CollisionScale.x, m_CollisionScale.y, m_CollisionScale.z), *m_Material);;
+	}
+
 	physx::PxShape* PhysicsStaticObjectComponent::GetPlane()
 	{
 		physx::PxShape* shapes[1];
@@ -40,5 +45,29 @@ namespace Project
 		shapes[0]->setSimulationFilterData(GroundPlaneSimFilterData);
 		
 		return shapes[0];
+	}
+	physx::PxShape* PhysicsStaticObjectComponent::GetConvexMesh()
+	{
+		physx::PxShape* shape = nullptr;
+		if (m_Entity->GetComponent("Renderer"))
+		{
+			RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+			physx::PxU32 vertexCount;
+			std::vector<physx::PxVec3> vertices;
+			vertexCount = comp->GetNumberOfVertices(0);
+
+			std::vector<CVector3> meshVertice = comp->GetVertices();
+
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ meshVertice[i].x,  meshVertice[i].y, meshVertice[i].z });
+			}
+
+			physx::PxVec3* v = vertices.data();
+
+			physx::PxConvexMeshGeometry geom = CreateConvexMesh(v, vertexCount, m_Physics->GetPhysics(), m_Physics->GetCooking());
+			return shape = physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, geom, *m_Material);
+		}
+		return shape;
 	}
 }

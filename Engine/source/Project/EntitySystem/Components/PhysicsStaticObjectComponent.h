@@ -12,7 +12,7 @@ namespace Project
 		Plane,
 		//Capsule,
 		//Sphere,
-		//ConvexMesh,
+		ConvexMesh,
 		//TriangleMesh,
 		//HeightField
 	};
@@ -44,10 +44,13 @@ namespace Project
 			switch (m_ObjectType)
 			{
 			case (PhysicsStaticObjectType::Box):
-				//m_Shape = GetBoxShape();
+				m_Shape = GetBoxShape();
 				break;
 			case(PhysicsStaticObjectType::Plane):
 				m_Shape = GetPlane();
+				break;
+			case(PhysicsStaticObjectType::ConvexMesh):
+				m_Shape = GetConvexMesh();
 				break;
 			}
 
@@ -59,8 +62,9 @@ namespace Project
 		void UpdatePositionAndRotation();
 
 	private:
-		//physx::PxShape* GetBoxShape();
+		physx::PxShape* GetBoxShape();
 		physx::PxShape* GetPlane();
+		physx::PxShape* GetConvexMesh();
 		
 	private:
 		Entity* m_Entity;

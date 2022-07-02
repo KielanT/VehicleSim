@@ -50,7 +50,7 @@ namespace Project
 				
 				break;*/
 			case(PhysicsDynmaicObjectType::ConvexMesh):
-				//m_Shape = GetConvextMeshShape();
+				m_Shape = GetConvextMeshShape();
 				break;
 			}
 
@@ -60,10 +60,13 @@ namespace Project
 		
 		virtual bool Update(float frameTime) override;
 		void UpdatePositionAndRotation();
+
+		physx::PxRigidDynamic* GetActor() { return m_RigidDynamic; }
 		
 	private:
 		physx::PxShape* GetBoxShape();
 		physx::PxShape* GetSphereShape();
+		physx::PxShape* GetConvextMeshShape();
 
 
 	private:

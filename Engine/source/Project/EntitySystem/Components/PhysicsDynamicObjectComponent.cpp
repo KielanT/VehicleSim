@@ -1,5 +1,6 @@
 #include "ppch.h"
 #include "PhysicsDynamicObjectComponent.h"
+#include "Physics/PhysX4.1/PhysxModelHelpers.h"
 
 namespace Project
 {
@@ -33,6 +34,31 @@ namespace Project
 	physx::PxShape* PhysicsDynamicObjectComponent::GetSphereShape()
 	{
 		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidDynamic, physx::PxSphereGeometry(m_CollisionScale.x), *m_Material);
+	}
+
+	physx::PxShape* PhysicsDynamicObjectComponent::GetConvextMeshShape()
+	{
+		physx::PxShape* shape = nullptr;
+		if (m_Entity->GetComponent("Renderer"))
+		{
+			RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+			physx::PxU32 vertexCount;
+			std::vector<physx::PxVec3> vertices;
+			vertexCount = comp->GetNumberOfVertices(0);
+
+			std::vector<CVector3> meshVertice = comp->GetVertices();
+
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				vertices.push_back({ meshVertice[i].x,  meshVertice[i].y, meshVertice[i].z });
+			}
+
+			physx::PxVec3* v = vertices.data();
+
+			physx::PxConvexMeshGeometry geom = CreateConvexMesh(v, vertexCount, m_Physics->GetPhysics(), m_Physics->GetCooking());
+			return shape = physx::PxRigidActorExt::createExclusiveShape(*m_RigidDynamic, geom, *m_Material);
+		}
+		return shape;
 	}
 
 }

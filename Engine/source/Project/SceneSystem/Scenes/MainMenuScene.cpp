@@ -223,8 +223,8 @@ namespace Project
 			ImGui::SetWindowFontScale(2.0f);
 			ImGui::SetWindowSize({ 216,253 });
 			ImGui::SetWindowPos({ 448,63 });
-			bool bMapOneBtn = ImGui::Button("HP MAP ONE", { 200, 100 });
-			bool bMapTwoBtn = ImGui::Button("HP MAP TWO", { 200, 100 });
+			bool bMapOneBtn = ImGui::Button("HL MAP ONE", { 200, 100 });
+			bool bMapTwoBtn = ImGui::Button("HL MAP TWO", { 200, 100 });
 
 			ImGui::End();
 
@@ -233,11 +233,11 @@ namespace Project
 				m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 1;
 			}
-			if (bMapTwoBtn)
+			/*if (bMapTwoBtn)
 			{
 				m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 3;
-			}
+			}*/
 
 			if (m_IsMapSelected)
 			{
@@ -252,8 +252,20 @@ namespace Project
 			ImGui::SetWindowSize({ 216,253 });
 			ImGui::SetWindowPos({ 448,63 });
 			ImGui::SetWindowFontScale(2.0f);
-			bool bHotLapBtn = ImGui::Button("OP MAP ONE", { 200, 100 });
-			bool bOepnWorldBtn = ImGui::Button("OP MAP TWO", { 200, 100 });
+			bool bMapOneBtn = ImGui::Button("OW MAP ONE", { 200, 100 });
+			bool bMapTwoBtn = ImGui::Button("OW MAP TWO", { 200, 100 });
+
+			if (bMapOneBtn)
+			{
+				m_IsMapSelected = !m_IsMapSelected;
+				m_MapIndex = 2;
+			}			
+			
+			if (m_IsMapSelected)
+			{
+				VehicleSetup();
+			}
+			
 			ImGui::End();
 		}
 	}

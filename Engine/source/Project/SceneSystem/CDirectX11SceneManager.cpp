@@ -4,6 +4,7 @@
 #include "Graphics/DirectX11/DirectX11Renderer.h"
 #include "Project/SceneSystem/Scenes/MainMenuScene.h"
 #include "Project/SceneSystem/Scenes/TrackSceneOne.h"
+#include "Project/SceneSystem/Scenes/OpenWorldSceneOne.h"
 #include "Project/SceneSystem/TempScenes/TempSceneOne.h"
 #include "Project/SceneSystem/TempScenes/TempSceneTwo.h"
 #include "Project/SceneSystem/TempScenes/TempSceneThree.h"
@@ -54,22 +55,23 @@ namespace Project
 
 	void CDirectX11SceneManager::CreateSceneFromObject()
 	{
-		IScene* scene = new MainMenuScene(this, m_Renderer, true, 0); // Creates a new temp scene
+		//Current scene working on
+		IScene* scene = new OpenWorldSceneOne(this, m_Renderer, true, 0); // Creates a new temp scene
 		auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		scene = new TrackSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
-		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
-		m_Scenes.insert(pos, scene); // Adds scene to the array
+		// Scene order
+		//IScene* scene = new MainMenuScene(this, m_Renderer, true, 0); // Creates a new temp scene
+		//auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		//m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		scene = new TempSceneFive(this, m_Renderer, true, 2); // Creates a new temp scene
-		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
-		m_Scenes.insert(pos, scene); // Adds scene to the array
+		//scene = new TrackSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
+		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		//m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		scene = new TempSceneSix(this, m_Renderer, true, 3); // Creates a new temp scene
-		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
-		m_Scenes.insert(pos, scene); // Adds scene to the array
-
+		//scene = new OpenWorldSceneOne(this, m_Renderer, true, 2); // Creates a new temp scene
+		//pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		//m_Scenes.insert(pos, scene); // Adds scene to the array
 		
 	}
 
