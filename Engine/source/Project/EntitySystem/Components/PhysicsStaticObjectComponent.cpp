@@ -30,7 +30,7 @@ namespace Project
 	
 	physx::PxShape* PhysicsStaticObjectComponent::GetBoxShape()
 	{
-		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, physx::PxBoxGeometry(m_CollisionScale.x, m_CollisionScale.y, m_CollisionScale.z), *m_Material);;
+		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, physx::PxBoxGeometry(m_CollisionScale.x, m_CollisionScale.y, m_CollisionScale.z), *m_Material);
 	}
 
 	physx::PxShape* PhysicsStaticObjectComponent::GetPlane()

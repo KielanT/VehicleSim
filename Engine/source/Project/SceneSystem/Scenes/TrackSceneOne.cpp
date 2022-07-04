@@ -45,9 +45,11 @@ namespace Project
 		/*****************************************************/
 		/**			   Create the entities                  **/
 		/*****************************************************/
-		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
-
 		std::string path = "media/";
+		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
+		m_EntityManager->CreateModelEntity("Track", path + "TrackOneInner.obj");
+
+		
 
 		if (m_EnablePhysics)
 		{
@@ -68,7 +70,11 @@ namespace Project
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 			
-		
+			m_Track = m_PhysicsSystem->GetPhysics()->createRigidStatic(physx::PxTransform({ 0.0f, 0.0f ,  0.0f }));
+			physx::PxTriangleMeshGeometry geom = MakeTrack(0, m_EntityManager->GetEntity("Track"));
+			m_TrackShape = physx::PxRigidActorExt::createExclusiveShape(*m_Track, geom, *m_Material);
+
+			m_PhysicsSystem->GetScene()->addActor(*m_Track);
 		}
 
 		return true;
@@ -128,10 +134,12 @@ namespace Project
 		if (m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
 	}
 
-	physx::PxConvexMesh* TrackSceneOne::MakeTrack(int index, Entity* entity)
+	physx::PxTriangleMesh* TrackSceneOne::MakeTrack(int index, Entity* entity)
 	{
 		physx::PxU32 vertexCount;
 		std::vector<physx::PxVec3> vertices;
+
+		
 		if (entity != nullptr)
 		{
 
@@ -139,16 +147,19 @@ namespace Project
 			{
 				RendererComponent* comp = static_cast<RendererComponent*>(entity->GetComponent("Renderer"));
 				vertexCount = comp->GetNumberOfVertices(index);
+				int triCount = comp->GetNumberTriangles();
 
 				std::vector<CVector3> trackVertices = comp->GetVertices();
 				for (int i = 0; i < vertexCount; i++)
 				{
 					vertices.push_back(physx::PxVec3(trackVertices[i].x, trackVertices[i].y, trackVertices[i].z));
 				}
-
 				physx::PxVec3* v = vertices.data();
 
-				return CreateConvexMesh(v, vertexCount, m_PhysicsSystem->GetPhysics(), m_PhysicsSystem->GetCooking());
+				physx::PxU32* i = comp->GetIndices().data();
+
+				return CreateTriangleMesh(v, vertexCount, triCount, comp->GetIndices(), *m_PhysicsSystem->GetPhysics(), *m_PhysicsSystem->GetCooking());
+				
 			}
 		}
 		return nullptr;

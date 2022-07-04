@@ -71,7 +71,7 @@ namespace Project
 		// TEMP
 		physx::PxShape* m_TrackShape = nullptr;
 		physx::PxRigidStatic* m_Track = nullptr;
-		physx::PxConvexMesh* MakeTrack(int index, Entity* entity);
+		physx::PxTriangleMesh* MakeTrack(int index, Entity* entity);
 
 		physx::PxRigidDynamic* m_SphereActor = nullptr;
 		physx::PxShape* m_SphereShape = nullptr;

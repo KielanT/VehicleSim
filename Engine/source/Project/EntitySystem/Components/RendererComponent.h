@@ -98,6 +98,9 @@ namespace Project
 
 		unsigned int GetNumberOfVertices(int index) { return m_Mesh->GetNumberVertices(index); }
 		std::vector<CVector3> GetVertices() { return m_Mesh->GetVertices(); }
+
+		int GetNumberTriangles() { return m_Mesh->GetNumberTriangles(); }
+		std::vector<unsigned int> GetIndices() { return m_Mesh->GetIndices(); }
 		
 		bool GetIsRendered() { return m_isRendered; }
 

@@ -69,10 +69,6 @@ namespace Project
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 			
-			SEntityTransform transform = SEntityTransform();
-			transform.Position = {0, 5, 10};
-			//m_PhysicsEntityManager->CreatePhysicsDynamicEntity("test", PhysicsDynmaicObjectType::ConvexMesh, path + "TestCube.obj", transform);
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("test", PhysicsStaticObjectType::ConvexMesh, path + "TestCube.obj", transform);
 			CreateDynamicCubes(CUBE_DYNAMIC_AMOUNT);
 			CreateStaticCubes(1);
 		}

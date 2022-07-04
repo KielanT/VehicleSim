@@ -98,7 +98,6 @@ namespace Project
         ReadNodes(scene->mRootNode, 0, 0);
 
 
-
         //******************************************//
         // Read geometry - multiple parts supported //
 
@@ -110,9 +109,10 @@ namespace Project
         // A mesh is made of sub-meshes, each one can have a different material (texture)
         // Import each sub-mesh in the file to seperate index / vertex buffer (could share buffers between sub-meshes but that would make things more complex)
         mSubMeshes.resize(scene->mNumMeshes);
+        
         for (unsigned int m = 0; m < scene->mNumMeshes; ++m)
         {
-            aiMesh* assimpMesh = scene->mMeshes[m];
+            assimpMesh = scene->mMeshes[m];
             std::string subMeshName = assimpMesh->mName.C_Str();
             auto& subMesh = mSubMeshes[m]; // Short name for the submesh we're currently preparing - makes code below more readable
 
@@ -334,18 +334,15 @@ namespace Project
             for (int i = 0; i < assimpMesh->mNumVertices; ++i)
             {
                 verticesArray.push_back({ assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z });
+				
             }
-			
             
-
-            /*int max = scene->mMeshes[0]->mNumVertices;
-
-            for (int i = 0; i < max - 1; ++i)
-            {
-                verticesArray.push_back({ scene->mMeshes[0]->mVertices[i].x, scene->mMeshes[0]->mVertices[i].y, scene->mMeshes[0]->mVertices[i].z });
-            }	
-            */	
-            
+           for (unsigned int face = 0; face < assimpMesh->mNumFaces; ++face)
+           {
+               indicesArray.push_back(assimpMesh->mFaces[face].mIndices[0]);
+               indicesArray.push_back(assimpMesh->mFaces[face].mIndices[1]);
+               indicesArray.push_back(assimpMesh->mFaces[face].mIndices[2]);;
+           }
 
             //-----------------------------------
 
@@ -374,6 +371,7 @@ namespace Project
 
             
 
+
             hr = m_Renderer->GetDevice()->CreateBuffer(&bufferDesc, &initData, &subMesh.indexBuffer);
             if (FAILED(hr))  throw std::runtime_error("Failure creating index buffer for " + fileName);
         }
@@ -389,6 +387,8 @@ namespace Project
             if (subMesh.vertexBuffer)  subMesh.vertexBuffer->Release();
             if (subMesh.vertexLayout)  subMesh.vertexLayout->Release();
         }
+
+        if (assimpMesh != nullptr) delete assimpMesh;
     }
 
 

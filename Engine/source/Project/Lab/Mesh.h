@@ -100,6 +100,7 @@ namespace Project
         //--------------------------------------------------------------------------------------
         // Member data
         //--------------------------------------------------------------------------------------
+        aiMesh* assimpMesh;
     protected:
 
         std::vector<SubMesh> mSubMeshes; // The mesh geometry. Nodes refer to sub-meshes in this vector
@@ -107,23 +108,35 @@ namespace Project
 
         bool mHasBones; // If any submesh has bones, then all submeshes are given bones - makes rendering easier (one shader for the whole mesh)
 
+
         DirectX11Renderer* m_Renderer;
         std::vector<CVector3> verticesArray;
+		std::vector<unsigned int> indicesArray;
     public:
 
 
         unsigned int GetNumberVertices(int index)
         {
-           int i = mSubMeshes.size();
            return mSubMeshes[index].numVertices;
         }
 
         std::vector<CVector3> GetVertices()
         {
-            
             return verticesArray;
         }
 
+        int GetNumberTriangles(int index = 0)
+        {    
+            return mSubMeshes[index].numIndices / 3;
+        }
+
+        std::vector<unsigned int> GetIndices()
+		{
+			return indicesArray;
+		}
+
+
+		
     };
 
 

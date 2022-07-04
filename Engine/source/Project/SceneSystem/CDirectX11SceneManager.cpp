@@ -56,7 +56,11 @@ namespace Project
 	void CDirectX11SceneManager::CreateSceneFromObject()
 	{
 		//Current scene working on
-		IScene* scene = new OpenWorldSceneOne(this, m_Renderer, true, 0); // Creates a new temp scene
+		//IScene* scene = new OpenWorldSceneOne(this, m_Renderer, true, 0); // Creates a new temp scene
+		//auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		//m_Scenes.insert(pos, scene); // Adds scene to the array
+
+		IScene* scene = new TrackSceneOne(this, m_Renderer, true, 0); // Creates a new temp scene
 		auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 
