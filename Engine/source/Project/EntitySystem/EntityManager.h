@@ -80,6 +80,16 @@ namespace Project
 			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
 			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
 
+		TEntityUID CreatePhysicsStaticEntity(const std::string& name, PhysicsStaticObjectType objectType, std::string mainMeshPath,
+			SEntityTransform transform = SEntityTransform(), CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isDrivable = false,
+			std::string texturePath = "media/BasicTexWhite.png",
+			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
+			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
+			EBlendState blendState = EBlendState::NoBlendingState,
+			EDepthStencilState depthStencilState = EDepthStencilState::UseDepthBufferState,
+			ERasterizerState rasterizerState = ERasterizerState::CullNoneState,
+			ESamplerState samplerState = ESamplerState::Anisotropic4xSampler);
+
 		bool DestroyEntity(TEntityUID UID);
 
 		void DestroyAllEntities();

@@ -47,9 +47,6 @@ namespace Project
 		/*****************************************************/
 		std::string path = "media/";
 		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
-		//m_EntityManager->CreateModelEntity("Track", path + "TrackOneInner.obj");
-
-		
 
 		if (m_EnablePhysics)
 		{
@@ -68,8 +65,9 @@ namespace Project
 
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneOuter.obj", {0.0f, 1.0f, 0.0f});
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj", { 0.0f, 1.0f, 0.0f });
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneOuter.obj", { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackInner", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj", { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackFinishLine", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneFinishLine.obj"/*, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, false, path + "brick1.jpg" */);
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 		}
 
@@ -104,8 +102,6 @@ namespace Project
 
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
 		{
-
-			
 			m_PhysicsEntityManager->UpdateAllEntities(frameTime);
 			m_PhysicsSystem->GetScene()->simulate(frameTime);
 			m_PhysicsSystem->GetScene()->fetchResults(true);
