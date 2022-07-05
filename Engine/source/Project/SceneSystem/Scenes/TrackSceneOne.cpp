@@ -35,6 +35,8 @@ namespace Project
 
 	}
 
+
+
 	bool TrackSceneOne::InitGeometry()
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
@@ -55,8 +57,8 @@ namespace Project
 			if (!m_PhysicsSystem->InitPhysics())
 				m_Log.ErrorMessage(m_Renderer->GetWindowsProperties(), "Failed to Initialise Physics");
 
-			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 
+			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 
 			/*****************************************************/
 			/**			   Set up actors and objects            **/
@@ -67,8 +69,15 @@ namespace Project
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneOuter.obj", { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackInner", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj", { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackFinishLine", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneFinishLine.obj"/*, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, false, path + "brick1.jpg" */);
+
+			SEntityTransform transform = SEntityTransform();
+			transform.Position = { 0.0f, 2.0f, 0.0f };
+			transform.Scale = { 10.0f, 10.0f, 2.0f };
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackFinishLine", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneFinishLine.obj", { 0.0f, 0.0f, 40.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexWhite.png", true, transform);
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
+
+
+
 		}
 
 		return true;
@@ -81,7 +90,7 @@ namespace Project
 			VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
 			comp->AttachMainCamera(m_SceneCamera);
 		}
-		
+
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
@@ -99,6 +108,8 @@ namespace Project
 
 	void TrackSceneOne::UpdateScene(float frameTime)
 	{
+		VehicleOverFinishLine();
+
 
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
 		{
@@ -126,35 +137,25 @@ namespace Project
 		if (m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
 	}
 
-	physx::PxTriangleMesh* TrackSceneOne::MakeTrack(int index, Entity* entity)
+	bool TrackSceneOne::VehicleOverFinishLine()
 	{
-		physx::PxU32 vertexCount;
-		std::vector<physx::PxVec3> vertices;
-
-		
-		if (entity != nullptr)
+		if (m_PhysicsEntityManager->GetEntity("MainCar"))
 		{
-
-			if (entity->GetComponent("Renderer"))
+			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
+			if (entity->GetComponent("VehicleComponent"))
 			{
-				RendererComponent* comp = static_cast<RendererComponent*>(entity->GetComponent("Renderer"));
-				vertexCount = comp->GetNumberOfVertices(index);
-				int triCount = comp->GetNumberTriangles();
-
-				std::vector<CVector3> trackVertices = comp->GetVertices();
-				for (int i = 0; i < vertexCount; i++)
+				TransformComponent* comp = static_cast<TransformComponent*>(entity->GetComponent("Transform"));
+				if (comp->GetPosition().z > 40.0f && comp->GetPosition().z < 45.0f &&
+					comp->GetPosition().x > -6.0f && comp->GetPosition().x < 6.0f)
 				{
-					vertices.push_back(physx::PxVec3(trackVertices[i].x, trackVertices[i].y, trackVertices[i].z));
+					return true;
 				}
-				physx::PxVec3* v = vertices.data();
-
-				physx::PxU32* i = comp->GetIndices().data();
-
-				return CreateTriangleMesh(v, vertexCount, triCount, comp->GetIndices(), *m_PhysicsSystem->GetPhysics(), *m_PhysicsSystem->GetCooking());
-				
+				else
+					return false;
 			}
 		}
-		return nullptr;
+		return false;
 	}
 
+	
 }

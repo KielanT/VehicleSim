@@ -21,13 +21,16 @@ namespace Project
 	class PhysicsStaticObjectComponent : public EntityComponent
 	{
 	public:
-		PhysicsStaticObjectComponent(Entity* entity, TEntityUID UID, PhysicsStaticObjectType objectType, IPhysics* physics, bool isDrivable = false, CVector3 colScale = { 1.0f, 1.0f, 1.0f }) : EntityComponent("PhysicsStaticObject", UID, entity)
+		PhysicsStaticObjectComponent(Entity* entity, TEntityUID UID, PhysicsStaticObjectType objectType, IPhysics* physics, bool isDrivable = false, CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isTrigger = false,  CVector3 trigScale = { 1.0f, 1.0f, 1.0f }, CVector3 trigPos = { 0.0f, 0.0f, 0.0f }, PhysicsStaticObjectType triggerOjectType = PhysicsStaticObjectType::Box) : EntityComponent("PhysicsStaticObject", UID, entity)
 		{
 			m_Entity = entity;
 			m_ObjectType = objectType;
 			m_Physics = physics;
 			m_IsDrivable = isDrivable;
 			m_CollisionScale = colScale;
+			m_IsTrigger = isTrigger;
+			m_TriggerObjectType = triggerOjectType;
+			m_TriggerScale = trigScale;
 
 			if (m_Entity->GetComponent("Transform"))
 			{
@@ -44,7 +47,7 @@ namespace Project
 			switch (m_ObjectType)
 			{
 			case (PhysicsStaticObjectType::Box):
-				m_Shape = GetBoxShape();
+				m_Shape = GetBoxShape(false);
 				break;
 			case(PhysicsStaticObjectType::Plane):
 				m_Shape = GetPlane();
@@ -57,15 +60,35 @@ namespace Project
 				break;
 			}
 
+			if (m_IsTrigger)
+			{
+				if (m_TriggerObjectType == PhysicsStaticObjectType::Box)
+				{
+
+					
+					m_RigidTriggerStatic = m_Physics->GetPhysics()->createRigidStatic({ m_Transform->GetPosition().x + trigPos.x,  m_Transform->GetPosition().y + trigPos.y , m_Transform->GetPosition().z + trigPos.z });
+					if (m_RigidTriggerStatic != nullptr)
+					{
+						m_TriggerShape = GetBoxShape(true);
+					}
+					m_Physics->GetScene()->addActor(*m_RigidTriggerStatic);
+
+				}
+			}
+
 			UpdatePositionAndRotation();
 			m_Physics->GetScene()->addActor(*m_RigidStatic);
 		}
 
 		virtual bool Update(float frameTime) override;
 		void UpdatePositionAndRotation();
+		physx::PxActor* GetTriggerActor() 
+		{ 
+			return m_RigidTriggerStatic;
+		}
 
 	private:
-		physx::PxShape* GetBoxShape();
+		physx::PxShape* GetBoxShape(bool isTrigger);
 		physx::PxShape* GetPlane();
 		physx::PxShape* GetConvexMesh();
 		physx::PxShape* GetTriangleMesh();
@@ -76,12 +99,18 @@ namespace Project
 		PhysicsStaticObjectType m_ObjectType;
 		physx::PxMaterial* m_Material;
 
-		physx::PxShape* m_Shape;
-		physx::PxRigidStatic* m_RigidStatic;
+		physx::PxShape* m_Shape = nullptr;
+		physx::PxRigidStatic* m_RigidStatic = nullptr;
+
+		physx::PxShape* m_TriggerShape = nullptr;
+		physx::PxRigidStatic* m_RigidTriggerStatic = nullptr;
+		PhysicsStaticObjectType m_TriggerObjectType;
 
 		bool m_IsDrivable;
+		bool m_IsTrigger;
 
 		TransformComponent* m_Transform;
 		CVector3 m_CollisionScale;
+		CVector3 m_TriggerScale;
 	};
 }

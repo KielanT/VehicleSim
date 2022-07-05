@@ -219,7 +219,11 @@ namespace Project
 		return m_NextUID++;
 	}
 
-	TEntityUID EntityManager::CreatePhysicsStaticEntity(const std::string& name, PhysicsStaticObjectType objectType, std::string mainMeshPath, SEntityTransform transform, CVector3 colScale, bool isDrivable, std::string texturePath, EPixelShader pixelShader, EVertexShader vertexShader, EBlendState blendState, EDepthStencilState depthStencilState, ERasterizerState rasterizerState, ESamplerState samplerState)
+
+
+
+
+	TEntityUID EntityManager::CreatePhysicsStaticEntity(const std::string& name, PhysicsStaticObjectType objectType, std::string mainMeshPath, SEntityTransform transform, CVector3 colScale, bool isDrivable, std::string texturePath, bool isTrigger, SEntityTransform triggerTransform, PhysicsStaticObjectType triggerObjectType, EPixelShader pixelShader, EVertexShader vertexShader, EBlendState blendState, EDepthStencilState depthStencilState, ERasterizerState rasterizerState, ESamplerState samplerState)
 	{
 		// Create new entity with next UID
 		Entity* newEntity = new Entity(m_NextUID, name);
@@ -235,7 +239,8 @@ namespace Project
 		comp = new TransformComponent(newEntity, GetNewUID(), transform.Position, transform.Rotation, transform.Scale);
 		newEntity->AddComponent(comp);
 
-		comp = new PhysicsStaticObjectComponent(newEntity, GetNewUID(), objectType, m_Physics, isDrivable, colScale);
+
+		comp = new PhysicsStaticObjectComponent(newEntity, GetNewUID(), objectType, m_Physics, isDrivable, colScale, isTrigger, triggerTransform.Scale, triggerTransform.Position, triggerObjectType);
 		newEntity->AddComponent(comp);
 
 		// Get vector index for new entity and add it to vector
@@ -250,7 +255,6 @@ namespace Project
 		// Return UID of new entity then increase it ready for next entity
 		return m_NextUID++;
 	}
-
 
 	bool EntityManager::DestroyEntity(TEntityUID UID)
 	{

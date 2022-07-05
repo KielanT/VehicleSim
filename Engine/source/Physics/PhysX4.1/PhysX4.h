@@ -2,6 +2,7 @@
 #include "Project/Interfaces/IPhysics.h"
 #include "PhysxHelpers.h"
 
+
 namespace Project
 {
 
@@ -10,6 +11,7 @@ namespace Project
 	{
 	public:
 		virtual bool InitPhysics(float meshWeldTolerance = 0.001f, CVector3 gravity = CVector3(0.0f, -9.81f, 0.0f)) override;
+		virtual bool InitPhysics(physx::PxSimulationEventCallback* callBack, physx::PxSimulationFilterShader filterShader, float meshWeldTolerance = 0.001f, CVector3 gravity = CVector3(0.0f, -9.81f, 0.0f)) override;
 
 		virtual void ShutdownPhysics() override;
 
@@ -18,8 +20,6 @@ namespace Project
 		virtual physx::PxPhysics* GetPhysics() override { return m_Physics; } // TODO Remove this from here and interface
 		virtual physx::PxCooking* GetCooking() override { return m_Cooking; } // TODO Remove this from here and interface
 		virtual physx::PxScene* GetScene() override { return m_Scene; } // TODO Remove this from here and interface
-		
-
 	private:
 		ErrorLogger m_Log;
 

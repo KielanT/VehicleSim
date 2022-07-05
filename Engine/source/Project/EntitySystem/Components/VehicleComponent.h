@@ -35,6 +35,8 @@ namespace Project
 		void AttachMainCamera(Camera* camera) { m_Camera = camera; };
 		void DetachMainCamera() { m_Camera = nullptr; }
 
+		physx::PxActor* GetActor() { return m_Vehicle4W->getRigidDynamicActor(); }
+
 	private:
 		void SetupVehicle();
 

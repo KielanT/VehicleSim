@@ -28,9 +28,19 @@ namespace Project
 		}
 	}
 	
-	physx::PxShape* PhysicsStaticObjectComponent::GetBoxShape()
+	physx::PxShape* PhysicsStaticObjectComponent::GetBoxShape(bool isTrigger)
 	{
-		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, physx::PxBoxGeometry(m_CollisionScale.x, m_CollisionScale.y, m_CollisionScale.z), *m_Material);
+		if (!isTrigger)
+		{
+			return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, physx::PxBoxGeometry(m_CollisionScale.x, m_CollisionScale.y, m_CollisionScale.z), *m_Material);
+		}
+		else
+		{
+			physx::PxShape* shape = physx::PxRigidActorExt::createExclusiveShape(*m_RigidTriggerStatic, physx::PxBoxGeometry(m_TriggerScale.x, m_TriggerScale.y, m_TriggerScale.z), *m_Material);
+			shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+			shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			return shape;
+		}
 	}
 
 	physx::PxShape* PhysicsStaticObjectComponent::GetPlane()

@@ -6,6 +6,7 @@
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
 
+
 namespace Project
 {
 	class TrackSceneOne : public IScene
@@ -45,6 +46,10 @@ namespace Project
 		virtual bool GetVSync() override { return m_VsyncOn; }
 
 	private:
+		bool VehicleOverFinishLine();
+
+
+	private:
 		ErrorLogger m_Log;
 
 		IRenderer* m_Renderer;
@@ -67,14 +72,5 @@ namespace Project
 		IPhysics* m_PhysicsSystem = nullptr;
 
 		physx::PxMaterial* m_Material = nullptr;
-
-		// TEMP
-		physx::PxShape* m_TrackShape = nullptr;
-		physx::PxRigidStatic* m_Track = nullptr;
-		physx::PxTriangleMesh* MakeTrack(int index, Entity* entity);
-
-		physx::PxRigidDynamic* m_SphereActor = nullptr;
-		physx::PxShape* m_SphereShape = nullptr;
-
 	};
 }
