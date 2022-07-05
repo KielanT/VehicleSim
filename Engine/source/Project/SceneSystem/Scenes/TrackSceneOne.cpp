@@ -47,7 +47,7 @@ namespace Project
 		/*****************************************************/
 		std::string path = "media/";
 		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
-		m_EntityManager->CreateModelEntity("Track", path + "TrackOneInner.obj");
+		//m_EntityManager->CreateModelEntity("Track", path + "TrackOneInner.obj");
 
 		
 
@@ -68,13 +68,8 @@ namespace Project
 
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Track", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj");
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
-			
-			m_Track = m_PhysicsSystem->GetPhysics()->createRigidStatic(physx::PxTransform({ 0.0f, 0.0f ,  0.0f }));
-			physx::PxTriangleMeshGeometry geom = MakeTrack(0, m_EntityManager->GetEntity("Track"));
-			m_TrackShape = physx::PxRigidActorExt::createExclusiveShape(*m_Track, geom, *m_Material);
-
-			m_PhysicsSystem->GetScene()->addActor(*m_Track);
 		}
 
 		return true;

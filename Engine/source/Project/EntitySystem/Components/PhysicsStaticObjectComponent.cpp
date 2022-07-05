@@ -70,4 +70,32 @@ namespace Project
 		}
 		return shape;
 	}
+	physx::PxShape* PhysicsStaticObjectComponent::GetTriangleMesh()
+	{
+		physx::PxU32 vertexCount;
+		std::vector<physx::PxVec3> vertices;
+
+		if (m_Entity != nullptr)
+		{
+			if (m_Entity->GetComponent("Renderer"))
+			{
+				RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+				vertexCount = comp->GetNumberOfVertices(0);
+				int triCount = comp->GetNumberTriangles();
+
+				std::vector<CVector3> trackVertices = comp->GetVertices();
+				for (int i = 0; i < vertexCount; i++)
+				{
+					vertices.push_back(physx::PxVec3(trackVertices[i].x, trackVertices[i].y, trackVertices[i].z));
+				}
+				physx::PxVec3* v = vertices.data();
+
+				physx::PxU32* i = comp->GetIndices().data();
+
+				physx::PxTriangleMeshGeometry geom = CreateTriangleMesh(v, vertexCount, triCount, comp->GetIndices(), *m_Physics->GetPhysics(), *m_Physics->GetCooking());
+				return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, geom, *m_Material);
+			}
+		}
+		return nullptr;
+	}
 }
