@@ -64,7 +64,7 @@ namespace Project
 //
 //		meshDesc.triangles.count = numTri;
 //		meshDesc.triangles.stride = 3 * sizeof(physx::PxU32);
-//		meshDesc.triangles.data = indices32;
+//		meshDesc.triangles.data = &indices32[0];
 //
 //#ifdef _DEBUG
 //		// mesh should be validated before cooked without the mesh cleaning

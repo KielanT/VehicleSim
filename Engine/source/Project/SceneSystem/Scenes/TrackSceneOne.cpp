@@ -68,7 +68,8 @@ namespace Project
 
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Track", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneOuter.obj", {0.0f, 1.0f, 0.0f});
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj", { 0.0f, 1.0f, 0.0f });
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 		}
 
