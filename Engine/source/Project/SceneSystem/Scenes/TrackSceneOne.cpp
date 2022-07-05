@@ -7,6 +7,8 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+#include "Data/SaveVehicleData.h"
+
 namespace Project
 {
 
@@ -56,6 +58,9 @@ namespace Project
 		/*****************************************************/
 		std::string path = "media/";
 		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
+
+		SaveVehicleData data;
+		data.SaveVehicleDataToFile(VehicleSettings());
 
 		if (m_EnablePhysics)
 		{

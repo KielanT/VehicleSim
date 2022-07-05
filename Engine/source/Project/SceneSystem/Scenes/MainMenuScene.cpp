@@ -550,25 +550,25 @@ namespace Project
 					{
 
 						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxCompression, 0);
+						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxCompression, 0);
 						ImGui::PopItemWidth();
 
 
 						ImGui::SameLine();
 
 						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxDroop, 0);
+						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxDroop, 0);
 						ImGui::PopItemWidth();
 
 
 						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mSpringStrength, 0);
+						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mSpringStrength, 0);
 						ImGui::PopItemWidth();
 
 						ImGui::SameLine();
 
 						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mSpringDamperRate, 0);
+						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mSpringDamperRate, 0);
 						ImGui::PopItemWidth();
 
 						ImGui::TreePop();

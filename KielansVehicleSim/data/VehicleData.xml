@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VehicleSettings>
+    <Basic ChassisMass="1500" WheelMass="20" MaxSteer="1.0470928"/>
+    <Differential Type="0"/>
+    <Engine PeakTorque="500" MaxRpm="600"/>
+    <Gears SwitchTime="0.1"/>
+    <Clutch Strength="10"/>
+    <Suspension>
+        <Suspension>
+            <FrontLeft MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
+            <FrontRight MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
+            <RearLeft MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
+            <RearRight MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
+        </Suspension>
+    </Suspension>
+</VehicleSettings>
