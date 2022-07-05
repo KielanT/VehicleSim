@@ -2,7 +2,9 @@
 #include "VehicleComponent.h"
 #include "CollisionComponent.h"
 
-
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
 
 namespace Project
 {
@@ -32,7 +34,50 @@ namespace Project
         }
     }
 
-    void VehicleComponent::SetupVehicle()
+	void VehicleComponent::GearsUI()
+	{
+		ImGui::Begin("HUD");
+		if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eNEUTRAL)
+		{
+			ImGui::Text("Gear: Neutral");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+		{
+			ImGui::Text("Gear: Reverse");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIRST)
+		{
+			ImGui::Text("Gear: First");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eSECOND)
+		{
+			ImGui::Text("Gear: Second");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eTHIRD)
+		{
+			ImGui::Text("Gear: Third");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFOURTH)
+		{
+			ImGui::Text("Gear: Fouth");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIFTH)
+		{
+			ImGui::Text("Gear: Fifth");
+		}
+		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eSIXTH)
+		{
+			ImGui::Text("Gear: Sixth");
+		}
+		else
+		{
+			ImGui::Text("Gear: Other");
+		}
+
+		ImGui::End();
+	}
+
+	void VehicleComponent::SetupVehicle()
     {
         if (m_Entity->GetComponent("Transform"))
         {

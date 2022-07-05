@@ -6,6 +6,7 @@
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
 
+#include "Utility/Lab/Timer.h"
 
 namespace Project
 {
@@ -48,6 +49,11 @@ namespace Project
 	private:
 		bool VehicleOverFinishLine();
 
+		void GUI();
+		void TimerUI();
+
+
+		
 
 	private:
 		ErrorLogger m_Log;
@@ -72,5 +78,14 @@ namespace Project
 		IPhysics* m_PhysicsSystem = nullptr;
 
 		physx::PxMaterial* m_Material = nullptr;
+
+		Timer* m_Timer;
+		int currentMins = 0;
+		float currentSeconds = 0;
+		float currentTimer = 0;
+		float previousTimer = 0;
+		float bestLap = 0;
+
+		int test = 0;
 	};
 }

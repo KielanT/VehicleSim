@@ -37,6 +37,8 @@ namespace Project
 
 		physx::PxActor* GetActor() { return m_Vehicle4W->getRigidDynamicActor(); }
 
+		void GearsUI();
+
 	private:
 		void SetupVehicle();
 

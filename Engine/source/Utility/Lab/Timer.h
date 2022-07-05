@@ -37,6 +37,7 @@ public:
 	// the time since timer was started or the last reset is returned
 	float GetLapTime();
 
+	bool IsRunning() { return mRunning; }
 
 private:
 	// Is the timer running

@@ -1,6 +1,12 @@
 #include "ppch.h"
 #include "TrackSceneOne.h"
 
+
+
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 namespace Project
 {
 
@@ -42,7 +48,8 @@ namespace Project
 		m_EntityManager = new EntityManager(m_Renderer);
 
 		m_SceneCamera = new Camera(true);
-
+		m_Timer = new Timer();
+		m_Timer->Stop();
 
 		/*****************************************************/
 		/**			   Create the entities                  **/
@@ -99,6 +106,8 @@ namespace Project
 
 	void TrackSceneOne::RenderScene()
 	{
+		GUI();
+
 		if (m_PhysicsEntityManager != nullptr)
 		{
 			m_PhysicsEntityManager->RenderAllEntities();
@@ -108,8 +117,31 @@ namespace Project
 
 	void TrackSceneOne::UpdateScene(float frameTime)
 	{
-		VehicleOverFinishLine();
+		bool b = VehicleOverFinishLine();
+		if (VehicleOverFinishLine())
+		{
+			if(!m_Timer->IsRunning())
+				m_Timer->Start();
+			else
+			{
+				test++;
+				if (test == 1)
+				{
+					previousTimer = currentTimer;
+					if (bestLap > previousTimer || bestLap <= 1)
+						bestLap = previousTimer;
 
+					m_Timer->Reset();
+					m_Timer->Start();
+				}
+			}
+		}
+		else
+		{
+			test = 0;
+		}
+
+		currentTimer = m_Timer->GetTime();
 
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
 		{
@@ -142,10 +174,10 @@ namespace Project
 		if (m_PhysicsEntityManager->GetEntity("MainCar"))
 		{
 			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
-			if (entity->GetComponent("VehicleComponent"))
+			if (entity->GetComponent("Transform"))
 			{
 				TransformComponent* comp = static_cast<TransformComponent*>(entity->GetComponent("Transform"));
-				if (comp->GetPosition().z > 40.0f && comp->GetPosition().z < 45.0f &&
+				if (comp->GetPosition().z > 40.0f && comp->GetPosition().z < 40.5f &&
 					comp->GetPosition().x > -6.0f && comp->GetPosition().x < 6.0f)
 				{
 					return true;
@@ -155,6 +187,57 @@ namespace Project
 			}
 		}
 		return false;
+	}
+
+	void TrackSceneOne::GUI()
+	{
+		if (m_PhysicsEntityManager->GetEntity("MainCar"))
+		{
+			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
+			if (entity->GetComponent("VehicleComponent"))
+			{
+				VehicleComponent* comp = static_cast<VehicleComponent*>(entity->GetComponent("VehicleComponent"));
+				comp->GearsUI();
+			}
+		}
+
+		TimerUI();
+	}
+
+	void TrackSceneOne::TimerUI()
+	{
+
+		// Current Lap, Previous Lap, best Lap
+
+
+		//currentMins = currentTimer / 60;
+		////currentSeconds = (currentTimer / 60) * 60;
+		////currentSeconds += m_Timer->GetLapTime() * 1;
+
+		//ImGui::Begin("Times");
+		//ImGui::Text("Best Lap %f", currentTimer);
+		//ImGui::Text("Current Lap %d:%f", currentMins, currentSeconds);
+		//ImGui::Text("Previous Lap %f", currentSeconds);
+
+
+
+		ImGui::Begin("Times");
+
+		if (bestLap <= 0.1)
+			ImGui::Text("    Best: --.--");
+		else
+			ImGui::Text("    Best: %f", bestLap);
+
+		if (currentTimer <= 0.1)
+			ImGui::Text(" Current: --.--");
+		else
+			ImGui::Text(" Current: %f", currentTimer);
+		
+		if (previousTimer <= 0.1)
+			ImGui::Text("Previous: --.--");
+		else
+			ImGui::Text("Previous: %f", previousTimer);
+		ImGui::End();
 	}
 
 	
