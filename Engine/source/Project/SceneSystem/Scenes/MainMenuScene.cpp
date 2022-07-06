@@ -1,7 +1,7 @@
 #include "ppch.h"
 #include "MainMenuScene.h"
 
-
+#include "Data/SaveVehicleData.h"
 
 
 namespace Project
@@ -579,6 +579,7 @@ namespace Project
 
 				m_VehicleSettings.SetSuspension(m_Suspension, 4);
 
+
 				ImGui::TreePop();
 			}
 
@@ -592,8 +593,14 @@ namespace Project
 			bool Go = ImGui::Button("Go", { 100, 100 });
 			ImGui::SetWindowFontScale(1.0f);
 
-			if (Go && m_MapIndex != 0)  m_sceneManager->LoadScene(m_MapIndex); 
-			//if (Go) m_sceneManager->LoadScene(1);
+			SaveVehicleData data;
+			
+			if (Go && m_MapIndex != 0)
+			{
+				data.SaveVehicleDataToFile(m_VehicleSettings);
+				m_sceneManager->LoadScene(m_MapIndex);
+			}
+				//if (Go) m_sceneManager->LoadScene(1);
 
 			ImGui::TreePop();
 			ImGui::Separator();

@@ -19,7 +19,7 @@ namespace Project
 
 		while (element != nullptr)
 		{
-			// Found a "Scene" tag at the root level, parse it
+
 			std::string elementName = element->Name();
 			if (elementName == "Window")
 			{
