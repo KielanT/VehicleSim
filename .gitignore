@@ -2,7 +2,7 @@
 **/bin/
 bin-int/
 
-Engine/data/
+*Engine/data/
 
 # Prerequisites
 *.d
