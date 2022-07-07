@@ -103,7 +103,25 @@ namespace Project
 				physx::PxU32* i = comp->GetIndices().data();
 
 				physx::PxTriangleMeshGeometry geom = CreateTriangleMesh(v, vertexCount, triCount, comp->GetIndices(), *m_Physics->GetPhysics(), *m_Physics->GetCooking());
-				return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, geom, *m_Material);
+
+
+				if (m_IsDrivable == true)
+				{
+					physx::PxShape* shape = physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, geom, *m_Material);;
+					physx::PxFilterData qryFilterData;
+					DrivableSurface(qryFilterData);
+					shape->setQueryFilterData(qryFilterData);
+
+					physx::PxFilterData GroundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+					shape->setSimulationFilterData(GroundPlaneSimFilterData);
+					return shape;
+				}
+				else
+				{
+					return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, geom, *m_Material);
+				}
+
+				
 			}
 		}
 		return nullptr;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VehicleSettings>
-    <Basic ChassisMass="2000" WheelMass="20" MaxSteer="1"/>
+    <Basic ChassisMass="1500" WheelMass="20" MaxSteer="1"/>
     <Differential Type="0"/>
     <Engine PeakTorque="500" MaxRpm="600"/>
     <Gears SwitchTime="0.1"/>

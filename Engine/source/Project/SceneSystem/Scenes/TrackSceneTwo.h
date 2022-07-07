@@ -1,29 +1,25 @@
 #pragma once
 
+#pragma once
+
 #include "Project/SceneSystem/IScene.h"
 #include "Project/Interfaces/IRenderer.h"
 #include "Project/Interfaces/IPhysics.h"
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
-#include "Graphics/DirectX11/DirectX11Renderer.h"
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_internal.h"
+#include "Utility/Lab/Timer.h"
 
 namespace Project
 {
-#define IMGUI_LEFT_LABEL(func, label, ...) (ImGui::TextUnformatted(label), ImGui::SameLine(), func("##" label, __VA_ARGS__))
-
-	class MainMenuScene : public IScene
+	class TrackSceneTwo : public IScene
 	{
 	public:
-		MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		TrackSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
-		MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		TrackSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
@@ -53,60 +49,13 @@ namespace Project
 		virtual bool GetVSync() override { return m_VsyncOn; }
 
 	private:
-		// GUI Functions
+		bool VehicleOverFinishLine();
+
 		void GUI();
-		void MainMenu();
-		void GameMode();
-		void LoadMaps();
-		void VehicleSetup();
+		void TimerUI();
 
-		bool m_ShowGameModeSelect = false;
-		bool m_IsHotLapSelected = false;
-		bool m_IsOpenWorldSelected = false;
 
-		struct LevelImages
-		{
-			int width = 0;
-			int height = 0;
-			ID3D11ShaderResourceView* image = nullptr;
-		};
 
-		const static int LEVEL_IMAGE_COUNT = 3;
-		LevelImages m_LevelImages[LEVEL_IMAGE_COUNT];
-		
-		int m_CarImage_Width = 0;
-		int m_CarImage_Height = 0;
-		ID3D11ShaderResourceView* m_CarImage = nullptr;
-		
-		bool m_Selected = false;
-		
-		bool m_IsMapSelected = false;
-		int m_MapIndex = 0;
-
-		void SelectableColor(ImU32 color)
-		{
-			ImVec2 p_min = ImGui::GetItemRectMin();
-			ImVec2 p_max = ImGui::GetItemRectMax();
-			ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, color);
-		}
-
-		VehicleSettings m_VehicleSettings;
-		int m_ChassisMass;
-		int m_WheelMass;
-		int m_MaxSteer;
-		int m_PeakTorque;
-		int m_RPM;
-		int m_ClutchStrength;
-		
-		float m_GearSwitchTime;
-		
-
-		physx::PxVehicleDifferential4WData m_Diff;
-		physx::PxVehicleEngineData m_Engine;
-		physx::PxVehicleGearsData m_Gears;
-		physx::PxVehicleClutchData m_Clutch;
-
-		physx::PxVehicleSuspensionData m_Suspension[4];
 
 	private:
 		ErrorLogger m_Log;
@@ -132,7 +81,15 @@ namespace Project
 
 		physx::PxMaterial* m_Material = nullptr;
 
-		
+		Timer* m_Timer;
+		int currentMins = 0;
+		float currentSeconds = 0;
+		float currentTimer = 0;
+		float previousTimer = 0;
+		float bestLap = 0;
 
+		int test = 0;
 	};
 }
+
+

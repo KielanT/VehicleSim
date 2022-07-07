@@ -109,11 +109,17 @@ namespace Project
 
 			if (render != nullptr)
 			{
-				bool rect = render->LoadTextureFromFile("media/TempLevelImage.PNG", &m_Image, &m_Image_Width, &m_Image_Height);
-				IM_ASSERT(rect);
+				for (int i = 0; i < LEVEL_IMAGE_COUNT; ++i)
+				{
+					std::string fileType = ".PNG";
+					std::string image = "media/LevelImages/Level" + std::to_string(i) + fileType;
+					bool success = render->LoadTextureFromFile(image.c_str(), &m_LevelImages[i].image, &m_LevelImages[i].width, &m_LevelImages[i].height);
+					IM_ASSERT(success);
+				}
 
-				rect = render->LoadTextureFromFile("media/CarImageOne.PNG", &m_CarImage, &m_CarImage_Width, &m_CarImage_Height);
-				IM_ASSERT(rect);
+
+				bool b = render->LoadTextureFromFile("media/CarImageOne.PNG", &m_CarImage, &m_CarImage_Width, &m_CarImage_Height);
+				IM_ASSERT(b);
 			}
 		}
 		return true;
@@ -233,11 +239,11 @@ namespace Project
 				m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 1;
 			}
-			/*if (bMapTwoBtn)
+			if (bMapTwoBtn)
 			{
 				m_IsMapSelected = !m_IsMapSelected;
-				m_MapIndex = 3;
-			}*/
+				m_MapIndex = 2;
+			}
 
 			if (m_IsMapSelected)
 			{
@@ -258,7 +264,7 @@ namespace Project
 			if (bMapOneBtn)
 			{
 				m_IsMapSelected = !m_IsMapSelected;
-				m_MapIndex = 2;
+				m_MapIndex = 3;
 			}			
 			
 			if (m_IsMapSelected)
@@ -272,7 +278,6 @@ namespace Project
 
 	void MainMenuScene::VehicleSetup()
 	{
-		ImGui::ShowDemoWindow();
 		ImGuiWindowFlags VehicleSetupWinFlags = 0;
 		//VehicleSetupWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;;
 		ImGui::Begin("LevelSettings", nullptr, VehicleSetupWinFlags);
@@ -285,8 +290,10 @@ namespace Project
 		
 		if (ImGui::TreeNodeEx("Map: ", treeFlags))
 		{
-			ImGui::Image(m_Image, ImVec2(m_Image_Width / 3, m_Image_Height / 3));
 			
+			//ImGui::Image(m_Image, ImVec2(m_Image_Width / 3, m_Image_Height / 3));
+			ImGui::Image(m_LevelImages[m_MapIndex].image, ImVec2(m_LevelImages[m_MapIndex].width/3, m_LevelImages[m_MapIndex].height/3));
+
 			ImGui::TreePop();
 			ImGui::Separator();
 		}

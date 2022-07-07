@@ -483,7 +483,7 @@ namespace Project
 	{
 		CVector3 pos;
 		pos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
-		pos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y;
+		pos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y - 0.6f;
 		pos.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
 		m_Transform->SetPosition(pos);
 		CVector3 rot;
@@ -492,6 +492,15 @@ namespace Project
 		rot.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.y;
 		rot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
 		m_Transform->SetRotationFromQuat(rot, w);
+
+
+		/*physx::PxShape* shapeBuffer[4];
+		m_Vehicle4W->getRigidDynamicActor()->getShapes(shapeBuffer, m_Vehicle4W->mWheelsSimData.getNbWheels());
+		const physx::PxTransform vehGlobalPose = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose();
+		const physx::PxTransform wheelTransform = vehGlobalPose.transform(shapeBuffer[1]->getLocalPose());
+		float wRot = wheelTransform.q.w;
+		CVector3 rotation = CVector3(wheelTransform.q.x, wheelTransform.q.y, wheelTransform.q.z);
+		m_Transform->SetRotationFromQuat(rotation, w, 3);*/
 	}
 
 	void VehicleComponent::UpdateInput()

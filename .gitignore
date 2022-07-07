@@ -2,9 +2,6 @@
 **/bin/
 bin-int/
 
-*Engine/data/
-*.xml
-
 # Prerequisites
 *.d
 

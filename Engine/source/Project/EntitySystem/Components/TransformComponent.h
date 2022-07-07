@@ -42,11 +42,24 @@ namespace Project
 		~TransformComponent();
 
 		void SetPosition(CVector3 pos) { m_Position = pos; }
-		void SetRotation(CVector3 rot) { m_Rotation = rot; }
-		void SetRotationFromQuat(CVector3 quat, float w) 
+		void SetRotation(CVector3 rot, int node = 0) 
+		{ 
+			m_Rotation = rot;
+
+		}
+		void SetRotationFromQuat(CVector3 quat, float w, int node = 0) 
 		{ 
 			CMatrix4x4 m = CMatrix4x4(quat, w);
-			m_Rotation = m.GetEulerAngles();
+			
+			if (node != 0 && m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Renderer"))
+			{
+				RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
+				comp->GetModel()->SetRotation(m.GetEulerAngles(), node);
+			}
+			else
+			{
+				m_Rotation = m.GetEulerAngles();
+			}
 		}
 		void SetScale(CVector3 scale) { m_Scale = scale; }
 
