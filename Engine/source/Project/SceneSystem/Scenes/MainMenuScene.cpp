@@ -2,6 +2,8 @@
 #include "MainMenuScene.h"
 
 #include "Data/SaveVehicleData.h"
+#include "Data/ParseWindowSettings.h"
+
 
 
 namespace Project
@@ -21,6 +23,8 @@ namespace Project
 		m_sceneManager = sceneManager;
 
 		m_EnablePhysics = false;
+
+		m_WindowsSettings = m_Renderer->GetWindowsProperties();
 	}
 
 	MainMenuScene::MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
@@ -36,6 +40,9 @@ namespace Project
 
 		m_sceneManager = sceneManager;
 
+		m_EnablePhysics = enablePhysics;
+
+		m_WindowsSettings = m_Renderer->GetWindowsProperties();
 	}
 
 	bool MainMenuScene::InitGeometry()
@@ -127,6 +134,32 @@ namespace Project
 
 	bool MainMenuScene::InitScene()
 	{
+		PlayerSettings settings;
+		PlayerControls controls;
+
+		if(settings.LoadPlayerControls(controls))
+			m_Controls = controls;
+		else
+			m_Controls = PlayerControls();
+
+		SetDefaultControls();
+
+		windSize[0].width = 1280; windSize[0].height = 720; windSize[0].winString = std::to_string(windSize[0].width) + " x " + std::to_string(windSize[0].height);
+		windSize[1].width = 1920; windSize[1].height = 1080; windSize[1].winString = std::to_string(windSize[1].width) + " x " + std::to_string(windSize[1].height);
+
+		window[0] = windSize[0].winString.c_str();
+		window[1] = windSize[1].winString.c_str();
+
+		for (int i = 0; i < 2; ++i)
+		{
+			if (m_WindowsSettings.Width == windSize[i].width && m_WindowsSettings.Height == windSize[i].height)
+			{
+				currentWindowIndex = i;
+				break;
+			}
+		}
+
+
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
 
@@ -146,7 +179,7 @@ namespace Project
 
 	void MainMenuScene::UpdateScene(float frameTime)
 	{
-
+		
 		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
 		{
 			m_PhysicsEntityManager->UpdateAllEntities(frameTime);
@@ -175,9 +208,9 @@ namespace Project
 	void MainMenuScene::GUI()
 	{
 		MainMenu();
-
+		//ImGui::ShowDemoWindow();
 		if (m_ShowGameModeSelect) GameMode();
-
+		if(m_SettingsMenu) SettingsMenu();
 	}
 
 	void MainMenuScene::MainMenu()
@@ -186,15 +219,25 @@ namespace Project
 		ButtonWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
 		ImGui::Begin("Main Menu", nullptr, ButtonWinFlags);
-		ImGui::SetWindowSize({ 219, 300 });
+		ImGui::SetWindowSize({ 219, 400 });
 		ImGui::SetWindowPos({ 0, 14 });
-		ImGui::SetWindowFontScale(5.0f);
+		ImGui::SetWindowFontScale(3.0f);
 		bool bPlayBtn = ImGui::Button("Play", { 200, 100 });
+		bool bSettingsBtn = ImGui::Button("Settings", { 200, 100 });
 		bool bQuitBtn = ImGui::Button("Quit", { 200, 100 });
 		ImGui::End();
 
-		if (bPlayBtn) m_ShowGameModeSelect = !m_ShowGameModeSelect;
+		if (bPlayBtn)
+		{
+			m_SettingsMenu = false;
+			m_ShowGameModeSelect = !m_ShowGameModeSelect;
+		}
 
+		if (bSettingsBtn)
+		{
+			m_ShowGameModeSelect = false;
+			m_SettingsMenu = !m_SettingsMenu;
+		}
 
 		if (bQuitBtn)
 			DestroyWindow(m_Renderer->GetWindowsProperties().Hwnd);
@@ -203,7 +246,7 @@ namespace Project
 	void MainMenuScene::GameMode()
 	{
 		ImGuiWindowFlags GameModeWinFlags = 0;
-		GameModeWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;;
+		GameModeWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		ImGui::Begin("Game Modes", nullptr, GameModeWinFlags);
 		ImGui::SetWindowSize({ 222,252 });
 		ImGui::SetWindowPos({ 220, 48 });
@@ -613,6 +656,235 @@ namespace Project
 			ImGui::Separator();
 		}
 		ImGui::End();
+	}
+
+	void MainMenuScene::SettingsMenu()
+	{
+		ImGuiWindowFlags SettingsWinFlags = 0;
+		SettingsWinFlags = /*ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse |*/ ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNav;
+		ImGui::Begin("SettingsMenu", nullptr, SettingsWinFlags);
+
+		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+		{
+			if (ImGui::BeginTabItem("Controls"))
+			{
+				ControlSettings();
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Window"))
+			{
+				WindowSettings();
+				ImGui::EndTabItem();
+			}
+			//if (ImGui::BeginTabItem("Camera"))
+			//{
+			//	
+			//	ImGui::EndTabItem();
+			//}
+			ImGui::EndTabBar();
+		}
+		
+		ImGui::End();
+	}
+
+	void MainMenuScene::ControlSettings()
+	{
+		ImGui::NewLine();
+
+		// Accelerate
+		ButtonChangeInputText(" Accelerate: ", m_AcclerateBuffer, 1, m_Controls.accelerate);
+		ImGui::NewLine();
+
+		// Steer Right
+		ButtonChangeInputText("Steer Right: ", m_SteerRightBuffer, 2, m_Controls.steerRight);
+		ImGui::NewLine();
+
+		// Steer Left
+		ButtonChangeInputText(" Steer Left: ", m_SteerLeftBuffer, 3, m_Controls.steerLeft);
+		ImGui::NewLine();
+
+		// Brake
+		ButtonChangeInputText("      Brake: ", m_BrakeBuffer, 4, m_Controls.brake);
+		ImGui::NewLine();
+
+		// Gear up
+		ButtonChangeInputText("    Gear up: ", m_GearUpBuffer, 5, m_Controls.gearUp);
+		ImGui::NewLine();
+		
+		// Gear Down
+		ButtonChangeInputText("  Gear Down: ", m_GearDownBuffer, 6, m_Controls.gearDown);
+		ImGui::NewLine();
+
+		
+
+		bool b = ImGui::Button("Apply", ImVec2(80, 30));
+		if (b)
+		{
+			PlayerSettings settings;
+			settings.SavePlayerControlsToFile(m_Controls);
+		}
+
+	}
+
+	void MainMenuScene::WindowSettings()
+	{
+		ImGui::NewLine();
+		windowPreviewValue = window[currentWindowIndex];
+
+		ImGui::PushItemWidth(310);
+		if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "Window Size: ", windowPreviewValue))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(window); n++)
+			{
+				const bool is_selected = (currentWindowIndex == n);
+				if (ImGui::Selectable(window[n], is_selected))
+					currentWindowIndex = n;
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		m_WindowsSettings.Height = windSize[currentWindowIndex].height;
+		m_WindowsSettings.Width = windSize[currentWindowIndex].width;
+
+		const char* renderType[1];
+		renderType[0] = "DirectX 11";
+
+		m_Renderer->GetWindowsProperties().Width;
+		static int currentRenderTypeIndex = 0;
+		ImGui::BeginDisabled();
+		const char* renderTypePreviewValue = renderType[currentRenderTypeIndex];
+		ImGui::PushItemWidth(310);
+		if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "   Renderer: ", renderTypePreviewValue))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(renderType); n++)
+			{
+				const bool is_selected = (currentRenderTypeIndex == n);
+				if (ImGui::Selectable(renderType[n], is_selected))
+					currentRenderTypeIndex = n;
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		ImGui::NewLine();
+
+		const char* physicsType[1];
+		physicsType[0] = "PhysX 4";
+
+		m_Renderer->GetWindowsProperties().Width;
+		static int currentPhysicsTypeIndex = 0;
+		
+		const char* physicsTypePreviewValue = physicsType[currentRenderTypeIndex];
+		ImGui::PushItemWidth(310);
+		if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "    Physics: ", physicsTypePreviewValue))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(physicsType); n++)
+			{
+				const bool is_selected = (currentPhysicsTypeIndex == n);
+				if (ImGui::Selectable(physicsType[n], is_selected))
+					currentPhysicsTypeIndex = n;
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::EndDisabled();
+
+		ImGui::NewLine();
+
+		bool b = ImGui::Button("Apply", ImVec2(80, 30));
+
+		if (b)
+		{
+			
+			ImGui::OpenPopup("MessageBox");
+		}
+		PopUpWindow("Changes Will Be Applied Next Launch");
+
+	}
+
+	void MainMenuScene::PopUpWindow(std::string message)
+	{
+		ImGuiWindowFlags popupFlags = 0;
+		popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		
+		
+		if (ImGui::BeginPopupModal("MessageBox", nullptr, popupFlags))
+		{
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto textWidth = ImGui::CalcTextSize(message.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::Text(message.c_str());
+
+			ImGui::NewLine();
+			ImGui::NewLine();
+
+			float avail = ImGui::GetContentRegionAvail().x;
+			float off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("OK", ImVec2(80, 0)))
+			{
+				ParseWindowSettings settings;
+				settings.SaveWindowSettings(m_WindowsSettings);
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void MainMenuScene::SetDefaultControls()
+	{
+		m_AcclerateBuffer = KeyValueToString(m_Controls.accelerate);
+		m_SteerRightBuffer = KeyValueToString(m_Controls.steerRight);
+		m_SteerLeftBuffer = KeyValueToString(m_Controls.steerLeft);
+		m_BrakeBuffer = KeyValueToString(m_Controls.brake);
+		m_GearUpBuffer = KeyValueToString(m_Controls.gearUp);
+		m_GearDownBuffer = KeyValueToString(m_Controls.gearDown);
+	}
+
+	void MainMenuScene::ButtonChangeInputText(std::string s, std::string& keyBuffer, int id, KeyCode& keycode)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuiInputTextFlags flag = 0;
+		flag = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoUndoRedo | ImGuiInputTextFlags_NoHorizontalScroll;
+
+		char a[128];
+		std::strcpy(a, keyBuffer.c_str());
+
+		ImGui::Text(s.c_str()); ImGui::SameLine();
+
+		ImGui::PushID(id);  ImGui::PushItemWidth(50.0f);
+		ImGui::InputText("##", a, 128, flag);
+		ImGui::PopID(); ImGui::PopItemWidth();
+
+		if(ImGui::IsItemActive())
+		for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++)
+		{
+			if (ImGui::IsKeyDown(i))
+			{
+				std::string s = std::to_string(i);
+				const char* c = s.c_str();
+				keyBuffer = KeyValueToString(i);
+
+				keycode = static_cast<KeyCode>(i);
+			}
+		}
 	}
 
 }

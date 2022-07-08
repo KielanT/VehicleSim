@@ -41,6 +41,8 @@ namespace Project
 
 		m_sceneManager = sceneManager;
 
+		m_EnablePhysics = enablePhysics;
+
 	}
 
 

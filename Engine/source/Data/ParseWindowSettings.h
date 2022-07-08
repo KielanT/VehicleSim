@@ -12,6 +12,8 @@ namespace Project
 
 		WindowProperties LoadWindowSettings(std::string fileName = "data/WinSettings.xml");
 
+		void SaveWindowSettings(WindowProperties settings);
+
 	private:
 		ERendererType GetRenderType(std::string value);
 		EPhysicsType GetPhysicsType(std::string value);

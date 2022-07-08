@@ -68,11 +68,8 @@ namespace Project
 		root->InsertEndChild(child);
 
 
-		tinyxml2::XMLError error = doc.SaveFile(m_Path.c_str());
-		if (error != tinyxml2::XML_SUCCESS)
-		{
-			int i = 0;
-		}
+		doc.SaveFile(m_Path.c_str());
+
 	}
 	bool SaveVehicleData::LoadVehicleData(VehicleSettings& settings)
 	{

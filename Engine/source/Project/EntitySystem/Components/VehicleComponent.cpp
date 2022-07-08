@@ -441,22 +441,22 @@ namespace Project
 	{
 		UpdateInput();
 
-		if (KeyHeld(Key_W))
+		if (KeyHeld(m_Controls.accelerate))
 			m_Accelerate = true;
 
-		if (KeyHeld(Key_D))
+		if (KeyHeld(m_Controls.steerRight))
 			m_Right = true;
 
-		if (KeyHeld(Key_A))
+		if (KeyHeld(m_Controls.steerLeft))
 			m_Left = true;
 
-		if (KeyHeld(Key_S))
+		if (KeyHeld(m_Controls.brake))
 			m_Brake = true;
 
-		if (KeyHeld(Key_Q))
+		if (KeyHeld(m_Controls.gearUp))
 			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
 
-		if (KeyHeld(Key_E))
+		if (KeyHeld(m_Controls.gearDown))
 			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
 		
 		physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTablesComp(SteerVsForwardSpeedDataComp, 4);

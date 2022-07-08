@@ -48,6 +48,51 @@ namespace Project
 
 		return m_Props;
 	}
+	void ParseWindowSettings::SaveWindowSettings(WindowProperties settings)
+	{
+		std::filesystem::path mainPath = std::filesystem::current_path();
+		std::filesystem::path Path = std::filesystem::current_path().parent_path().append("KielansVehicleSim\\data");
+		std::filesystem::current_path(Path);
+
+		tinyxml2::XMLDocument doc;
+
+		tinyxml2::XMLDeclaration* decl = doc.NewDeclaration();
+		doc.InsertFirstChild(decl);
+
+		tinyxml2::XMLElement* root = doc.NewElement("Window");
+		doc.InsertEndChild(root);
+
+		tinyxml2::XMLElement* child = doc.NewElement("Title");
+		child->SetAttribute("Name", settings.Title.c_str());
+		root->InsertEndChild(child);
+
+		child = doc.NewElement("Size");
+		child->SetAttribute("Width", settings.Width);
+		child->SetAttribute("Height", settings.Height);
+		root->InsertEndChild(child);
+
+		child = doc.NewElement("Renderer");
+		std::string renderType = "";
+		if (settings.RendererType == ERendererType::DirectX11)
+		{
+			renderType = "DirectX11";
+		}
+		child->SetAttribute("Type", renderType.c_str());
+		root->InsertEndChild(child);
+
+		child = doc.NewElement("Physics");
+		std::string physicsType = "";
+		if (settings.PhysicsType == EPhysicsType::PhysX4)
+		{
+			physicsType = "PhysX4";
+		}
+		child->SetAttribute("Type", physicsType.c_str());
+		root->InsertEndChild(child);
+
+		doc.SaveFile("WinSettings.xml");
+		std::filesystem::current_path(mainPath);
+	}
+
 	ERendererType ParseWindowSettings::GetRenderType(std::string value)
 	{
 		if (value == "DirectX11")

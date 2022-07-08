@@ -8,6 +8,7 @@
 #include "Physics/PhysX4.1/VehicleSceneQueryData.h"
 #include "Physics/PhysX4.1/PhysxModelHelpers.h"
 #include "Project/Lab/Camera.h"
+#include "Data/PlayerSettings.h"
 
 
 namespace Project
@@ -24,8 +25,18 @@ namespace Project
 				m_Physics = physics;
 				m_VehicleSettings = vehSettings;
 
+				PlayerSettings settings;
+				PlayerControls controls;
+
+				if (settings.LoadPlayerControls(controls))
+					m_Controls = controls;
+				else
+					m_Controls = PlayerControls();
+
+
 				SetupVehicle();
 				UpdateVehiclePosAndRot();
+
 			}
 		}
 		~VehicleComponent();
@@ -88,6 +99,8 @@ namespace Project
 		bool m_HandBrake = false;
 		
 		bool IsVehicleInAir = true;
+
+		PlayerControls m_Controls;
 
 		VehicleSceneQueryData* m_VehicleSceneQueryData = NULL;
 		physx::PxBatchQuery* m_BatchQuery = NULL;

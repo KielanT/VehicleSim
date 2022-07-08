@@ -194,6 +194,7 @@ bool KeyHit(KeyCode eKeyCode);
 // Mouse_LButton, see input.h for a full list.
 bool KeyHeld(KeyCode eKeyCode);
 
+
 // Returns current X position of mouse
 int GetMouseX();
 

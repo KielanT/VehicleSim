@@ -45,7 +45,7 @@ namespace Project
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 
-		m_SceneCamera = new Camera(false);
+		m_SceneCamera = new Camera(true);
 		m_Timer = new Timer();
 		m_Timer->Stop();
 

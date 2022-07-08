@@ -6,6 +6,7 @@
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
 #include "Graphics/DirectX11/DirectX11Renderer.h"
+#include "Data/PlayerSettings.h"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -59,8 +60,13 @@ namespace Project
 		void GameMode();
 		void LoadMaps();
 		void VehicleSetup();
+		void SettingsMenu();
+		void ControlSettings();
+		void WindowSettings();
+		void PopUpWindow(std::string message);
 
 		bool m_ShowGameModeSelect = false;
+		bool m_SettingsMenu = false;
 		bool m_IsHotLapSelected = false;
 		bool m_IsOpenWorldSelected = false;
 
@@ -90,6 +96,28 @@ namespace Project
 			ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, color);
 		}
 
+		struct SWinSize
+		{
+			int width;
+			int height;
+			std::string winString;
+		};
+
+		SWinSize windSize[2];
+		const char* window[2];
+		const char* windowPreviewValue;
+		int currentWindowIndex = 0;
+
+		std::string m_AcclerateBuffer;
+		std::string m_SteerRightBuffer;
+		std::string m_SteerLeftBuffer;
+		std::string m_BrakeBuffer;
+		std::string m_GearUpBuffer;
+		std::string m_GearDownBuffer;
+
+		PlayerControls m_Controls;
+		void SetDefaultControls();
+
 		VehicleSettings m_VehicleSettings;
 		int m_ChassisMass;
 		int m_WheelMass;
@@ -101,12 +129,55 @@ namespace Project
 		float m_GearSwitchTime;
 		
 
+
 		physx::PxVehicleDifferential4WData m_Diff;
 		physx::PxVehicleEngineData m_Engine;
 		physx::PxVehicleGearsData m_Gears;
 		physx::PxVehicleClutchData m_Clutch;
 
 		physx::PxVehicleSuspensionData m_Suspension[4];
+
+		std::string KeyValueToString(int vk)
+		{
+			UINT ch = MapVirtualKeyW(vk, MAPVK_VK_TO_CHAR);
+			if (ch != 0)
+			{
+				std::string t;
+				t.push_back(ch);
+				return t;
+			}
+			else if (vk == 16)
+			{
+				return "Shift";
+			}
+			else if (vk == 18)
+			{
+				return "Alt";
+			}
+			else if (vk == 17)
+			{
+				return "CTRL";
+			}
+			else if (vk == 38)
+			{
+				return "Up";
+			}
+			else if (vk == 40)
+			{
+				return "Down";
+			}
+			else if (vk == 37)
+			{
+				return "Left";
+			}
+			else if (vk == 39)
+			{
+				return "Right";
+			}
+		}
+
+		void ButtonChangeInputText(std::string s, std::string& keyBuffer, int id, KeyCode& keycode);
+
 
 	private:
 		ErrorLogger m_Log;
@@ -132,7 +203,7 @@ namespace Project
 
 		physx::PxMaterial* m_Material = nullptr;
 
-		
+		WindowProperties m_WindowsSettings;
 
 	};
 }
