@@ -47,7 +47,8 @@ namespace Project
 
 		m_SceneCamera = new Camera(true);
 
-
+		m_Timer = new Timer();
+		m_Timer->Stop();
 		/*****************************************************/
 		/**			   Create the entities                  **/
 		/*****************************************************/
@@ -109,17 +110,19 @@ namespace Project
 		{
 			VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
 			comp->AttachMainCamera(m_SceneCamera);
+			comp->SetResetPos({ 0.0f, 0.0f, -20.0f });
 		}
 
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
+		m_Timer->Start();
 
 		return true;
 	}
 
 	void OpenWorldSceneTwo::RenderScene()
 	{
-		Gui();
+		GUI();
 
 		if (m_PhysicsEntityManager != nullptr)
 		{
@@ -130,10 +133,6 @@ namespace Project
 
 	void OpenWorldSceneTwo::UpdateScene(float frameTime)
 	{
-		
-		
-		
-
 		if (!m_IsPaused)
 		{
 
@@ -150,6 +149,9 @@ namespace Project
 			m_SceneCamera->Control(frameTime);
 
 			m_EntityManager->UpdateAllEntities(frameTime);
+
+
+			m_CurrentTime -= frameTime;
 		}
 
 	}
@@ -179,7 +181,7 @@ namespace Project
 					comp->GetPosition().x > -12.0f && comp->GetPosition().x < 12.0f)
 				{
 					m_Score++;
-					Reset();
+					Reset(false);
 					return true;
 				}
 			}
@@ -200,7 +202,7 @@ namespace Project
 				{
 		
 					if(m_Score >= 0) m_Score--;
-					Reset();
+					Reset(false);
 					return true;
 				}
 			}
@@ -208,14 +210,15 @@ namespace Project
 		return false;
 	}
 
-	void OpenWorldSceneTwo::Reset()
+	void OpenWorldSceneTwo::Reset(bool resetCar)
 	{
-		if(m_PhysicsEntityManager->GetEntity("MainCar"))
+		if(resetCar && m_PhysicsEntityManager->GetEntity("MainCar"))
 		{
 			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
 			VehicleComponent* comp = static_cast<VehicleComponent*>(entity->GetComponent("VehicleComponent"));
+			comp->SetResetPos({ 0.0f, 0.0f, -20.0f });
 			comp->Reset();
-			comp->GetActor()->setGlobalPose({ 0.0f, 0.0f, -20.0f });
+			
 
 		}
 		if (m_PhysicsEntityManager->GetEntity("Sphere") && m_PhysicsEntityManager->GetEntity("Sphere")->GetComponent("PhysicsDynamicObject"));
@@ -227,7 +230,7 @@ namespace Project
 		}
 	}
 
-	void OpenWorldSceneTwo::Gui()
+	void OpenWorldSceneTwo::GUI()
 	{
 		if (m_PhysicsEntityManager->GetEntity("MainCar"))
 		{
@@ -240,6 +243,8 @@ namespace Project
 		}
 
 		Scores();
+
+		TimerUI();
 
 		if (KeyHit(KeyCode::Key_Escape))
 		{
@@ -270,7 +275,7 @@ namespace Project
 	void OpenWorldSceneTwo::PauseMenu()
 	{
 		ImGuiWindowFlags popupFlags = 0;
-		//popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
 
 		if (ImGui::BeginPopupModal("PauseMenuPopUp", nullptr, popupFlags))
@@ -306,6 +311,24 @@ namespace Project
 
 			ImGui::EndPopup();
 		}
+	}
+
+	void OpenWorldSceneTwo::TimerUI()
+	{
+		ImGui::Begin("GameTime");
+		ImGui::Text("Time: %d", (int)m_CurrentTime);
+
+		if (m_CurrentTime <= 0)
+		{
+			m_CurrentTime = START_TIME / m_TimeCount;
+			m_CurrentTime += 1;
+			Reset();
+			m_TimeCount++;
+		}
+
+		
+
+		ImGui::End();
 	}
 
 

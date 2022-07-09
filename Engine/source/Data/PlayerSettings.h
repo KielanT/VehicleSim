@@ -12,6 +12,8 @@ namespace Project
 		KeyCode brake;
 		KeyCode gearUp;
 		KeyCode gearDown;
+		KeyCode handBrake;
+		KeyCode reset;
 
 		PlayerControls()
 		{
@@ -21,6 +23,8 @@ namespace Project
 			brake = static_cast<KeyCode>(83);
 			gearUp = static_cast<KeyCode>(81);
 			gearDown = static_cast<KeyCode>(69);
+			handBrake = static_cast<KeyCode>(32);
+			reset = static_cast<KeyCode>(82);
 		}
 	};
 

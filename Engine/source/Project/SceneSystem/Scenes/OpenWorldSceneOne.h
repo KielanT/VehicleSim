@@ -51,6 +51,11 @@ namespace Project
 		void CreateDynamicSpheres(int amount);
 		void CreateStaticSpheres(int amount);
 
+		void GUI();
+		void PauseMenu();
+
+		bool m_IsPaused = false;
+
 	private:
 		ErrorLogger m_Log;
 

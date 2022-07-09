@@ -1,6 +1,9 @@
 #include "ppch.h"
 #include "OpenWorldSceneOne.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
 
 namespace Project
 {
@@ -112,15 +115,8 @@ namespace Project
 
 	void OpenWorldSceneOne::RenderScene()
 	{
-		if (m_PhysicsEntityManager->GetEntity("MainCar"))
-		{
-			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
-			if (entity->GetComponent("VehicleComponent"))
-			{
-				VehicleComponent* comp = static_cast<VehicleComponent*>(entity->GetComponent("VehicleComponent"));
-				comp->GearsUI();
-			}
-		}
+		GUI();
+
 
 		if (m_PhysicsEntityManager != nullptr)
 		{
@@ -131,23 +127,19 @@ namespace Project
 
 	void OpenWorldSceneOne::UpdateScene(float frameTime)
 	{
-
-		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
+		if (!m_IsPaused)
 		{
-			m_PhysicsEntityManager->UpdateAllEntities(frameTime);
-			m_PhysicsSystem->GetScene()->simulate(frameTime);
-			m_PhysicsSystem->GetScene()->fetchResults(true);
+			if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
+			{
+				m_PhysicsEntityManager->UpdateAllEntities(frameTime);
+				m_PhysicsSystem->GetScene()->simulate(frameTime);
+				m_PhysicsSystem->GetScene()->fetchResults(true);
+			}
+
+			m_SceneCamera->Control(frameTime);
+
+			m_EntityManager->UpdateAllEntities(frameTime);
 		}
-
-		m_SceneCamera->Control(frameTime);
-
-		m_EntityManager->UpdateAllEntities(frameTime);
-
-		if (KeyHit(KeyCode::Key_G))
-		{
-			m_sceneManager->LoadScene(0);
-		}
-
 	}
 
 	void OpenWorldSceneOne::ReleaseResources()
@@ -231,6 +223,68 @@ namespace Project
 			transform.Rotation = m_SphereStaticSettings[i].rotation;
 			transform.Scale = m_SphereStaticSettings[i].scale;
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Sphere" + i, PhysicsStaticObjectType::Sphere, path + "Sphere.x", transform, { transform.Scale.x * 10, transform.Scale.y, transform.Scale.z }, false, path + "BasicTexGreen.png");
+		}
+	}
+
+	void OpenWorldSceneOne::GUI()
+	{
+		if (m_PhysicsEntityManager->GetEntity("MainCar"))
+		{
+			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
+			if (entity->GetComponent("VehicleComponent"))
+			{
+				VehicleComponent* comp = static_cast<VehicleComponent*>(entity->GetComponent("VehicleComponent"));
+				comp->GearsUI();
+			}
+		}
+
+		if (KeyHit(KeyCode::Key_Escape))
+		{
+			m_IsPaused = !m_IsPaused;
+			if (m_IsPaused)
+				ImGui::OpenPopup("PauseMenuPopUp");
+		}
+		PauseMenu();
+	}
+
+	void OpenWorldSceneOne::PauseMenu()
+	{
+		ImGuiWindowFlags popupFlags = 0;
+		popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+
+
+		if (ImGui::BeginPopupModal("PauseMenuPopUp", nullptr, popupFlags))
+		{
+			m_IsPaused = true;
+			std::string t = "Paused";
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto textWidth = ImGui::CalcTextSize(t.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::Text(t.c_str());
+
+			ImGui::NewLine();
+			ImGui::NewLine();
+
+			float avail = ImGui::GetContentRegionAvail().x;
+			float off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("Resume", ImVec2(80, 0)))
+			{
+				m_IsPaused = false;
+				ImGui::CloseCurrentPopup();
+			}
+			avail = ImGui::GetContentRegionAvail().x;
+			off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("Quit", ImVec2(80, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+				m_sceneManager->LoadScene(0);
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 

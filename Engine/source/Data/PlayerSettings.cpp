@@ -38,6 +38,14 @@ namespace Project
 		child->SetAttribute("Key", settings.gearDown);
 		root->InsertEndChild(child);
 
+		child = doc.NewElement("HandBrake");
+		child->SetAttribute("Key", settings.handBrake);
+		root->InsertEndChild(child);
+
+		child = doc.NewElement("Reset");
+		child->SetAttribute("Key", settings.reset);
+		root->InsertEndChild(child);
+
 		doc.SaveFile("data/ControlSettings.xml");
 	}
 
@@ -79,6 +87,14 @@ namespace Project
 				childElement = element->FirstChildElement("GearDown");
 				attr = childElement->FindAttribute("Key");
 				if (attr != nullptr) settings.gearDown = static_cast<KeyCode>(attr->IntValue());
+
+				childElement = element->FirstChildElement("HandBrake");
+				attr = childElement->FindAttribute("Key");
+				if (attr != nullptr) settings.handBrake = static_cast<KeyCode>(attr->IntValue());
+
+				childElement = element->FirstChildElement("Reset");
+				attr = childElement->FindAttribute("Key");
+				if (attr != nullptr) settings.reset = static_cast<KeyCode>(attr->IntValue());
 			}
 			element = element->NextSiblingElement();
 		}

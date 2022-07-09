@@ -37,6 +37,8 @@ namespace Project
 				SetupVehicle();
 				UpdateVehiclePosAndRot();
 
+				m_ResetPos = { 0.0f, 0.0f, 0.0f };
+
 			}
 		}
 		~VehicleComponent();
@@ -49,6 +51,10 @@ namespace Project
 		physx::PxRigidDynamic* GetActor() { return m_Vehicle4W->getRigidDynamicActor(); }
 
 		void Reset();
+		void SetResetPos(CVector3 pos)
+		{
+			m_ResetPos = pos;
+		}
 
 		void GearsUI();
 
@@ -83,7 +89,7 @@ namespace Project
 		void MoveCamera();
 		
 		
-
+		CVector3 m_ResetPos;
 
 	private:
 		Entity* m_Entity = nullptr;

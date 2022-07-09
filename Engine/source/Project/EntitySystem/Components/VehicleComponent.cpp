@@ -72,6 +72,8 @@ namespace Project
 		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
 
 		m_VehicleInputData.setDigitalBrake(true);
+		
+		m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ m_ResetPos.x, m_ResetPos.y, m_ResetPos.z });
 
 		m_Accelerate = false;
 		m_Left = false;
@@ -155,7 +157,17 @@ namespace Project
 		m_Vehicle4W = CreateVehicle4W();
 		m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ m_Transform->GetPosition().x, m_Transform->GetPosition().y, m_Transform->GetPosition().z });
 
-		Reset();
+		m_Vehicle4W->setToRestState();
+		m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
+
+		m_VehicleInputData.setDigitalBrake(true);
+
+		m_Accelerate = false;
+		m_Left = false;
+		m_Right = false;
+		m_Brake = false;
+		m_HandBrake = false;
 		
 		m_Physics->GetScene()->addActor(*m_Vehicle4W->getRigidDynamicActor());
 
@@ -504,6 +516,13 @@ namespace Project
 
 		if (KeyHeld(m_Controls.gearDown))
 			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+
+		if (KeyHeld(m_Controls.handBrake))
+			m_HandBrake = true;
+
+		if(KeyHit(m_Controls.reset))
+			Reset();
+
 		
 		physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTablesComp(SteerVsForwardSpeedDataComp, 4);
 		

@@ -729,6 +729,13 @@ namespace Project
 		ButtonChangeInputText("  Gear Down: ", m_GearDownBuffer, 6, m_Controls.gearDown);
 		ImGui::NewLine();
 
+		// Gear Down
+		ButtonChangeInputText(" Hand Brake: ", m_HandBrakeBuffer, 7, m_Controls.handBrake);
+		ImGui::NewLine();
+
+		// Gear Down
+		ButtonChangeInputText("     Reset: ", m_ResetBuffer, 8, m_Controls.reset);
+		ImGui::NewLine();
 		
 
 		bool b = ImGui::Button("Apply", ImVec2(80, 30));
@@ -869,6 +876,8 @@ namespace Project
 		m_BrakeBuffer = KeyValueToString(m_Controls.brake);
 		m_GearUpBuffer = KeyValueToString(m_Controls.gearUp);
 		m_GearDownBuffer = KeyValueToString(m_Controls.gearDown);
+		m_HandBrakeBuffer = KeyValueToString(m_Controls.handBrake);
+		m_ResetBuffer = KeyValueToString(m_Controls.reset);
 	}
 
 	void MainMenuScene::ButtonChangeInputText(std::string s, std::string& keyBuffer, int id, KeyCode& keycode)

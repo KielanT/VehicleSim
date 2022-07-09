@@ -118,43 +118,45 @@ namespace Project
 
 	void TrackSceneTwo::UpdateScene(float frameTime)
 	{
-		bool b = VehicleOverFinishLine();
-		if (VehicleOverFinishLine())
+		if (!m_IsPaused)
 		{
- 		if (!m_Timer->IsRunning())
-			m_Timer->Start();
-			else
+			bool b = VehicleOverFinishLine();
+			if (VehicleOverFinishLine())
 			{
-				test++;
-				if (test == 1)
-				{
-					previousTimer = currentTimer;
-					if (bestLap > previousTimer || bestLap <= 1)
-						bestLap = previousTimer;
-
-					m_Timer->Reset();
+				if (!m_Timer->IsRunning())
 					m_Timer->Start();
+				else
+				{
+					test++;
+					if (test == 1)
+					{
+						previousTimer = currentTimer;
+						if (bestLap > previousTimer || bestLap <= 1)
+							bestLap = previousTimer;
+
+						m_Timer->Reset();
+						m_Timer->Start();
+					}
 				}
 			}
+			else
+			{
+				test = 0;
+			}
+
+			currentTimer = m_Timer->GetTime();
+
+			if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
+			{
+				m_PhysicsEntityManager->UpdateAllEntities(frameTime);
+				m_PhysicsSystem->GetScene()->simulate(frameTime);
+				m_PhysicsSystem->GetScene()->fetchResults(true);
+			}
+
+			m_SceneCamera->Control(frameTime);
+
+			m_EntityManager->UpdateAllEntities(frameTime);
 		}
-		else
-		{
-			test = 0;
-		}
-
-		currentTimer = m_Timer->GetTime();
-
-		if (m_EnablePhysics && m_PhysicsEntityManager != nullptr)
-		{
-			m_PhysicsEntityManager->UpdateAllEntities(frameTime);
-			m_PhysicsSystem->GetScene()->simulate(frameTime);
-			m_PhysicsSystem->GetScene()->fetchResults(true);
-		}
-
-		m_SceneCamera->Control(frameTime);
-
-		m_EntityManager->UpdateAllEntities(frameTime);
-
 	}
 
 	void TrackSceneTwo::ReleaseResources()
@@ -204,6 +206,59 @@ namespace Project
 		}
 
 		TimerUI();
+
+		if (KeyHit(KeyCode::Key_Escape))
+		{
+			m_IsPaused = !m_IsPaused;
+			if (m_IsPaused)
+			{
+				m_Timer->Stop();
+				ImGui::OpenPopup("PauseMenuPopUp");
+			}
+		}
+		PauseMenu();
+	}
+
+	void TrackSceneTwo::PauseMenu()
+	{
+		ImGuiWindowFlags popupFlags = 0;
+		popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+
+
+		if (ImGui::BeginPopupModal("PauseMenuPopUp", nullptr, popupFlags))
+		{
+			m_IsPaused = true;
+			std::string t = "Paused";
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto textWidth = ImGui::CalcTextSize(t.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::Text(t.c_str());
+
+			ImGui::NewLine();
+			ImGui::NewLine();
+
+			float avail = ImGui::GetContentRegionAvail().x;
+			float off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("Resume", ImVec2(80, 0)))
+			{
+				m_IsPaused = false;
+				m_Timer->Start();
+				ImGui::CloseCurrentPopup();
+			}
+			avail = ImGui::GetContentRegionAvail().x;
+			off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("Quit", ImVec2(80, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+				m_sceneManager->LoadScene(0);
+			}
+
+			ImGui::EndPopup();
+		}
 	}
 
 	void TrackSceneTwo::TimerUI()

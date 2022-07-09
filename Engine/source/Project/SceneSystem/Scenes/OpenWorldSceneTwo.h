@@ -6,6 +6,7 @@
 #include "Project/Interfaces/IPhysics.h"
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
+#include "Utility/Lab/Timer.h"
 
 namespace Project
 {
@@ -48,15 +49,21 @@ namespace Project
 	private:
 		bool BallInGoalOne();
 		bool BallInGoalTwo();
-		void Reset();
+		void Reset(bool resetCar = true);
 
-		void Gui();
+		void GUI();
 		void Scores();
 		void PauseMenu();
+		void TimerUI();
 
 
 		int m_Score = 0;
 		bool m_IsPaused = false;
+
+		Timer* m_Timer;
+		const float START_TIME = 120.0f;
+		float m_CurrentTime = START_TIME + 1;
+		int m_TimeCount = 2;
 
 	private:
 		ErrorLogger m_Log;

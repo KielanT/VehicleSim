@@ -114,6 +114,8 @@ namespace Project
 		std::string m_BrakeBuffer;
 		std::string m_GearUpBuffer;
 		std::string m_GearDownBuffer;
+		std::string m_HandBrakeBuffer;
+		std::string m_ResetBuffer;
 
 		PlayerControls m_Controls;
 		void SetDefaultControls();
@@ -173,6 +175,10 @@ namespace Project
 			else if (vk == 39)
 			{
 				return "Right";
+			}
+			else if (vk == 32)
+			{
+				return "Space";
 			}
 		}
 

@@ -6,4 +6,6 @@
     <Brake Key="83"/>
     <GearUp Key="81"/>
     <GearDown Key="69"/>
+    <HandBrake Key="32"/>
+    <Reset Key="82"/>
 </PlayerControls>

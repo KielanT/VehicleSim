@@ -52,8 +52,8 @@ namespace Project
 		void GUI();
 		void TimerUI();
 
-
-		
+		void PauseMenu();
+		bool m_IsPaused = false;
 
 	private:
 		ErrorLogger m_Log;
