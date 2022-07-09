@@ -231,6 +231,13 @@ namespace Project
 		{
 			m_SettingsMenu = false;
 			m_ShowGameModeSelect = !m_ShowGameModeSelect;
+
+			if (!m_ShowGameModeSelect)
+			{
+				m_IsHotLapSelected = false;
+				m_IsOpenWorldSelected = false;
+				m_IsMiniGamesSelected = false;
+			}
 		}
 
 		if (bSettingsBtn)
@@ -250,15 +257,41 @@ namespace Project
 		ImGuiWindowFlags GameModeWinFlags = 0;
 		GameModeWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		ImGui::Begin("Game Modes", nullptr, GameModeWinFlags);
-		ImGui::SetWindowSize({ 222,252 });
+		ImGui::SetWindowSize({ 222,500 });
 		ImGui::SetWindowPos({ 220, 48 });
 		ImGui::SetWindowFontScale(2.0f);
 		bool bHotLapBtn = ImGui::Button("Hot Laps", { 200, 100 });
 		bool bOepnWorldBtn = ImGui::Button("Open World", { 200, 100 });
+		bool bGamesBtn = ImGui::Button("Mini Games", { 200, 100 });
 
 
-		if (bHotLapBtn) { m_IsHotLapSelected = !m_IsHotLapSelected; m_IsOpenWorldSelected = !m_IsHotLapSelected; }
-		else if (bOepnWorldBtn) { m_IsOpenWorldSelected = !m_IsOpenWorldSelected; m_IsHotLapSelected = !m_IsOpenWorldSelected; }
+		if (bHotLapBtn)
+		{
+			m_IsHotLapSelected = !m_IsHotLapSelected;
+			if (m_IsHotLapSelected)
+			{
+				m_IsOpenWorldSelected = false;
+				m_IsMiniGamesSelected = false;
+			}
+		}
+		else if (bOepnWorldBtn)
+		{
+			m_IsOpenWorldSelected = !m_IsOpenWorldSelected;
+			if (m_IsOpenWorldSelected)
+			{
+				m_IsHotLapSelected = false;
+				m_IsMiniGamesSelected = false;
+			}
+		}
+		else if(bGamesBtn)
+		{
+			m_IsMiniGamesSelected = !m_IsMiniGamesSelected;
+			if (m_IsMiniGamesSelected)
+			{
+				m_IsOpenWorldSelected = false;
+				m_IsHotLapSelected = false;
+			}
+		}
 		LoadMaps();
 
 		ImGui::End();
@@ -268,8 +301,10 @@ namespace Project
 	{
 		ImGuiWindowFlags LoadMapsWinFlags = 0;
 		LoadMapsWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;;
-		if (m_IsHotLapSelected && !m_IsOpenWorldSelected)
+		if (m_IsHotLapSelected)
 		{
+			m_IsOpenWorldSelected = false;
+			m_IsMiniGamesSelected = false;
 			ImGui::Begin("Hotlap Maps", nullptr, LoadMapsWinFlags);
 			ImGui::SetWindowFontScale(2.0f);
 			ImGui::SetWindowSize({ 216,253 });
@@ -296,23 +331,45 @@ namespace Project
 			}
 
 		}
-		if (m_IsOpenWorldSelected && !m_IsHotLapSelected)
+		if (m_IsOpenWorldSelected)
 		{
 			m_IsHotLapSelected = false;
+			m_IsMiniGamesSelected = false;
 			ImGui::Begin("Open World", nullptr, LoadMapsWinFlags);
 			ImGui::SetWindowSize({ 216,253 });
 			ImGui::SetWindowPos({ 448,63 });
 			ImGui::SetWindowFontScale(2.0f);
 			bool bMapOneBtn = ImGui::Button("OW MAP ONE", { 200, 100 });
-			bool bMapTwoBtn = ImGui::Button("OW MAP TWO", { 200, 100 });
+			//bool bMapTwoBtn = ImGui::Button("OW MAP TWO", { 200, 100 });
 
+			ImGui::End();
 			if (bMapOneBtn)
 			{
 				m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 3;
-			}			
+			}
+
+
+			if (m_IsMapSelected)
+			{
+				VehicleSetup();
+			}
 			
-			if (bMapTwoBtn)
+		}
+
+		if (m_IsMiniGamesSelected)
+		{
+			m_IsHotLapSelected = false;
+			m_IsOpenWorldSelected = false;
+			ImGui::Begin("MiniGames", nullptr, LoadMapsWinFlags);
+			ImGui::SetWindowSize({ 216,253 });
+			ImGui::SetWindowPos({ 448,63 });
+			ImGui::SetWindowFontScale(2.0f);
+			bool bMapOneBtn = ImGui::Button("Car Ball", { 200, 100 });
+			//bool bMapTwoBtn = ImGui::Button("OW MAP TWO", { 200, 100 });
+
+			ImGui::End();
+			if (bMapOneBtn)
 			{
 				m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 4;
@@ -322,8 +379,6 @@ namespace Project
 			{
 				VehicleSetup();
 			}
-			
-			ImGui::End();
 		}
 	}
 

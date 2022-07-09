@@ -69,6 +69,7 @@ namespace Project
 		bool m_SettingsMenu = false;
 		bool m_IsHotLapSelected = false;
 		bool m_IsOpenWorldSelected = false;
+		bool m_IsMiniGamesSelected = false;
 
 		struct LevelImages
 		{
