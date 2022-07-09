@@ -76,6 +76,9 @@ namespace Project
             UpdatePositionAndRotation();
             m_Physics->GetScene()->addActor(*m_Actor);
         }
+
+        ~PhysicsObjectComponent();
+
         virtual bool Update(float frameTime) override;
         physx::PxRigidActor* GetActor() {  return m_Actor; }
         void UpdatePositionAndRotation();

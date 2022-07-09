@@ -46,9 +46,16 @@ namespace Project
 		void AttachMainCamera(Camera* camera) { m_Camera = camera; };
 		void DetachMainCamera() { m_Camera = nullptr; }
 
-		physx::PxActor* GetActor() { return m_Vehicle4W->getRigidDynamicActor(); }
+		physx::PxRigidDynamic* GetActor() { return m_Vehicle4W->getRigidDynamicActor(); }
+
+		void Reset();
 
 		void GearsUI();
+
+		void Release()
+		{
+			if (m_Physics != nullptr) physx::PxCloseVehicleSDK();
+		}
 
 	private:
 		void SetupVehicle();
@@ -75,22 +82,24 @@ namespace Project
 
 		void MoveCamera();
 		
+		
+
 
 	private:
-		Entity* m_Entity;
+		Entity* m_Entity = nullptr;
 		
-		IPhysics* m_Physics;
+		IPhysics* m_Physics = nullptr;
 		VehicleSettings m_VehicleSettings;
 
-		physx::PxVehicleDrive4W* m_Vehicle4W;
+		physx::PxVehicleDrive4W* m_Vehicle4W = nullptr;
 
-		TransformComponent* m_Transform;
+		TransformComponent* m_Transform = nullptr;
 
-		physx::PxMaterial* m_Material;
+		physx::PxMaterial* m_Material = nullptr;
 		
-		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* m_FrictionPairs;
+		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* m_FrictionPairs = nullptr;
 
-		Camera* m_Camera;
+		Camera* m_Camera = nullptr;
 
 		bool m_Accelerate = false;
 		bool m_Left = false;

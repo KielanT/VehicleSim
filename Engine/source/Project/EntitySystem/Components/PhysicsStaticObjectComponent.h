@@ -11,7 +11,7 @@ namespace Project
 		Box = 0,
 		Plane,
 		//Capsule,
-		//Sphere,
+		Sphere,
 		ConvexMesh,
 		TriangleMesh,
 		//HeightField
@@ -52,6 +52,9 @@ namespace Project
 			case(PhysicsStaticObjectType::Plane):
 				m_Shape = GetPlane();
 				break;
+			case(PhysicsStaticObjectType::Sphere):
+				m_Shape = GetSphere();
+				break;
 			case(PhysicsStaticObjectType::ConvexMesh):
 				m_Shape = GetConvexMesh();
 				break;
@@ -80,6 +83,8 @@ namespace Project
 			m_Physics->GetScene()->addActor(*m_RigidStatic);
 		}
 
+		~PhysicsStaticObjectComponent();
+
 		virtual bool Update(float frameTime) override;
 		void UpdatePositionAndRotation();
 		physx::PxActor* GetTriggerActor() 
@@ -92,6 +97,7 @@ namespace Project
 		physx::PxShape* GetPlane();
 		physx::PxShape* GetConvexMesh();
 		physx::PxShape* GetTriangleMesh();
+		physx::PxShape* GetSphere();
 		
 	private:
 		Entity* m_Entity;

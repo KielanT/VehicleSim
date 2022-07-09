@@ -5,7 +5,7 @@ namespace Project
 {
 	TransformComponent::~TransformComponent()
 	{
-		delete m_Entity;
+		//if(m_Entity != nullptr) delete m_Entity;
 	}
 	bool TransformComponent::Update(float frameTime)
 	{

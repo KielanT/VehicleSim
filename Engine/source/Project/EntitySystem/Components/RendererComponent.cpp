@@ -6,17 +6,17 @@ namespace Project
 {
 	RendererComponent::~RendererComponent()
 	{
-		delete m_Renderer;
-
-		delete m_Mesh;
-		delete m_Model;
-
+		//if(m_Renderer != nullptr) delete m_Renderer;
+		
+		if (m_Mesh != nullptr)delete m_Mesh;
+		if (m_Model != nullptr)delete m_Model;
+		
 		if (m_TextureResource) m_TextureResource->Release();
 		if (m_TextureSRV) m_TextureSRV->Release();
-
+		
 		if (m_PixelShader) m_PixelShader->Release();
 		if (m_VertexShader) m_VertexShader->Release();
-
+		
 		if (m_BlendState) m_BlendState->Release();
 		if (m_DepthStencilState) m_DepthStencilState->Release();
 		if (m_RasterizerState) m_RasterizerState->Release();

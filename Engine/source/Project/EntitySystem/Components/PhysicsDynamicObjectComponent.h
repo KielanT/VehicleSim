@@ -58,6 +58,8 @@ namespace Project
 			m_Physics->GetScene()->addActor(*m_RigidDynamic);
 		}
 		
+		~PhysicsDynamicObjectComponent();
+
 		virtual bool Update(float frameTime) override;
 		void UpdatePositionAndRotation();
 

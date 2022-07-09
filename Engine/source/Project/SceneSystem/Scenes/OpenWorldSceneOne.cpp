@@ -34,6 +34,8 @@ namespace Project
 
 		m_sceneManager = sceneManager;
 
+		m_EnablePhysics = enablePhysics;
+
 	}
 
 	bool OpenWorldSceneOne::InitGeometry()
@@ -66,11 +68,29 @@ namespace Project
 			// Set Actors and shapes here
 
 			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
+			SEntityTransform transform = SEntityTransform();
+			transform.Scale = { 2.0f, 0.0f, 2.0f };
+
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x", transform, {1.0f, 1.0f, 1.0f}, true, path + "BasicTexOrange.png");
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 			
+			transform.Scale = { 1.0f, 1.0f, 1.0f };
+			transform.Position = { 0.0f, 0.0f, 200.0f };
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("RampOne", PhysicsStaticObjectType::TriangleMesh, path + "Ramp.obj", transform, transform.Scale, true, path + "BasicTexBlue.png");
+			
+			transform.Position = { 30.0f, -5.0f, 200.0f };
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("RampTwo", PhysicsStaticObjectType::TriangleMesh, path + "Ramp.obj", transform, transform.Scale, true, path + "BasicTexBlue.png");
+			
+			transform.Position = { 30.0f, -5.0f, -700.0f };
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("RampThree", PhysicsStaticObjectType::TriangleMesh, path + "DoubleRampR45.obj", transform, transform.Scale, true, path + "BasicTexBlue.png");
+
+			transform.Position = { 50.0f, -5.0f, 200.0f };
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("RampFour", PhysicsStaticObjectType::TriangleMesh, path + "DoubleRamp.obj", transform, transform.Scale, true, path + "BasicTexBlue.png");
+		
 			CreateDynamicCubes(CUBE_DYNAMIC_AMOUNT);
-			CreateStaticCubes(1);
+			CreateStaticCubes(CUBE_STATIC_AMOUNT);
+			CreateDynamicSpheres(SPHERE_DYNAMIC_AMOUNT);
+			CreateStaticSpheres(SPHERE_STATIC_AMOUNT);
 		}
 
 		return true;
@@ -92,6 +112,16 @@ namespace Project
 
 	void OpenWorldSceneOne::RenderScene()
 	{
+		if (m_PhysicsEntityManager->GetEntity("MainCar"))
+		{
+			Entity* entity = m_PhysicsEntityManager->GetEntity("MainCar");
+			if (entity->GetComponent("VehicleComponent"))
+			{
+				VehicleComponent* comp = static_cast<VehicleComponent*>(entity->GetComponent("VehicleComponent"));
+				comp->GearsUI();
+			}
+		}
+
 		if (m_PhysicsEntityManager != nullptr)
 		{
 			m_PhysicsEntityManager->RenderAllEntities();
@@ -112,6 +142,11 @@ namespace Project
 		m_SceneCamera->Control(frameTime);
 
 		m_EntityManager->UpdateAllEntities(frameTime);
+
+		if (KeyHit(KeyCode::Key_G))
+		{
+			m_sceneManager->LoadScene(0);
+		}
 
 	}
 
@@ -138,7 +173,7 @@ namespace Project
 			transform.Position = m_CubedDynamicSettings[i].position;
 			transform.Rotation = m_CubedDynamicSettings[i].rotation;
 			transform.Scale = m_CubedDynamicSettings[i].scale;
-			m_PhysicsEntityManager->CreatePhysicsDynamicEntity("Cube" + i, PhysicsDynmaicObjectType::Box, path + "Cube.x", transform, { transform.Scale.x * 5, transform.Scale.y * 5, transform.Scale.z * 5 });
+			m_PhysicsEntityManager->CreatePhysicsDynamicEntity("Cube" + i, PhysicsDynmaicObjectType::Box, path + "Cube.x", transform, { transform.Scale.x * 5, transform.Scale.y * 5, transform.Scale.z * 5 }, false, path + "BasicTexYellow.png");
 			if (m_PhysicsEntityManager->GetEntity("Cube" + i) && m_PhysicsEntityManager->GetEntity("Cube" + i)->GetComponent("PhysicsDynamicObject"));
 			{
 				PhysicsDynamicObjectComponent* comp = static_cast<PhysicsDynamicObjectComponent*>(m_PhysicsEntityManager->GetEntity("Cube" + i)->GetComponent("PhysicsDynamicObject"));
@@ -156,11 +191,46 @@ namespace Project
 
 		for (int i = 0; i < amount; ++i)
 		{
-			transform.Position = { 100, 5, 100 };// m_CubeSettings[i].position;
-			//transform.Rotation = m_CubeSettings[i].rotation;
-			//transform.Scale = m_CubeSettings[i].scale;
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Cube" + i, PhysicsStaticObjectType::Box, path + "Cube.x", transform, { transform.Scale.x * 5, transform.Scale.y * 5, transform.Scale.z * 5 });
+			transform.Position = m_CubedStaticSettings[i].position;
+			transform.Rotation = m_CubedStaticSettings[i].rotation;
+			transform.Scale = m_CubedStaticSettings[i].scale;
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Cube" + i, PhysicsStaticObjectType::Box, path + "Cube.x", transform, { transform.Scale.x * 5, transform.Scale.y * 5, transform.Scale.z * 5 }, false, path + "BasicTexGreen.png");
 
+		}
+	}
+
+	void OpenWorldSceneOne::CreateDynamicSpheres(int amount)
+	{
+		static std::string path = "media/";
+		SEntityTransform transform = SEntityTransform();
+
+		for (int i = 0; i < amount; ++i)
+		{
+			transform.Position = m_SphereDynamicSettings[i].position;
+			transform.Rotation = m_SphereDynamicSettings[i].rotation;
+			transform.Scale = m_SphereDynamicSettings[i].scale;
+			m_PhysicsEntityManager->CreatePhysicsDynamicEntity("Sphere" + i, PhysicsDynmaicObjectType::Sphere, path + "Sphere.x", transform, { transform.Scale.x * 10, transform.Scale.y, transform.Scale.z }, false, path + "BasicTexBlue.png");
+			if (m_PhysicsEntityManager->GetEntity("Sphere" + i) && m_PhysicsEntityManager->GetEntity("Sphere" + i)->GetComponent("PhysicsDynamicObject"));
+			{
+				PhysicsDynamicObjectComponent* comp = static_cast<PhysicsDynamicObjectComponent*>(m_PhysicsEntityManager->GetEntity("Sphere" + i)->GetComponent("PhysicsDynamicObject"));
+				comp->GetActor()->setMass(m_SphereDynamicSettings[i].mass);
+				comp->GetActor()->setMassSpaceInertiaTensor(physx::PxVec3(m_SphereDynamicSettings[i].mass));
+			
+			}
+		}
+	}
+
+	void OpenWorldSceneOne::CreateStaticSpheres(int amount)
+	{
+		static std::string path = "media/";
+		SEntityTransform transform = SEntityTransform();
+
+		for (int i = 0; i < amount; ++i)
+		{
+			transform.Position = m_SphereStaticSettings[i].position;
+			transform.Rotation = m_SphereStaticSettings[i].rotation;
+			transform.Scale = m_SphereStaticSettings[i].scale;
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Sphere" + i, PhysicsStaticObjectType::Sphere, path + "Sphere.x", transform, { transform.Scale.x * 10, transform.Scale.y, transform.Scale.z }, false, path + "BasicTexGreen.png");
 		}
 	}
 

@@ -4,6 +4,9 @@
 
 namespace Project
 {
+	PhysicsStaticObjectComponent::~PhysicsStaticObjectComponent()
+	{
+	}
 	bool PhysicsStaticObjectComponent::Update(float frameTime)
 	{
 		UpdatePositionAndRotation();
@@ -125,5 +128,9 @@ namespace Project
 			}
 		}
 		return nullptr;
+	}
+	physx::PxShape* PhysicsStaticObjectComponent::GetSphere()
+	{
+		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidStatic, physx::PxSphereGeometry(m_CollisionScale.x), *m_Material);;
 	}
 }

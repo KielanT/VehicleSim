@@ -48,6 +48,8 @@ namespace Project
 	private:
 		void CreateDynamicCubes(int amount);
 		void CreateStaticCubes(int amount);
+		void CreateDynamicSpheres(int amount);
+		void CreateStaticSpheres(int amount);
 
 	private:
 		ErrorLogger m_Log;
@@ -81,8 +83,8 @@ namespace Project
 			float mass;
 		};
 		
-		const int CUBE_DYNAMIC_AMOUNT = 10;
-		DefaultObjectSettings m_CubedDynamicSettings[10]
+		const static int CUBE_DYNAMIC_AMOUNT = 10;
+		DefaultObjectSettings m_CubedDynamicSettings[CUBE_DYNAMIC_AMOUNT]
 		{
 			//Position						  Rotation					      Scale						  Mass
 			{ CVector3(  20.0f, 5.0f,   0.0f), CVector3( 0.0f, 0.0f,   0.0f), CVector3(0.5f, 0.5f, 0.5f), 10000.0f },
@@ -96,6 +98,55 @@ namespace Project
 			{ CVector3(-100.0f, 5.0f,  15.0f), CVector3( 0.0f, 0.0f,   0.0f), CVector3(0.5f, 0.5f, 0.5f), 1000000.0f }, 
 			{ CVector3( -55.0f, 5.0f,  80.0f), CVector3( 0.0f, 0.0f, -40.0f), CVector3(0.5f, 0.5f, 0.5f), 70000.0f }, 
 		};
+
+		const static int CUBE_STATIC_AMOUNT = 10;
+		DefaultObjectSettings m_CubedStaticSettings[CUBE_STATIC_AMOUNT]
+		{
+			//Position						  Rotation					      Scale						  Mass
+			{ CVector3(100.0f, 5.0f, 100.0f), CVector3(0.0f, 90.0f,   0.0f), CVector3(0.5f, 0.5f, 0.5f), 10000.0f },
+			{ CVector3(100.0f, 0.0f,   0.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(1.0f, 1.0f, 1.0f), 10000.0f },
+			{ CVector3(-40.0f, 0.0f,  200.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(0.5f, 0.5f, 0.5f), 10.0f },
+			{ CVector3(-60.0f, 20.0f, -200.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(5.0f, 5.0f, 5.0f), 100000.0f },
+			{ CVector3(80.0f, 0.0f, -390.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(0.5f, 0.5f, 0.5f), 10000.0f },
+			{ CVector3(-190.0f, 25.0f, -50.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(5.0f, 5.0f, 5.0f), 50000.0f },
+			{ CVector3(300.0f, 10.0f, -40.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(3.5f, 3.5f, 3.5f), 10000.0f },
+			{ CVector3(0.0f, 5.0f,  0.0f), CVector3(5.0f, 0.0f,  60.0f), CVector3(0.5f, 0.5f, 0.5f), 400.0f },
+			{ CVector3(-150.0f, 2.0f,  -100.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(0.5f, 0.5f, 0.5f), 1000000.0f },
+			{ CVector3(-155.0f, 7.0f,  180.0f), CVector3(0.0f, 0.0f, -40.0f), CVector3(0.5f, 0.5f, 0.5f), 70000.0f },
+		};
+
+		const static int SPHERE_DYNAMIC_AMOUNT = 10;
+		DefaultObjectSettings m_SphereDynamicSettings[SPHERE_DYNAMIC_AMOUNT]
+		{
+			//Position						  Rotation					      Scale						  Mass
+			{ CVector3(200.0f, 10.0f, 100.0f), CVector3(0.0f, 90.0f,   0.0f), CVector3(0.5f, 0.5f, 0.5f), 10000.0f },
+			{ CVector3(200.0f, 15.0f,   -110.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(1.0f, 1.0f, 1.0f), 10000.0f },
+			{ CVector3(-250.0f, 0.0f,  200.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(2.0f, 2.0f, 2.0f), 10.0f },
+			{ CVector3(-250.0f, 15.0f, -200.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(5.0f, 5.0f, 5.0f), 100000.0f },
+			{ CVector3(400.0f, 20.0f, -390.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(10.0f, 10.0f, 10.0f), 10000.0f },
+			{ CVector3(-400.0f, 5.0f, -400.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(5.0f, 5.0f, 5.0f), 50000.0f },
+			{ CVector3(400.0f, 10.0f, 400.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(0.2f, 0.2f, 0.2f), 10000.0f },
+			{ CVector3(400.0f, 5.0f,  250.0f), CVector3(5.0f, 0.0f,  60.0f), CVector3(0.5f, 0.5f, 0.5f), 400.0f },
+			{ CVector3(-300.0f, 2.0f,  100.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(0.7f, 0.7f, 0.7f), 1000000.0f },
+			{ CVector3(-500.0f, 30.0f,  500.0f), CVector3(0.0f, 0.0f, -40.0f), CVector3(15.0f, 15.0f, 15.0f), 70000.0f },
+		};
+
+		const static int SPHERE_STATIC_AMOUNT = 10;
+		DefaultObjectSettings m_SphereStaticSettings[SPHERE_STATIC_AMOUNT]
+		{
+			//Position						  Rotation					      Scale						  Mass
+			{ CVector3(500.0f, 10.0f, 300.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(5.0f, 5.0f, 5.0f), 10000.0f },
+			{ CVector3(500.0f, 35.0f,   -600.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(5.0f, 5.0f, 5.0f), 10000.0f },
+			{ CVector3(-600.0f, 0.0f,  600.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(2.0f, 2.0f, 2.0f), 10.0f },
+			{ CVector3(-600.0f, 15.0f, -600.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(5.0f, 5.0f, 5.0f), 100000.0f },
+			{ CVector3(700.0f, 20.0f, 0.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(10.0f, 10.0f, 10.0f), 10000.0f },
+			{ CVector3(-700.0f, 5.0f, 0.0f), CVector3(0.0f, 0.0f,  0.0f), CVector3(5.0f, 5.0f, 5.0f), 50000.0f },
+			{ CVector3(800.0f, 10.0f, 700.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(0.2f, 0.2f, 0.2f), 10000.0f },
+			{ CVector3(0.0f, 1.0f,  800.0f), CVector3(5.0f, 0.0f,  0.0f), CVector3(20.0f, 20.0f, 20.0f), 400.0f },
+			{ CVector3(0.0f, -20.0f,  -900.0f), CVector3(0.0f, 0.0f,   0.0f), CVector3(10.0f, 10.0f, 10.0f), 1000000.0f },
+			{ CVector3(-900.0f, 250.0f,  900.0f), CVector3(0.0f, 0.0f, 0.0f), CVector3(15.0f, 15.0f, 15.0f), 70000.0f },
+		};
+
 		
 		// TEMP
 		physx::PxShape* m_TrackShape = nullptr;

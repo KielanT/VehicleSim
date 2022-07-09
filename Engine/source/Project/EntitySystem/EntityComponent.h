@@ -16,6 +16,8 @@ namespace Project
 			m_Entity = entity;
 		}
 
+		 virtual ~EntityComponent() {}
+
 		const std::string& GetType() { return m_Type; }
 		const TEntityUID GetUID() { return m_UID; }
 		const Entity* GetEntity() { return m_Entity; }

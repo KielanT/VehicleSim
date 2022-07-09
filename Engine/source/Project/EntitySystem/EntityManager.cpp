@@ -287,8 +287,10 @@ namespace Project
 		m_EntityUIDMap->RemoveAllKeys();
 		while (m_Entities.size())
 		{
+
 			delete m_Entities.back();
 			m_Entities.pop_back();
+
 		}
 
 		m_IsEnumerating = false;

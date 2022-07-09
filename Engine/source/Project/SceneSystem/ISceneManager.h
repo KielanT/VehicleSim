@@ -8,6 +8,8 @@ namespace Project
 	class ISceneManager
 	{
 	public:
+
+		virtual ~ISceneManager(){}
 		// Loads the first scene in the array (typically index 0)
 		virtual bool LoadFirstScene() = 0; 
 

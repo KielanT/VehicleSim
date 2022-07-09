@@ -346,6 +346,8 @@ namespace Project
 
             //-----------------------------------
 
+
+
             D3D11_BUFFER_DESC bufferDesc;
             D3D11_SUBRESOURCE_DATA initData;
 
@@ -381,14 +383,16 @@ namespace Project
 
     Mesh::~Mesh()
     {
+        //if (assimpMesh != nullptr) delete assimpMesh;
+
         for (auto& subMesh : mSubMeshes)
         {
             if (subMesh.indexBuffer)   subMesh.indexBuffer->Release();
             if (subMesh.vertexBuffer)  subMesh.vertexBuffer->Release();
             if (subMesh.vertexLayout)  subMesh.vertexLayout->Release();
         }
-
-        if (assimpMesh != nullptr) delete assimpMesh;
+        
+        
     }
 
 

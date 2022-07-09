@@ -20,10 +20,11 @@ namespace Project
 		virtual physx::PxPhysics* GetPhysics() override { return m_Physics; } // TODO Remove this from here and interface
 		virtual physx::PxCooking* GetCooking() override { return m_Cooking; } // TODO Remove this from here and interface
 		virtual physx::PxScene* GetScene() override { return m_Scene; } // TODO Remove this from here and interface
+
+		~PhysX() {}
+
 	private:
 		ErrorLogger m_Log;
-
-		
 
 		physx::PxFoundation* m_Foundation = nullptr;
 		physx::PxPvd* m_Pvd = nullptr;

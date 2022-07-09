@@ -10,7 +10,38 @@ namespace Project
 {
     VehicleComponent::~VehicleComponent()
     {
+		int i = 0;
         if (m_Physics != nullptr) physx::PxCloseVehicleSDK();
+		//
+		//if (m_Entity != nullptr) delete m_Entity;
+		//
+		//
+		////VehicleSettings m_VehicleSettings;
+		////
+		//if (m_Vehicle4W != nullptr) m_Vehicle4W->release();
+		//
+		////TransformComponent* m_Transform = nullptr;
+		//
+		//SAFE_RELEASE(m_Material);
+		////
+		//if(m_FrictionPairs != nullptr) m_FrictionPairs->release();
+		////
+		//if (m_Camera != nullptr) delete m_Camera;
+		////
+		////bool m_Accelerate = false;
+		////bool m_Left = false;
+		////bool m_Right = false;
+		////bool m_Brake = false;
+		////bool m_HandBrake = false;
+		////
+		////bool IsVehicleInAir = true;
+		////
+		////PlayerControls m_Controls;
+		////
+		////VehicleSceneQueryData* m_VehicleSceneQueryData = NULL;
+		////physx::PxBatchQuery* m_BatchQuery = NULL;
+		//
+		//if (m_Physics != nullptr)  m_Physics->ShutdownPhysics();
     }
 
     bool VehicleComponent::Update(float frameTime)
@@ -34,9 +65,28 @@ namespace Project
         }
     }
 
+	void VehicleComponent::Reset()
+	{
+		m_Vehicle4W->setToRestState();
+		m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
+
+		m_VehicleInputData.setDigitalBrake(true);
+
+		m_Accelerate = false;
+		m_Left = false;
+		m_Right = false;
+		m_Brake = false;
+		m_HandBrake = false;
+	}
+
 	void VehicleComponent::GearsUI()
 	{
-		ImGui::Begin("HUD");
+		ImGuiWindowFlags flag = 0;
+		flag = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+
+
+		ImGui::Begin("HUD", nullptr, flag);
 		if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eNEUTRAL)
 		{
 			ImGui::Text("Gear: Neutral");
@@ -105,11 +155,7 @@ namespace Project
 		m_Vehicle4W = CreateVehicle4W();
 		m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ m_Transform->GetPosition().x, m_Transform->GetPosition().y, m_Transform->GetPosition().z });
 
-		m_Vehicle4W->setToRestState();
-		m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
-		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
-
-        m_VehicleInputData.setDigitalBrake(true);
+		Reset();
 		
 		m_Physics->GetScene()->addActor(*m_Vehicle4W->getRigidDynamicActor());
 

@@ -123,18 +123,27 @@ namespace Project
 
     void PhysX::ShutdownPhysics()
     {
+       
+
         SAFE_RELEASE(m_Scene);
+        
         SAFE_RELEASE(m_CpuDispatcher);
+       
         SAFE_RELEASE(m_Cooking);
 
-        PxCloseExtensions();
+        if(m_Foundation != nullptr)
+            PxCloseExtensions();
+
+        
+
         SAFE_RELEASE(m_Physics);
+        
         SAFE_RELEASE(m_Pvd);
-        
-        
-       
         SAFE_RELEASE(m_Foundation);
        
+       
+        
+        
     }
 
     const EPhysicsType PhysX::GetPhysicsType()

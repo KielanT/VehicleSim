@@ -29,7 +29,7 @@ namespace Project
 		}
 		~CollisionComponent()
 		{
-			delete m_Renderer;
+			//delete m_Renderer;
 			delete m_Mesh;
 			delete m_Model;
 		}

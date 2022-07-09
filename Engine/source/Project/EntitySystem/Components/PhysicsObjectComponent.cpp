@@ -4,6 +4,10 @@
 
 namespace Project
 {
+	PhysicsObjectComponent::~PhysicsObjectComponent()
+	{
+	}
+
 	bool PhysicsObjectComponent::Update(float frameTime)
 	{
 		UpdatePositionAndRotation();

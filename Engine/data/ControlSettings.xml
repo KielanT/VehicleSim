@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PlayerControls>
-    <Accelerate Key="38"/>
-    <SteerRight Key="39"/>
-    <SteerLeft Key="37"/>
-    <Brake Key="40"/>
+    <Accelerate Key="87"/>
+    <SteerRight Key="68"/>
+    <SteerLeft Key="65"/>
+    <Brake Key="83"/>
     <GearUp Key="81"/>
     <GearDown Key="69"/>
 </PlayerControls>

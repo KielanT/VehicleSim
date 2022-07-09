@@ -6,6 +6,7 @@
 #include "Project/SceneSystem/Scenes/TrackSceneOne.h"
 #include "Project/SceneSystem/Scenes/TrackSceneTwo.h"
 #include "Project/SceneSystem/Scenes/OpenWorldSceneOne.h"
+#include "Project/SceneSystem/Scenes/OpenWorldSceneTwo.h"
 #include "Project/SceneSystem/TempScenes/TempSceneOne.h"
 #include "Project/SceneSystem/TempScenes/TempSceneTwo.h"
 #include "Project/SceneSystem/TempScenes/TempSceneThree.h"
@@ -44,7 +45,8 @@ namespace Project
 	{
 		for (int i = 0; i < m_Scenes.size(); ++i)
 		{
-			m_Scenes[i]->ReleaseResources();
+			if(m_Scenes[i] != nullptr)
+			 m_Scenes[i]->ReleaseResources();
 		}
 		
 	}
@@ -83,6 +85,10 @@ namespace Project
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 		
 		scene = new OpenWorldSceneOne(this, m_Renderer, true, 3); // Creates a new temp scene
+		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
+		m_Scenes.insert(pos, scene); // Adds scene to the array
+
+		scene = new OpenWorldSceneTwo(this, m_Renderer, true, 4); // Creates a new temp scene
 		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 		

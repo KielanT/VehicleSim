@@ -77,7 +77,7 @@ namespace Project
 			ID3D11ShaderResourceView* image = nullptr;
 		};
 
-		const static int LEVEL_IMAGE_COUNT = 3;
+		const static int LEVEL_IMAGE_COUNT = 5;
 		LevelImages m_LevelImages[LEVEL_IMAGE_COUNT];
 		
 		int m_CarImage_Width = 0;
@@ -197,7 +197,7 @@ namespace Project
 		EntityManager* m_PhysicsEntityManager = nullptr;
 		EntityManager* m_LightEntityManager = nullptr;
 
-		CDirectX11SceneManager* m_sceneManager;
+		CDirectX11SceneManager* m_sceneManager = nullptr;
 
 		IPhysics* m_PhysicsSystem = nullptr;
 

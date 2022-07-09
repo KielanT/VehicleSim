@@ -18,6 +18,8 @@ namespace Project
 
 		const std::string GetMeshPath() { return m_filePath; }
 
+		~MeshComponent(){}
+
 	private:
 		std::string m_filePath;
 		int m_Index;

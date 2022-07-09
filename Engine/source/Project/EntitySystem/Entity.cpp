@@ -73,7 +73,10 @@ namespace Project
 		std::map<TEntityUID, EntityComponent*>::iterator it = m_Components.begin();
 		while (it != m_Components.end())
 		{
-			delete (*it).second;
+			if ((*it).second != nullptr)
+			{
+				delete (*it).second;
+			}
 			it++;
 		}
 		m_Components.clear();

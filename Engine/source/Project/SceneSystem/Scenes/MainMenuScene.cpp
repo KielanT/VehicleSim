@@ -240,7 +240,9 @@ namespace Project
 		}
 
 		if (bQuitBtn)
+		{
 			DestroyWindow(m_Renderer->GetWindowsProperties().Hwnd);
+		}
 	}
 
 	void MainMenuScene::GameMode()
@@ -310,6 +312,12 @@ namespace Project
 				m_MapIndex = 3;
 			}			
 			
+			if (bMapTwoBtn)
+			{
+				m_IsMapSelected = !m_IsMapSelected;
+				m_MapIndex = 4;
+			}
+
 			if (m_IsMapSelected)
 			{
 				VehicleSetup();
@@ -322,28 +330,33 @@ namespace Project
 	void MainMenuScene::VehicleSetup()
 	{
 		ImGuiWindowFlags VehicleSetupWinFlags = 0;
-		//VehicleSetupWinFlags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;;
-		ImGui::Begin("LevelSettings", nullptr, VehicleSetupWinFlags);
-		/*ImGui::SetWindowSize({ 216,253 });
-		ImGui::SetWindowPos({ 448,63 });*/
-		//ImGui::SetWindowFontScale(2.0f);
+		VehicleSetupWinFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		ImGui::Begin("Level Settings", nullptr, VehicleSetupWinFlags);
+		ImGui::SetWindowSize({ 597,701 });
+		ImGui::SetWindowPos({ 670,15 });
 		
 		ImGuiWindowFlags treeFlags = 0;
-		treeFlags = ImGuiWindowFlags_NoCollapse;
-		
+		treeFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMouseInputs | ImGuiTreeNodeFlags_Leaf;
+
 		if (ImGui::TreeNodeEx("Map: ", treeFlags))
 		{
-			
-			//ImGui::Image(m_Image, ImVec2(m_Image_Width / 3, m_Image_Height / 3));
+			ImGui::Unindent();
+			float avail = ImGui::GetContentRegionAvail().x;
+			float off = (avail - m_LevelImages[m_MapIndex].width / 3) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
 			ImGui::Image(m_LevelImages[m_MapIndex].image, ImVec2(m_LevelImages[m_MapIndex].width/3, m_LevelImages[m_MapIndex].height/3));
 
 			ImGui::TreePop();
 			ImGui::Separator();
 		}
-
+		ImGui::Indent();
 		if (ImGui::TreeNodeEx("Vehicle Select: ", treeFlags))
 		{
 			ImGuiWindowFlags child_flags = ImGuiWindowFlags_HorizontalScrollbar;
+
+
+
 			ImGui::BeginChild("ScrollBar", ImVec2(-100, 100), true, child_flags);
 			
 			auto pos = ImGui::GetCursorPos();
@@ -384,7 +397,7 @@ namespace Project
 			ImGui::Separator();
 
 		}
-		
+		ImGui::Indent();
 		if (ImGui::TreeNodeEx("Vehicle Setup: ", treeFlags))
 		{
 			// Set Chassis Mass

@@ -9,6 +9,8 @@ namespace Project
 	class P_API IRenderer
 	{
 	public:
+		virtual ~IRenderer(){}
+
 		// Initialize the renderer
 		virtual bool InitRenderer(WindowProperties& props) = 0; 
 		 

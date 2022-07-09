@@ -8,7 +8,7 @@ namespace Project
 	class IScene
 	{
 	public:
-		//virtual ~IScene() = 0;
+		virtual ~IScene() {};
 
 		// Initializes the geometry for the scene
 		virtual bool InitGeometry() = 0;

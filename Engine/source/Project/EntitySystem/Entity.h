@@ -12,7 +12,7 @@ namespace Project
 	public:
 		Entity(TEntityUID UID, const std::string& name);
 
-		virtual ~Entity()
+		~Entity()
 		{
 			RemoveAllComponent();
 		}
