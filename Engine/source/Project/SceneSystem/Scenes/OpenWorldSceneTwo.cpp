@@ -47,8 +47,6 @@ namespace Project
 
 		m_SceneCamera = new Camera(true);
 
-		m_Timer = new Timer();
-		m_Timer->Stop();
 		/*****************************************************/
 		/**			   Create the entities                  **/
 		/*****************************************************/
@@ -111,11 +109,11 @@ namespace Project
 			VehicleComponent* comp = static_cast<VehicleComponent*>(m_PhysicsEntityManager->GetEntity("MainCar")->GetComponent("VehicleComponent"));
 			comp->AttachMainCamera(m_SceneCamera);
 			comp->SetResetPos({ 0.0f, 0.0f, -20.0f });
+			comp->EnableReset(false);
 		}
 
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
-		m_Timer->Start();
 
 		return true;
 	}
@@ -246,6 +244,8 @@ namespace Project
 
 		TimerUI();
 
+		RoundUI();
+
 		if (KeyHit(KeyCode::Key_Escape))
 		{
 			m_IsPaused = !m_IsPaused;
@@ -315,20 +315,99 @@ namespace Project
 
 	void OpenWorldSceneTwo::TimerUI()
 	{
-		ImGui::Begin("GameTime");
-		ImGui::Text("Time: %d", (int)m_CurrentTime);
+		ImGuiWindowFlags flag = 0;
+		flag = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground;
+		ImGui::Begin("GameTime", nullptr, flag);
+		ImGui::SetWindowPos(ImVec2(1085, 7));
+		float avail = ImGui::GetContentRegionAvail().x;
+		float off = (avail - 160) * 0.5f;
+		if (off > 0.0f)
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+		ImGui::SetWindowFontScale(2.0f);
+		ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Time: %d", (int)m_CurrentTime);
+		ImGui::End();
 
 		if (m_CurrentTime <= 0)
 		{
 			m_CurrentTime = START_TIME / m_TimeCount;
 			m_CurrentTime += 1;
 			Reset();
-			m_TimeCount++;
+			m_TimeCount += 2;
+			m_RoundCount++;
 		}
 
 		
 
+		if (m_RoundCount >= 4)
+		{
+			m_IsPaused = true;
+			ImGui::OpenPopup("GameOverPopup");
+		}
+		GameOver();
+	}
+
+	void OpenWorldSceneTwo::RoundUI()
+	{
+		ImGuiWindowFlags flag = 0;
+		flag = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground;
+		ImGui::Begin("GameRoundCount", nullptr, flag);
+		ImGui::SetWindowPos(ImVec2(555, 7));
+		float avail = ImGui::GetContentRegionAvail().x;
+		float off = (avail - 160) * 0.5f;
+		if (off > 0.0f)
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+		ImGui::SetWindowFontScale(2.0f);
+		ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 1.0f), "Round: %d", m_RoundCount);
+
+
 		ImGui::End();
+	}
+
+	void OpenWorldSceneTwo::GameOver()
+	{
+		ImGuiWindowFlags popupFlags = 0;
+		popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+
+
+		if (ImGui::BeginPopupModal("GameOverPopup", nullptr, popupFlags))
+		{
+			m_IsPaused = true;
+			std::string t = "Paused";
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto textWidth = ImGui::CalcTextSize(t.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::Text(t.c_str());
+
+			ImGui::NewLine();
+			ImGui::NewLine();
+
+			float avail = ImGui::GetContentRegionAvail().x;
+			float off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("Reset", ImVec2(80, 0)))
+			{
+				m_CurrentTime = START_TIME + 1;
+				m_TimeCount = 2;
+				m_RoundCount = 1;
+				m_Score = 0;
+				Reset();
+				m_IsPaused = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::NewLine();
+			avail = ImGui::GetContentRegionAvail().x;
+			off = (avail - 80) * 0.5f;
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+			if (ImGui::Button("Quit", ImVec2(80, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+				m_sceneManager->LoadScene(0);
+			}
+
+			ImGui::EndPopup();
+		}
 	}
 
 

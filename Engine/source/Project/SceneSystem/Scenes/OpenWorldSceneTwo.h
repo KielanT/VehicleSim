@@ -55,15 +55,17 @@ namespace Project
 		void Scores();
 		void PauseMenu();
 		void TimerUI();
+		void RoundUI();
+		void GameOver();
 
 
 		int m_Score = 0;
 		bool m_IsPaused = false;
 
-		Timer* m_Timer;
 		const float START_TIME = 120.0f;
 		float m_CurrentTime = START_TIME + 1;
 		int m_TimeCount = 2;
+		int m_RoundCount = 1;
 
 	private:
 		ErrorLogger m_Log;

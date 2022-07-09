@@ -63,6 +63,8 @@ namespace Project
 			if (m_Physics != nullptr) physx::PxCloseVehicleSDK();
 		}
 
+		void EnableReset(bool reset) { m_IsResetEnabled = reset; }
+
 	private:
 		void SetupVehicle();
 
@@ -90,6 +92,7 @@ namespace Project
 		
 		
 		CVector3 m_ResetPos;
+		bool m_IsResetEnabled = true;
 
 	private:
 		Entity* m_Entity = nullptr;

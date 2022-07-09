@@ -520,7 +520,7 @@ namespace Project
 		if (KeyHeld(m_Controls.handBrake))
 			m_HandBrake = true;
 
-		if(KeyHit(m_Controls.reset))
+		if(m_IsResetEnabled && KeyHit(m_Controls.reset))
 			Reset();
 
 		
