@@ -116,7 +116,7 @@ namespace Project
 		bool m_Brake = false;
 		bool m_HandBrake = false;
 		
-		bool IsVehicleInAir = true;
+		bool IsVehicleInAir = false;
 
 		PlayerControls m_Controls;
 

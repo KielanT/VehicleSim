@@ -33,10 +33,12 @@ physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* phys
 {
 	physx::PxU32 vertexCount;
 	std::vector<physx::PxVec3> vertices;
+
 	if (entity->GetComponent("CollisionMesh"))
 	{
 		CollisionComponent* comp = static_cast<CollisionComponent*>(entity->GetComponent("CollisionMesh"));
 		vertexCount = comp->GetNumberOfVertices(index);
+
 
 		std::vector<CVector3> Chassis = comp->GetVertices(index);
 
@@ -98,18 +100,18 @@ void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const phys
 	const physx::PxF32 numLeftWheels = numWheels / 2.0f;
 	const physx::PxF32 deltaZ = (wheelFrontZ - wheelRearZ) / (numLeftWheels - 1.0f);
 
-	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
-	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
-	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
-	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
+	//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[2]) * 0.5f, -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
+	//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[3]) * 0.5f, -0.3f, wheelRearZ + 0 * deltaZ * 0.5f);
+	//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth[0]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
+	//wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth[1]) * 0.5f, -0.3f, wheelRearZ + (numLeftWheels - 1) * deltaZ);
 
+	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3( -0.7f,  0.0f, -1.0f);
+	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3( 0.6f , 0.0f, -1.0f);
+	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3(-0.7f,  0.0f,  1.0f);
+	wheelCentreOffsets[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3(0.6f,  0.0f,  1.0f);
 }
 
-static physx::PxF32 gTireFrictionMultipliers[MAX_NUM_SURFACE_TYPES][MAX_NUM_TIRE_TYPES] =
-{
-	//NORMAL,	WORN
-	{1.00f,		0.1f}//TARMAC
-};
+
 
 physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial)
 {
@@ -128,7 +130,7 @@ physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const ph
 	{
 		for (physx::PxU32 j = 0; j < MAX_NUM_TIRE_TYPES; j++)
 		{
-			surfaceTirePairs->setTypePairFriction(i, j, gTireFrictionMultipliers[i][j]);
+			surfaceTirePairs->setTypePairFriction(i, j, TireFrictionMultipliers[i][j]);
 		}
 	}
 	return surfaceTirePairs;

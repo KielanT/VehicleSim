@@ -39,6 +39,8 @@ namespace Project
 		unsigned int GetNumberOfVertices(int index) { return m_Mesh->GetNumberVertices(index); }
 		std::vector<CVector3> GetVertices(int index) { return m_Mesh->GetVertices(); }
 
+		int GetNumberTriangles() { return m_Mesh->GetNumberTriangles(); }
+		std::vector<unsigned int> GetIndices() { return m_Mesh->GetIndices(); }
 	private:
 		IRenderer* m_Renderer;
 		Mesh* m_Mesh;

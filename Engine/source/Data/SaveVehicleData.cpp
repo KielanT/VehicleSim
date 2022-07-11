@@ -20,6 +20,10 @@ namespace Project
 		child->SetAttribute("MaxSteer", settings.GetMaxSteer());
 		root->InsertEndChild(child);
 
+		child = doc.NewElement("Tires");
+		child->SetAttribute("Type", settings.GetTireType());
+		root->InsertEndChild(child);
+
 		child = doc.NewElement("Differential");
 		child->SetAttribute("Type", settings.GetDiff().mType);
 		child->SetAttribute("FrontBias", settings.GetDiff().mFrontBias);
@@ -119,6 +123,10 @@ namespace Project
 				if (attr != nullptr) settings.SetWheelMass(attr->FloatValue());
 				attr = childElement->FindAttribute("MaxSteer");
 				if (attr != nullptr) settings.SetMaxSteer(attr->FloatValue());
+
+				childElement = element->FirstChildElement("Tires");
+				attr = childElement->FindAttribute("Type");
+				if (attr != nullptr) settings.SetTires(attr->IntValue());
 
 				physx::PxVehicleDifferential4WData data;
 				childElement = element->FirstChildElement("Differential");
@@ -230,8 +238,6 @@ namespace Project
 				if (attr != nullptr) settings.SetFrontAntiRollBarStiffness(attr->FloatValue());
 				attr = childElement->FindAttribute("RearStiffness");
 				if (attr != nullptr) settings.SetRearAntiRollBarStiffness(attr->FloatValue());
-
-				
 
 			}
 			element = element->NextSiblingElement();

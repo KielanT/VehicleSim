@@ -481,6 +481,8 @@ namespace Project
 			ImGui::PopItemWidth();
 			ImGui::EndDisabled();
 			
+			TireSettings();
+
 			DifferentialSettings();
 
 			EngineSettings();
@@ -515,6 +517,43 @@ namespace Project
 			ImGui::Separator();
 		}
 		ImGui::End();
+	}
+
+	void MainMenuScene::TireSettings()
+	{
+		if (ImGui::TreeNodeEx("Tires: ", 0))
+		{
+			const char* items[MAX_NUM_TIRE_TYPES];
+			items[0] = "Normal";
+			items[1] = "Worn";
+			items[2] = "Wets";
+			items[3] = "Slicks";
+			items[4] = "Ice";
+			items[5] = "MUD";
+
+			static int item_current_idx = 0;
+			const char* combo_preview_value = items[item_current_idx];
+			ImGui::PushItemWidth(310);
+			if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "Type: ", combo_preview_value))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+				{
+					const bool is_selected = (item_current_idx == n);
+					if (ImGui::Selectable(items[n], is_selected))
+						item_current_idx = n;
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+			ImGui::PopItemWidth();
+
+			m_VehicleSettings.SetTires(item_current_idx);
+			ImGui::TreePop();
+		}
 	}
 
 	void MainMenuScene::DifferentialSettings()

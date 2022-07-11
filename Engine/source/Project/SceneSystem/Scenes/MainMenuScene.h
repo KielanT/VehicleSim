@@ -60,6 +60,7 @@ namespace Project
 		void GameMode();
 		void LoadMaps();
 		void VehicleSetup();
+		void TireSettings();
 		void DifferentialSettings();
 		void EngineSettings();
 		void GearSettings();

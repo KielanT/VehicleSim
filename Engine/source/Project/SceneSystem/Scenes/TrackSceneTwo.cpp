@@ -87,7 +87,7 @@ namespace Project
 			SEntityTransform transform = SEntityTransform();
 			transform.Position = { 0.0f, 2.0f, 0.0f };
 			transform.Scale = { 10.0f, 10.0f, 2.0f };
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", vehicleSettings, path + "Compact/CompactBlue.png");
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/MainCompact.obj", path + "Compact/CollisionCompact.obj", vehicleSettings, path + "Compact/CompactBlue.png");
 		}
 
 		return true;

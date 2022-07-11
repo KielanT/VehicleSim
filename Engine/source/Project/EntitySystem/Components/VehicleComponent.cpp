@@ -46,6 +46,8 @@ namespace Project
 
     bool VehicleComponent::Update(float frameTime)
     {
+
+
         if (m_Physics != nullptr)
         {
 			// Update vehicle positioning and rotation
@@ -198,10 +200,16 @@ namespace Project
 
 
 			// TODO Find a way to have the wheels selected in the order (remove hard coding)
-			wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics); // Front Left
-			wheelMesh[1] = CreateWheelMesh(4, m_Entity, m_Physics); // Front right
-			wheelMesh[2] = CreateWheelMesh(2, m_Entity, m_Physics); // Rear left
-			wheelMesh[3] = CreateWheelMesh(3, m_Entity, m_Physics); // Rear 
+			//wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics); // Front Left
+			//wheelMesh[1] = CreateWheelMesh(4, m_Entity, m_Physics); // Front right
+			//wheelMesh[2] = CreateWheelMesh(2, m_Entity, m_Physics); // Rear left
+			//wheelMesh[3] = CreateWheelMesh(3, m_Entity, m_Physics); // Rear 
+
+			wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics);
+			wheelMesh[1] = CreateWheelMesh(0, m_Entity, m_Physics);
+			wheelMesh[2] = CreateWheelMesh(0, m_Entity, m_Physics);
+			wheelMesh[3] = CreateWheelMesh(0, m_Entity, m_Physics);
+
 
 
 			MakeWheelWidthsAndRadii(wheelMesh, wheelWidths, wheelRadii);
@@ -233,6 +241,7 @@ namespace Project
 
 			//Rigid body data.
 			physx::PxVehicleChassisData rigidBodyData;
+
 			rigidBodyData.mMOI = chassisMOI;
 			rigidBodyData.mMass = m_VehicleSettings.GetChassisMass();
 			rigidBodyData.mCMOffset = chassisCMOffset;
@@ -251,7 +260,8 @@ namespace Project
 			const physx::PxF32 frontZ = chassisDims.z * 0.3f;
 			const physx::PxF32 rearZ = -chassisDims.z * 0.3f;
 			ComputeWheelCenterActorOffsets4W(frontZ, rearZ, chassisDims, wheelWidths, wheelRadii, m_VehicleSettings.GetNumberOfWheels(), wheelCenterActorOffsets);
-
+			
+		
 			physx::PxF32 wheelMOI[4];
 
 			for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT; i++)
@@ -394,7 +404,7 @@ namespace Project
 			//Set up the tires.
 			for (auto i = 0; i < numWheels; i++)
 			{
-				tires[i].mType = TIRE_TYPE_NORMAL;
+				tires[i].mType = m_VehicleSettings.GetTireType();
 			}
 		}
 
@@ -534,7 +544,7 @@ namespace Project
 	{
 		CVector3 pos;
 		pos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
-		pos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y - 0.6f;
+		pos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y - 0.4f;
 		pos.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.z;
 		m_Transform->SetPosition(pos);
 		CVector3 rot;

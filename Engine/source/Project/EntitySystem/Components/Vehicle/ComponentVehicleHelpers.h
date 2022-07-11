@@ -9,20 +9,31 @@ namespace Project
 	{
 		TIRE_TYPE_NORMAL = 0,
 		TIRE_TYPE_WORN,
+		TIRE_TYPE_WETS,
+		TIRE_TYPE_SLICKS,
+		TIRE_TYPE_ICE,
+		TIRE_TYPE_MUD,
 		MAX_NUM_TIRE_TYPES
 	};
 		
 	enum
 	{
 		SURFACE_TYPE_TARMAC = 0,
+		SURFACE_TYPE_MUD,
+		SURFACE_TYPE_SNOW,
+		SURFACE_TYPE_GRASS,
 		MAX_NUM_SURFACE_TYPES
 	};
 	
+	// VALUES FROM PHYSX SAMPLE
 	//Tire model friction for each combination of drivable surface type and tire type.
 	static physx::PxF32 TireFrictionMultipliers[MAX_NUM_SURFACE_TYPES][MAX_NUM_TIRE_TYPES] =
 	{
-		//NORMAL,	WORN
-		{1.00f,		0.1f}//TARMAC
+		//NORMAL	WORN	WETS	SLICKS	ICE		MUD
+		{1.00f,		0.1f,	1.10f,	1.15f,	1.10f,	1.10f}, // TARMAC
+		{1.00f,		0.1f,	0.95f,	0.95f,	0.95f,	0.95f}, // MUD
+		{1.00f,		0.1f,	0.70f,	0.70f,	0.70f,	0.70f}, // SNOW
+		{1.00f,		0.1f,	0.80f,	0.80f,	0.80f,	0.80f} // GRASS
 	};
 	
 	enum

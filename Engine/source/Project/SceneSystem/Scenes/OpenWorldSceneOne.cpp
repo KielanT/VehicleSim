@@ -84,8 +84,8 @@ namespace Project
 			transform.Scale = { 2.0f, 0.0f, 2.0f };
 
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x", transform, {1.0f, 1.0f, 1.0f}, true, path + "BasicTexOrange.png");
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", vehicleSettings, path + "Compact/CompactBlue.png");
-			
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/MainCompact.obj", path + "Compact/CollisionCompact.obj", vehicleSettings, path + "Compact/CompactBlue.png");
+
 			transform.Scale = { 1.0f, 1.0f, 1.0f };
 			transform.Position = { 0.0f, 0.0f, 200.0f };
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("RampOne", PhysicsStaticObjectType::TriangleMesh, path + "Ramp.obj", transform, transform.Scale, true, path + "BasicTexBlue.png");

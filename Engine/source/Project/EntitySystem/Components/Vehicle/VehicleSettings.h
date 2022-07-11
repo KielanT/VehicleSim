@@ -1,5 +1,6 @@
 #pragma once
 #include "Project/Interfaces/IPhysics.h"
+#include "Project/EntitySystem/Components/Vehicle/ComponentVehicleHelpers.h"
 
 namespace Project
 {
@@ -10,13 +11,6 @@ namespace Project
 		AllWheels
 	};
 
-	enum class AntiRollBar
-	{
-		FrontOnly = 0,
-		RearOnly,
-		Both,
-		None
-	};
 	
 	class VehicleSettings
 	{
@@ -24,7 +18,8 @@ namespace Project
 		VehicleSettings() : m_IsAuto(true), m_ChassisMass(1500.0f), m_Diff(DefaultDifferetial()),
 			m_Engine(DefaultEngine()), m_Gears(DefaultGears()), m_Clutch(DefaultClutch()),
 			m_WheelMass(20.0f), m_MaxSteer(physx::PxPi * 0.3333f), m_NumWheels(4), m_HandBrake(HandBrake::RearWheelsOnly),
-			m_MaxHandBrakeTorque(4000.0f), m_AntiRollBar(AntiRollBar::Both), m_FrontRollBarStiffness(10000.0f), m_RearRollBarStiffness(10000.0f)
+			m_MaxHandBrakeTorque(4000.0f), m_FrontRollBarStiffness(10000.0f), m_RearRollBarStiffness(10000.0f),
+			m_TireType(TIRE_TYPE_NORMAL)
 		{
 			for (int i = 0; i < m_NumWheels; ++i)
 			{
@@ -44,9 +39,9 @@ namespace Project
 		physx::PxReal GetHandBrakeTorque() { return m_MaxHandBrakeTorque; }
 		physx::PxF32 GetMaxSteer() { return m_MaxSteer; }
 		physx::PxVehicleSuspensionData GetSuspension(int index) { return m_Suspension[index]; }
-		AntiRollBar GetAntiRollBar() { return m_AntiRollBar; }
 		physx::PxF32 GetFrontAntiRollBarStiffness() { return m_FrontRollBarStiffness; }
 		physx::PxF32 GetRearAntiRollBarStiffness() { return m_RearRollBarStiffness; }
+		int GetTireType() { return m_TireType; }
 
 		const physx::PxVehicleDifferential4WData DefaultDifferetial();
 		const physx::PxVehicleEngineData DefaultEngine();
@@ -73,6 +68,8 @@ namespace Project
 
 		void SetFrontAntiRollBarStiffness(physx::PxF32 stiffness) { m_FrontRollBarStiffness = stiffness; }
 		void SetRearAntiRollBarStiffness(physx::PxF32 stiffness) { m_RearRollBarStiffness = stiffness; }
+
+		void SetTires(int tire) { m_TireType = tire; }
 		
 	private:
 
@@ -98,10 +95,9 @@ namespace Project
 		HandBrake m_HandBrake;
 		physx::PxReal m_MaxHandBrakeTorque;
 
-		AntiRollBar m_AntiRollBar;
-
 		physx::PxF32 m_FrontRollBarStiffness;
 		physx::PxF32 m_RearRollBarStiffness;
 		
+		int m_TireType;
 	};
 }

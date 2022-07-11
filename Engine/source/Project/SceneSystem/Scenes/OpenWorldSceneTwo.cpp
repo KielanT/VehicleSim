@@ -94,8 +94,8 @@ namespace Project
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("GoalTwo", PhysicsStaticObjectType::TriangleMesh, path + "GoalTwo.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexYellow.png");
 			
 			transform.Position = { 0.0f, 0.0f, -30.0f };
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", vehicleSettings, path + "Compact/CompactBlue.png", transform);
-			
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/MainCompact.obj", path + "Compact/CollisionCompact.obj", vehicleSettings, path + "Compact/CompactBlue.png");
+
 			transform.Position = { 0.0f, 0.0f, 0.0f };
 			transform.Scale = { 0.3f, 0.3f, 0.3f };
 			m_PhysicsEntityManager->CreatePhysicsDynamicEntity("Sphere", PhysicsDynmaicObjectType::Sphere, path + "Sphere.x", transform, { transform.Scale.x * 10, transform.Scale.y, transform.Scale.z }, false, path + "BasicTexBlue.png");
