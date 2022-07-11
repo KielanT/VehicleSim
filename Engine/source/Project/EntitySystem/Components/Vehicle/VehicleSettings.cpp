@@ -36,6 +36,9 @@ namespace Project
         data.mMaxDroop = 0.1f;
         data.mSpringStrength = 35000.0f;
         data.mSpringDamperRate = 4500.0f;
+        data.mCamberAtRest = 0.0f;
+        data.mCamberAtMaxDroop = 0.001f;
+        data.mCamberAtMaxCompression = 0.001f;
         return data;
     }
 }

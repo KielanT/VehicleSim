@@ -48,7 +48,9 @@ namespace Project
 		m_SceneCamera = new Camera(true);
 		m_Timer = new Timer();
 		m_Timer->Stop();
-
+		m_IsPaused = false;
+		bestLap = 0;
+		previousTimer = 0;
 		/*****************************************************/
 		/**			   Create the entities                  **/
 		/*****************************************************/
@@ -277,8 +279,9 @@ namespace Project
 		//ImGui::Text("Previous Lap %f", currentSeconds);
 
 
-
-		ImGui::Begin("Times");
+		ImGuiWindowFlags flags = 0;
+		flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		ImGui::Begin("Times", nullptr, flags);
 
 		if (bestLap <= 0.1)
 			ImGui::Text("    Best: --.--");

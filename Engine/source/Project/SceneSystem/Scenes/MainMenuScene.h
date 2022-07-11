@@ -60,6 +60,13 @@ namespace Project
 		void GameMode();
 		void LoadMaps();
 		void VehicleSetup();
+		void DifferentialSettings();
+		void EngineSettings();
+		void GearSettings();
+		void ClutchSettings();
+		void SuspensionSettings();
+		void SuspensionSettingHelper(std::string nodeName, physx::PxVehicleDrive4WWheelOrder::Enum wheelNum);
+
 		void SettingsMenu();
 		void ControlSettings();
 		void WindowSettings();
@@ -130,8 +137,10 @@ namespace Project
 		int m_ClutchStrength;
 		
 		float m_GearSwitchTime;
+		int m_NumGears;
 		
-
+		float m_FrontAntiStiffness;
+		float m_RearAntiStiffness;
 
 		physx::PxVehicleDifferential4WData m_Diff;
 		physx::PxVehicleEngineData m_Engine;

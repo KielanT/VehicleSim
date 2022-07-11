@@ -22,6 +22,12 @@ namespace Project
 
 		child = doc.NewElement("Differential");
 		child->SetAttribute("Type", settings.GetDiff().mType);
+		child->SetAttribute("FrontBias", settings.GetDiff().mFrontBias);
+		child->SetAttribute("RearBias", settings.GetDiff().mRearBias);
+		child->SetAttribute("CentreBias", settings.GetDiff().mCentreBias);
+		child->SetAttribute("FrontRearSplit", settings.GetDiff().mFrontRearSplit);
+		child->SetAttribute("FrontLeftRightSplit", settings.GetDiff().mFrontLeftRightSplit);
+		child->SetAttribute("RearLeftRightSplit", settings.GetDiff().mRearLeftRightSplit);
 		root->InsertEndChild(child);
 
 		child = doc.NewElement("Engine");
@@ -31,6 +37,7 @@ namespace Project
 
 		child = doc.NewElement("Gears");
 		child->SetAttribute("SwitchTime", settings.GetGears().mSwitchTime);
+		child->SetAttribute("NumGears", settings.GetGears().mFinalRatio);
 		root->InsertEndChild(child);
 
 		child = doc.NewElement("Clutch");
@@ -43,6 +50,9 @@ namespace Project
 		childFL->SetAttribute("MaxDroop", settings.GetSuspension(0).mMaxDroop);
 		childFL->SetAttribute("SpringStength", settings.GetSuspension(0).mSpringStrength);
 		childFL->SetAttribute("SpringDamperRate", settings.GetSuspension(0).mSpringDamperRate);
+		childFL->SetAttribute("CamberAtRest", settings.GetSuspension(0).mCamberAtRest);
+		childFL->SetAttribute("CamberAtMaxDroop", settings.GetSuspension(0).mCamberAtMaxDroop);
+		childFL->SetAttribute("CamberAtMaxCompression", settings.GetSuspension(0).mCamberAtMaxCompression);
 		child->InsertEndChild(childFL);
 
 		tinyxml2::XMLElement* childFR = doc.NewElement("FrontRight");
@@ -50,6 +60,9 @@ namespace Project
 		childFR->SetAttribute("MaxDroop", settings.GetSuspension(1).mMaxDroop);
 		childFR->SetAttribute("SpringStength", settings.GetSuspension(1).mSpringStrength);
 		childFR->SetAttribute("SpringDamperRate", settings.GetSuspension(1).mSpringDamperRate);
+		childFR->SetAttribute("CamberAtRest", -settings.GetSuspension(1).mCamberAtRest);
+		childFR->SetAttribute("CamberAtMaxDroop", -settings.GetSuspension(1).mCamberAtMaxDroop);
+		childFR->SetAttribute("CamberAtMaxCompression", -settings.GetSuspension(1).mCamberAtMaxCompression);
 		child->InsertEndChild(childFR);
 
 		tinyxml2::XMLElement* childRL = doc.NewElement("RearLeft");
@@ -57,6 +70,9 @@ namespace Project
 		childRL->SetAttribute("MaxDroop", settings.GetSuspension(2).mMaxDroop);
 		childRL->SetAttribute("SpringStength", settings.GetSuspension(2).mSpringStrength);
 		childRL->SetAttribute("SpringDamperRate", settings.GetSuspension(2).mSpringDamperRate);
+		childRL->SetAttribute("CamberAtRest", settings.GetSuspension(2).mCamberAtRest);
+		childRL->SetAttribute("CamberAtMaxDroop", settings.GetSuspension(2).mCamberAtMaxDroop);
+		childRL->SetAttribute("CamberAtMaxCompression", settings.GetSuspension(2).mCamberAtMaxCompression);
 		child->InsertEndChild(childRL);
 
 		tinyxml2::XMLElement* childRR = doc.NewElement("RearRight");
@@ -64,8 +80,17 @@ namespace Project
 		childRR->SetAttribute("MaxDroop", settings.GetSuspension(3).mMaxDroop);
 		childRR->SetAttribute("SpringStength", settings.GetSuspension(3).mSpringStrength);
 		childRR->SetAttribute("SpringDamperRate", settings.GetSuspension(3).mSpringDamperRate);
+		childRR->SetAttribute("CamberAtRest", -settings.GetSuspension(3).mCamberAtRest);
+		childRR->SetAttribute("CamberAtMaxDroop", -settings.GetSuspension(3).mCamberAtMaxDroop);
+		childRR->SetAttribute("CamberAtMaxCompression", -settings.GetSuspension(3).mCamberAtMaxCompression);
 		child->InsertEndChild(childRR);
 		root->InsertEndChild(child);
+
+		child = doc.NewElement("AntiRollbar");
+		child->SetAttribute("FrontStiffness", settings.GetFrontAntiRollBarStiffness());
+		child->SetAttribute("RearStiffness", settings.GetRearAntiRollBarStiffness());
+		root->InsertEndChild(child);
+
 
 
 		doc.SaveFile(m_Path.c_str());
@@ -95,14 +120,24 @@ namespace Project
 				attr = childElement->FindAttribute("MaxSteer");
 				if (attr != nullptr) settings.SetMaxSteer(attr->FloatValue());
 
+				physx::PxVehicleDifferential4WData data;
 				childElement = element->FirstChildElement("Differential");
 				attr = childElement->FindAttribute("Type");
-				if (attr != nullptr)
-				{
-					physx::PxVehicleDifferential4WData data;
-					data.mType = static_cast<physx::PxVehicleDifferential4WData::Enum>(attr->IntValue());
-					settings.SetDifferential(data);
-				}
+				if (attr != nullptr) data.mType = static_cast<physx::PxVehicleDifferential4WData::Enum>(attr->IntValue());
+				attr = childElement->FindAttribute("FrontBias");
+				if (attr != nullptr) data.mFrontBias = attr->FloatValue();
+				attr = childElement->FindAttribute("RearBias");
+				if (attr != nullptr) data.mRearBias = attr->FloatValue();
+				attr = childElement->FindAttribute("CentreBias");
+				if (attr != nullptr) data.mCentreBias = attr->FloatValue();
+				attr = childElement->FindAttribute("FrontRearSplit");
+				if (attr != nullptr) data.mFrontRearSplit = attr->FloatValue();
+				attr = childElement->FindAttribute("FrontLeftRightSplit");
+				if (attr != nullptr) data.mFrontLeftRightSplit = attr->FloatValue();
+				attr = childElement->FindAttribute("RearLeftRightSplit");
+				if (attr != nullptr) data.mRearLeftRightSplit = attr->FloatValue();
+				settings.SetDifferential(data);
+
 
 				childElement = element->FirstChildElement("Engine"); physx::PxVehicleEngineData eData;
 				attr = childElement->FindAttribute("PeakTorque");
@@ -114,6 +149,8 @@ namespace Project
 				childElement = element->FirstChildElement("Gears"); physx::PxVehicleGearsData gData;
 				attr = childElement->FindAttribute("SwitchTime");
 				if (attr != nullptr) gData.mSwitchTime = attr->FloatValue();
+				attr = childElement->FindAttribute("NumGears");
+				if (attr != nullptr) gData.mFinalRatio = attr->FloatValue();
 				settings.SetGears(gData);
 
 				childElement = element->FirstChildElement("Clutch"); physx::PxVehicleClutchData cData;
@@ -131,6 +168,12 @@ namespace Project
 				if (attr != nullptr) sData[0].mSpringStrength = attr->FloatValue();
 				attr = suspElement->FindAttribute("SpringDamperRate");
 				if (attr != nullptr) sData[0].mSpringDamperRate = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtRest");
+				if (attr != nullptr) sData[0].mCamberAtRest = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxDroop");
+				if (attr != nullptr) sData[0].mCamberAtMaxDroop = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxCompression");
+				if (attr != nullptr) sData[0].mCamberAtMaxCompression = attr->FloatValue();
 
 				suspElement = childElement->FirstChildElement("FrontRight");
 				attr = suspElement->FindAttribute("MaxCompression");
@@ -141,6 +184,12 @@ namespace Project
 				if (attr != nullptr) sData[1].mSpringStrength = attr->FloatValue();
 				attr = suspElement->FindAttribute("SpringDamperRate");
 				if (attr != nullptr) sData[1].mSpringDamperRate = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtRest");
+				if (attr != nullptr) sData[1].mCamberAtRest = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxDroop");
+				if (attr != nullptr) sData[1].mCamberAtMaxDroop = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxCompression");
+				if (attr != nullptr) sData[1].mCamberAtMaxCompression = attr->FloatValue();
 
 				suspElement = childElement->FirstChildElement("RearLeft");
 				attr = suspElement->FindAttribute("MaxCompression");
@@ -151,6 +200,12 @@ namespace Project
 				if (attr != nullptr) sData[2].mSpringStrength = attr->FloatValue();
 				attr = suspElement->FindAttribute("SpringDamperRate");
 				if (attr != nullptr) sData[2].mSpringDamperRate = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtRest");
+				if (attr != nullptr) sData[2].mCamberAtRest = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxDroop");
+				if (attr != nullptr) sData[2].mCamberAtMaxDroop = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxCompression");
+				if (attr != nullptr) sData[2].mCamberAtMaxCompression = attr->FloatValue();
 
 				suspElement = childElement->FirstChildElement("RearRight");
 				attr = suspElement->FindAttribute("MaxCompression");
@@ -161,8 +216,22 @@ namespace Project
 				if (attr != nullptr) sData[3].mSpringStrength = attr->FloatValue();
 				attr = suspElement->FindAttribute("SpringDamperRate");
 				if (attr != nullptr) sData[3].mSpringDamperRate = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtRest");
+				if (attr != nullptr) sData[3].mCamberAtRest = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxDroop");
+				if (attr != nullptr) sData[3].mCamberAtMaxDroop = attr->FloatValue();
+				attr = suspElement->FindAttribute("CamberAtMaxCompression");
+				if (attr != nullptr) sData[3].mCamberAtMaxCompression = attr->FloatValue();
 
 				settings.SetSuspension(sData, 4);
+
+				childElement = element->FirstChildElement("AntiRollbar");
+				attr = childElement->FindAttribute("FrontStiffness");
+				if (attr != nullptr) settings.SetFrontAntiRollBarStiffness(attr->FloatValue());
+				attr = childElement->FindAttribute("RearStiffness");
+				if (attr != nullptr) settings.SetRearAntiRollBarStiffness(attr->FloatValue());
+
+				
 
 			}
 			element = element->NextSiblingElement();

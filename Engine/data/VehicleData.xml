@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VehicleSettings>
     <Basic ChassisMass="1500" WheelMass="20" MaxSteer="1"/>
-    <Differential Type="0"/>
+    <Differential Type="0" FrontBias="1.3" RearBias="1.3" CentreBias="1.3" FrontRearSplit="0.44999999" FrontLeftRightSplit="0.5" RearLeftRightSplit="0.5"/>
     <Engine PeakTorque="500" MaxRpm="600"/>
-    <Gears SwitchTime="0.1"/>
+    <Gears SwitchTime="0.1" NumGears="4"/>
     <Clutch Strength="10"/>
     <Suspension>
-        <FrontLeft MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
-        <FrontRight MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
-        <RearLeft MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
-        <RearRight MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500"/>
+        <FrontLeft MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500" CamberAtRest="0" CamberAtMaxDroop="0.001" CamberAtMaxCompression="0.001"/>
+        <FrontRight MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500" CamberAtRest="-0" CamberAtMaxDroop="-0.001" CamberAtMaxCompression="-0.001"/>
+        <RearLeft MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500" CamberAtRest="0" CamberAtMaxDroop="0.001" CamberAtMaxCompression="0.001"/>
+        <RearRight MaxCompression="0.30000001" MaxDroop="0.1" SpringStength="35000" SpringDamperRate="4500" CamberAtRest="-0" CamberAtMaxDroop="-0.001" CamberAtMaxCompression="-0.001"/>
     </Suspension>
+    <AntiRollbar FrontStiffness="2000" RearStiffness="10000"/>
 </VehicleSettings>

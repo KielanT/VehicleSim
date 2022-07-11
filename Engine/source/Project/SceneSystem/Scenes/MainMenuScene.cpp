@@ -93,12 +93,15 @@ namespace Project
 		m_Engine = m_VehicleSettings.GetEngine();
 		m_Gears = m_VehicleSettings.GetGears();
 		m_Clutch = m_VehicleSettings.GetClutch();
+		m_FrontAntiStiffness = m_VehicleSettings.GetFrontAntiRollBarStiffness();
+		m_RearAntiStiffness = m_VehicleSettings.GetRearAntiRollBarStiffness();
 
 		m_PeakTorque = m_Engine.mPeakTorque;
 		m_RPM = m_Engine.mMaxOmega * 10;
 		m_GearSwitchTime = m_Gears.mSwitchTime;
+		m_NumGears = (int)m_Gears.mFinalRatio;
 		m_ClutchStrength = m_Clutch.mStrength;
-		
+
 		for (int i = 0; i < 4; ++i)
 		{
 			m_Suspension[i] = m_VehicleSettings.GetSuspension(i);
@@ -309,8 +312,8 @@ namespace Project
 			ImGui::SetWindowFontScale(2.0f);
 			ImGui::SetWindowSize({ 216,253 });
 			ImGui::SetWindowPos({ 448,63 });
-			bool bMapOneBtn = ImGui::Button("HL MAP ONE", { 200, 100 });
-			bool bMapTwoBtn = ImGui::Button("HL MAP TWO", { 200, 100 });
+			bool bMapOneBtn = ImGui::Button("Short Track", { 200, 100 });
+			bool bMapTwoBtn = ImGui::Button("Long Track", { 200, 100 });
 
 			ImGui::End();
 
@@ -348,7 +351,6 @@ namespace Project
 				m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 3;
 			}
-
 
 			if (m_IsMapSelected)
 			{
@@ -452,7 +454,7 @@ namespace Project
 			ImGui::Separator();
 
 		}
-		ImGui::Indent();
+		
 		if (ImGui::TreeNodeEx("Vehicle Setup: ", treeFlags))
 		{
 			// Set Chassis Mass
@@ -472,234 +474,23 @@ namespace Project
 			ImGui::SameLine();
 
 			// Set Max Steer
+			ImGui::BeginDisabled(true);
 			ImGui::PushItemWidth(50);
 			IMGUI_LEFT_LABEL(ImGui::InputInt, "Max Steer:", &m_MaxSteer, 0);
 			m_VehicleSettings.SetMaxSteer(m_MaxSteer);
 			ImGui::PopItemWidth();
+			ImGui::EndDisabled();
 			
+			DifferentialSettings();
+
+			EngineSettings();
 			
+			GearSettings();
 			
-			if(ImGui::TreeNodeEx("Differential: ", 0))
-			{
-				const char* items[physx::PxVehicleDifferential4WData::eMAX_NB_DIFF_TYPES];
-				items[0] = "Limited Slip for 4 wheel drive";
-				items[1] = "Limted Slip for front wheel drive";
-				items[2] = "Limited Slip for rear wheel drive";
-				items[3] = "Open Differential for 4 wheel drive";
-				items[4] = "Open Differential for 4 front wheel drive";
-				items[5] = "Open Differential for 4 rear wheel drive";
-				
-				static int item_current_idx = 0;
-				const char* combo_preview_value = items[item_current_idx];
-				ImGui::PushItemWidth(310);				
-				if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "Type: ", combo_preview_value))
-				{
-					for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-					{
-						const bool is_selected = (item_current_idx == n);
-						if (ImGui::Selectable(items[n], is_selected))
-							item_current_idx = n;
-
-						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();
-					}
-					
-					ImGui::EndCombo();
-				}
-				ImGui::PopItemWidth();
-				
-				m_Diff.mType = (physx::PxVehicleDifferential4WData::Enum)item_current_idx;
-				m_VehicleSettings.SetDifferential(m_Diff);
-				ImGui::TreePop();
-			}
-
-
-			if (ImGui::TreeNodeEx("Engine: ", 0))
-			{
-				// Set Engine Peak Torque
-				ImGui::PushItemWidth(50);
-				IMGUI_LEFT_LABEL(ImGui::InputInt, "Peak Torque:", &m_PeakTorque, 0);
-				m_Engine.mPeakTorque = m_PeakTorque;
-				ImGui::PopItemWidth();
-				
-				ImGui::SameLine();
-
-				// Set Engine Max RPM
-				ImGui::PushItemWidth(50);
-				IMGUI_LEFT_LABEL(ImGui::InputInt, "Max RPM:", &m_RPM, 0);
-				m_Engine.mMaxOmega = m_RPM / 10;
-				ImGui::PopItemWidth();
-
-				m_VehicleSettings.SetEngine(m_Engine);
-				
-				ImGui::TreePop();
-			}
+			ClutchSettings();
 			
-			if (ImGui::TreeNodeEx("Gears: ", 0))
-			{
-				// Set Swtich time
-				ImGui::PushItemWidth(50);
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Switch Time:", &m_GearSwitchTime, 0);
-				m_Gears.mSwitchTime = m_GearSwitchTime;
-				ImGui::PopItemWidth();
-
-				
-				m_VehicleSettings.SetGears(m_Gears);
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNodeEx("Clutch: ", 0))
-			{
-				// Set Clutch strength
-				ImGui::PushItemWidth(50);
-				IMGUI_LEFT_LABEL(ImGui::InputInt, "Strength:", &m_ClutchStrength, 0);
-				m_Clutch.mStrength = m_ClutchStrength;
-				ImGui::PopItemWidth();
-
-
-				m_VehicleSettings.SetClutch(m_Clutch);
-				
-				ImGui::TreePop();
-			}
+			SuspensionSettings();
 			
-			if (ImGui::TreeNodeEx("Suspension: ", 0))
-			{
-				// Set Suspension 
-				if (ImGui::TreeNodeEx("Suspension FL: ", 0)) // Front Left
-				{
-					if (ImGui::TreeNodeEx("Springs: ", 0))
-					{
-						
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxCompression, 0);
-						ImGui::PopItemWidth();
-						
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxDroop, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mSpringStrength, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mSpringDamperRate, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::TreePop();
-					}
-					ImGui::TreePop();
-				}
-
-				if (ImGui::TreeNodeEx("Suspension FR: ", 0)) // Front Right 
-				{
-					if (ImGui::TreeNodeEx("Springs: ", 0))
-					{
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxCompression, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxDroop, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mSpringStrength, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mSpringDamperRate, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::TreePop();
-					}
-					ImGui::TreePop(); 
-				}
-
-				if (ImGui::TreeNodeEx("Suspension RL: ", 0)) // Rear Left
-				{
-					if (ImGui::TreeNodeEx("Springs: ", 0))
-					{
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxCompression, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxDroop, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mSpringStrength, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mSpringDamperRate, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::TreePop();
-					}
-					ImGui::TreePop();
-				}
-				
-				if (ImGui::TreeNodeEx("Suspension RR: ", 0)) // Rear Right
-				{
-					if (ImGui::TreeNodeEx("Springs: ", 0))
-					{
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxCompression, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxDroop, 0);
-						ImGui::PopItemWidth();
-
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mSpringStrength, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::SameLine();
-
-						ImGui::PushItemWidth(50);
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mSpringDamperRate, 0);
-						ImGui::PopItemWidth();
-
-						ImGui::TreePop();
-					}
-					ImGui::TreePop();
-				}
-				
-
-				m_VehicleSettings.SetSuspension(m_Suspension, 4);
-
-
-				ImGui::TreePop();
-			}
 
 			ImGui::TreePop();
 			ImGui::Separator();
@@ -724,6 +515,237 @@ namespace Project
 			ImGui::Separator();
 		}
 		ImGui::End();
+	}
+
+	void MainMenuScene::DifferentialSettings()
+	{
+		if (ImGui::TreeNodeEx("Differential: ", 0))
+		{
+			const char* items[physx::PxVehicleDifferential4WData::eMAX_NB_DIFF_TYPES];
+			items[0] = "Limited Slip for 4 wheel drive";
+			items[1] = "Limted Slip for front wheel drive";
+			items[2] = "Limited Slip for rear wheel drive";
+			items[3] = "Open Differential for 4 wheel drive";
+			items[4] = "Open Differential for 4 front wheel drive";
+			items[5] = "Open Differential for 4 rear wheel drive";
+
+			static int item_current_idx = 0;
+			const char* combo_preview_value = items[item_current_idx];
+			ImGui::PushItemWidth(310);
+			if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "Type: ", combo_preview_value))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+				{
+					const bool is_selected = (item_current_idx == n);
+					if (ImGui::Selectable(items[n], is_selected))
+						item_current_idx = n;
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+			ImGui::PopItemWidth();
+
+
+			ImGui::Unindent();
+			if (ImGui::TreeNodeEx("Advanced: ", 0))
+			{
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Front Bias:", &m_Diff.mFrontBias, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Rear Bias: ", &m_Diff.mRearBias, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Centre Bias:", &m_Diff.mCentreBias, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Front Rear Split:", &m_Diff.mFrontRearSplit, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Front Left Front Split:", &m_Diff.mFrontLeftRightSplit, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Rear Left Front Split:", &m_Diff.mRearLeftRightSplit, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::TreePop();
+			}
+
+			m_Diff.mType = (physx::PxVehicleDifferential4WData::Enum)item_current_idx;
+			m_VehicleSettings.SetDifferential(m_Diff);
+			ImGui::TreePop();
+		}
+	}
+
+	void MainMenuScene::EngineSettings()
+	{
+		if (ImGui::TreeNodeEx("Engine: ", 0))
+		{
+			// Set Engine Peak Torque
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputInt, "Peak Torque:", &m_PeakTorque, 0);
+			m_Engine.mPeakTorque = m_PeakTorque;
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+
+			// Set Engine Max RPM
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputInt, "Max RPM:", &m_RPM, 0);
+			m_Engine.mMaxOmega = m_RPM / 10;
+			ImGui::PopItemWidth();
+
+			m_VehicleSettings.SetEngine(m_Engine);
+			
+			ImGui::TreePop();
+		}
+	}
+
+	void MainMenuScene::GearSettings()
+	{
+		if (ImGui::TreeNodeEx("Gears: ", 0))
+		{
+			// Set Swtich time
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputFloat, "Switch Time:", &m_GearSwitchTime, 0);
+			m_Gears.mSwitchTime = m_GearSwitchTime;
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputInt, "Number of gears:", &m_NumGears, 0);
+			m_Gears.mFinalRatio = m_NumGears;
+			m_Gears.mNbRatios = m_NumGears;
+			ImGui::PopItemWidth();
+
+			m_VehicleSettings.SetGears(m_Gears);
+			ImGui::TreePop();
+		}
+	}
+
+	void MainMenuScene::ClutchSettings()
+	{
+		if (ImGui::TreeNodeEx("Clutch: ", 0))
+		{
+			// Set Clutch strength
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputInt, "Strength:", &m_ClutchStrength, 0);
+			m_Clutch.mStrength = m_ClutchStrength;
+			ImGui::PopItemWidth();
+
+
+			m_VehicleSettings.SetClutch(m_Clutch);
+
+			ImGui::TreePop();
+		}
+	}
+
+	void MainMenuScene::SuspensionSettings()
+	{
+		if (ImGui::TreeNodeEx("Suspension: ", 0))
+		{
+			// Set Suspension 
+			SuspensionSettingHelper("Suspension FL: ", physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT);
+			SuspensionSettingHelper("Suspension FR: ", physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT);
+			SuspensionSettingHelper("Suspension RL: ", physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT);
+			SuspensionSettingHelper("Suspension RR: ", physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT);
+
+			if (ImGui::TreeNodeEx("Antiroll bar: ", 0))
+			{
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Front Stiffness:", &m_FrontAntiStiffness, 0);
+				m_VehicleSettings.SetFrontAntiRollBarStiffness(m_FrontAntiStiffness);
+				ImGui::PopItemWidth();
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Rear Stiffness:", &m_RearAntiStiffness, 0);
+				m_VehicleSettings.SetRearAntiRollBarStiffness(m_RearAntiStiffness);
+				ImGui::PopItemWidth();
+
+				ImGui::TreePop();
+			}
+
+			m_VehicleSettings.SetSuspension(m_Suspension, 4);
+
+
+			ImGui::TreePop();
+		}
+	}
+
+	void MainMenuScene::SuspensionSettingHelper(std::string nodeName, physx::PxVehicleDrive4WWheelOrder::Enum wheelNum)
+	{
+		if (ImGui::TreeNodeEx(nodeName.c_str(), 0)) 
+		{
+			if (ImGui::TreeNodeEx("Springs: ", 0))
+			{
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Compression:", &m_Suspension[wheelNum].mMaxCompression, 0);
+				ImGui::PopItemWidth();
+
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Max Droop:", &m_Suspension[wheelNum].mMaxDroop, 0);
+				ImGui::PopItemWidth();
+
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Strength:", &m_Suspension[wheelNum].mSpringStrength, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Spring Damper Rate:", &m_Suspension[wheelNum].mSpringDamperRate, 0);
+				ImGui::PopItemWidth();
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNodeEx("Camber: ", 0))
+			{
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Camber At Rest:", &m_Suspension[wheelNum].mCamberAtRest, 0);
+				ImGui::PopItemWidth();
+
+
+				ImGui::SameLine();
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Camber At Max Droop:", &m_Suspension[wheelNum].mCamberAtMaxDroop, 0);
+				ImGui::PopItemWidth();
+
+
+				ImGui::PushItemWidth(50);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Camber At Max Compression:", &m_Suspension[wheelNum].mCamberAtMaxCompression, 0);
+				ImGui::PopItemWidth();
+
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
 	}
 
 	void MainMenuScene::SettingsMenu()
@@ -789,7 +811,7 @@ namespace Project
 		ImGui::NewLine();
 
 		// Gear Down
-		ButtonChangeInputText("     Reset: ", m_ResetBuffer, 8, m_Controls.reset);
+		ButtonChangeInputText("      Reset: ", m_ResetBuffer, 8, m_Controls.reset);
 		ImGui::NewLine();
 		
 

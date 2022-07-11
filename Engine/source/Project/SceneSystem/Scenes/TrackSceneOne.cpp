@@ -54,7 +54,9 @@ namespace Project
 		m_SceneCamera = new Camera(true);
 		m_Timer = new Timer();
 		m_Timer->Stop();
-
+		m_IsPaused = false;
+		bestLap = 0;
+		previousTimer = 0;
 		/*****************************************************/
 		/**			   Create the entities                  **/
 		/*****************************************************/
@@ -67,6 +69,8 @@ namespace Project
 		{
 			vehicleSettings = VehicleSettings();
 		}
+
+	
 
 		if (m_EnablePhysics)
 		{
@@ -242,20 +246,25 @@ namespace Project
 		//ImGui::Text("Current Lap %d:%f", currentMins, currentSeconds);
 		//ImGui::Text("Previous Lap %f", currentSeconds);
 
+		ImGuiWindowFlags flags = 0;
+		flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
-
-		ImGui::Begin("Times");
+		ImGui::Begin("Times", nullptr, flags);
 
 		if (bestLap <= 0.1)
 			ImGui::Text("    Best: --.--");
 		else
 			ImGui::Text("    Best: %f", bestLap);
 
+		ImGui::Spacing();
+
 		if (currentTimer <= 0.1)
 			ImGui::Text(" Current: --.--");
 		else
 			ImGui::Text(" Current: %f", currentTimer);
 		
+		ImGui::Spacing();
+
 		if (previousTimer <= 0.1)
 			ImGui::Text("Previous: --.--");
 		else
@@ -266,7 +275,7 @@ namespace Project
 	void TrackSceneOne::PauseMenu()
 	{
 		ImGuiWindowFlags popupFlags = 0;
-		//popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		popupFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
 
 		if (ImGui::BeginPopupModal("PauseMenuPopUp", nullptr, popupFlags))

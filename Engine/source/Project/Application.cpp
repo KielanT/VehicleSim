@@ -42,7 +42,6 @@ namespace Project
 				ErrorLogger log;
 				log.ErrorMessage(props, "Error Creating the scene manager");
 			}
-
 		}
 	}
 
@@ -59,7 +58,6 @@ namespace Project
 
 	void Application::Run()
 	{
-		
 		m_Window->Update(m_SceneManager); // Updates the window and sends the scene manager to the window
 	}
 }

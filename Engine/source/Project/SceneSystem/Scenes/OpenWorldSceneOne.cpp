@@ -5,6 +5,8 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+#include "Data/SaveVehicleData.h"
+
 namespace Project
 {
 
@@ -55,6 +57,13 @@ namespace Project
 
 		std::string path = "media/";
 
+		SaveVehicleData data;
+		VehicleSettings vehicleSettings;
+		if (!data.LoadVehicleData(vehicleSettings))
+		{
+			vehicleSettings = VehicleSettings();
+		}
+		m_IsPaused = false;
 		if (m_EnablePhysics)
 		{
 			m_PhysicsSystem = NewPhysics(m_sceneManager->GetWindowsProperties().PhysicsType);
@@ -75,7 +84,7 @@ namespace Project
 			transform.Scale = { 2.0f, 0.0f, 2.0f };
 
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x", transform, {1.0f, 1.0f, 1.0f}, true, path + "BasicTexOrange.png");
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", vehicleSettings, path + "Compact/CompactBlue.png");
 			
 			transform.Scale = { 1.0f, 1.0f, 1.0f };
 			transform.Position = { 0.0f, 0.0f, 200.0f };

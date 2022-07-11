@@ -5,6 +5,8 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+#include "Data/SaveVehicleData.h"
+
 namespace Project
 {
 
@@ -54,6 +56,13 @@ namespace Project
 
 		std::string path = "media/";
 
+		SaveVehicleData data;
+		VehicleSettings vehicleSettings;
+		if (!data.LoadVehicleData(vehicleSettings))
+		{
+			vehicleSettings = VehicleSettings();
+		}
+		m_IsPaused = false;
 		if (m_EnablePhysics)
 		{
 			m_PhysicsSystem = NewPhysics(m_sceneManager->GetWindowsProperties().PhysicsType);
@@ -85,7 +94,7 @@ namespace Project
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("GoalTwo", PhysicsStaticObjectType::TriangleMesh, path + "GoalTwo.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexYellow.png");
 			
 			transform.Position = { 0.0f, 0.0f, -30.0f };
-			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png", transform);
+			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", vehicleSettings, path + "Compact/CompactBlue.png", transform);
 			
 			transform.Position = { 0.0f, 0.0f, 0.0f };
 			transform.Scale = { 0.3f, 0.3f, 0.3f };
@@ -333,7 +342,9 @@ namespace Project
 			m_CurrentTime += 1;
 			Reset();
 			m_TimeCount += 2;
-			m_RoundCount++;
+
+			if(!m_IsPaused)
+				m_RoundCount++;
 		}
 
 		
@@ -341,6 +352,8 @@ namespace Project
 		if (m_RoundCount >= 4)
 		{
 			m_IsPaused = true;
+			m_CurrentTime = 0;
+			m_RoundCount = 3;
 			ImGui::OpenPopup("GameOverPopup");
 		}
 		GameOver();
@@ -372,7 +385,7 @@ namespace Project
 		if (ImGui::BeginPopupModal("GameOverPopup", nullptr, popupFlags))
 		{
 			m_IsPaused = true;
-			std::string t = "Paused";
+			std::string t = "Game Over!";
 			auto windowWidth = ImGui::GetWindowSize().x;
 			auto textWidth = ImGui::CalcTextSize(t.c_str()).x;
 			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);

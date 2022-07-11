@@ -111,7 +111,7 @@ namespace Project
 		}
 		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFOURTH)
 		{
-			ImGui::Text("Gear: Fouth");
+			ImGui::Text("Gear: Fourth");
 		}
 		else if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eFIFTH)
 		{
@@ -413,20 +413,6 @@ namespace Project
 				suspensions[i] = m_VehicleSettings.GetSuspension(i);
 				suspensions[i].mSprungMass = suspSprungMasses[i];
 			}
-
-			//Set the camber angles.
-			const physx::PxF32 camberAngleAtRest = 0.0;
-			const physx::PxF32 camberAngleAtMaxDroop = 0.01f;
-			const physx::PxF32 camberAngleAtMaxCompression = -0.01f;
-			for (auto i = 0; i < numWheels; i += 2)
-			{
-				suspensions[i + 0].mCamberAtRest = camberAngleAtRest;
-				suspensions[i + 1].mCamberAtRest = -camberAngleAtRest;
-				suspensions[i + 0].mCamberAtMaxDroop = camberAngleAtMaxDroop;
-				suspensions[i + 1].mCamberAtMaxDroop = -camberAngleAtMaxDroop;
-				suspensions[i + 0].mCamberAtMaxCompression = camberAngleAtMaxCompression;
-				suspensions[i + 1].mCamberAtMaxCompression = -camberAngleAtMaxCompression;
-			}
 		}
 
 		//Set up the wheel geometry.
@@ -482,12 +468,12 @@ namespace Project
 		physx::PxVehicleAntiRollBarData barFront;
 		barFront.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT;
 		barFront.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT;
-		barFront.mStiffness = 10000.0f;
+		barFront.mStiffness = m_VehicleSettings.GetFrontAntiRollBarStiffness();
 		wheelsSimData->addAntiRollBarData(barFront);
 		physx::PxVehicleAntiRollBarData barRear;
 		barRear.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT;
 		barRear.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
-		barRear.mStiffness = 10000.0f;
+		barRear.mStiffness = m_VehicleSettings.GetRearAntiRollBarStiffness();;
 		wheelsSimData->addAntiRollBarData(barRear);
 	}
 

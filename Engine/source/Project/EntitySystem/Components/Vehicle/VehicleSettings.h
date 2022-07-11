@@ -24,7 +24,7 @@ namespace Project
 		VehicleSettings() : m_IsAuto(true), m_ChassisMass(1500.0f), m_Diff(DefaultDifferetial()),
 			m_Engine(DefaultEngine()), m_Gears(DefaultGears()), m_Clutch(DefaultClutch()),
 			m_WheelMass(20.0f), m_MaxSteer(physx::PxPi * 0.3333f), m_NumWheels(4), m_HandBrake(HandBrake::RearWheelsOnly),
-			m_MaxHandBrakeTorque(4000.0f), m_AntiRollBar(AntiRollBar::Both), m_RollBarStiffness(10000.0f)
+			m_MaxHandBrakeTorque(4000.0f), m_AntiRollBar(AntiRollBar::Both), m_FrontRollBarStiffness(10000.0f), m_RearRollBarStiffness(10000.0f)
 		{
 			for (int i = 0; i < m_NumWheels; ++i)
 			{
@@ -45,7 +45,8 @@ namespace Project
 		physx::PxF32 GetMaxSteer() { return m_MaxSteer; }
 		physx::PxVehicleSuspensionData GetSuspension(int index) { return m_Suspension[index]; }
 		AntiRollBar GetAntiRollBar() { return m_AntiRollBar; }
-		physx::PxF32 GetAntiRollBarStiffness() { return m_RollBarStiffness; }
+		physx::PxF32 GetFrontAntiRollBarStiffness() { return m_FrontRollBarStiffness; }
+		physx::PxF32 GetRearAntiRollBarStiffness() { return m_RearRollBarStiffness; }
 
 		const physx::PxVehicleDifferential4WData DefaultDifferetial();
 		const physx::PxVehicleEngineData DefaultEngine();
@@ -69,6 +70,9 @@ namespace Project
 				m_Suspension[i] = susp[i];
 			}
 		}
+
+		void SetFrontAntiRollBarStiffness(physx::PxF32 stiffness) { m_FrontRollBarStiffness = stiffness; }
+		void SetRearAntiRollBarStiffness(physx::PxF32 stiffness) { m_RearRollBarStiffness = stiffness; }
 		
 	private:
 
@@ -96,7 +100,8 @@ namespace Project
 
 		AntiRollBar m_AntiRollBar;
 
-		physx::PxF32 m_RollBarStiffness;
+		physx::PxF32 m_FrontRollBarStiffness;
+		physx::PxF32 m_RearRollBarStiffness;
 		
 	};
 }
