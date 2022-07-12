@@ -90,8 +90,5 @@ namespace Project
 		IPhysics* m_PhysicsSystem = nullptr;
 
 		physx::PxMaterial* m_Material = nullptr;
-
-
-
 	};
 }

@@ -10,38 +10,14 @@ namespace Project
 {
     VehicleComponent::~VehicleComponent()
     {
-		int i = 0;
         if (m_Physics != nullptr) physx::PxCloseVehicleSDK();
-		//
-		//if (m_Entity != nullptr) delete m_Entity;
-		//
-		//
-		////VehicleSettings m_VehicleSettings;
-		////
-		//if (m_Vehicle4W != nullptr) m_Vehicle4W->release();
-		//
-		////TransformComponent* m_Transform = nullptr;
-		//
-		//SAFE_RELEASE(m_Material);
-		////
-		//if(m_FrictionPairs != nullptr) m_FrictionPairs->release();
-		////
-		//if (m_Camera != nullptr) delete m_Camera;
-		////
-		////bool m_Accelerate = false;
-		////bool m_Left = false;
-		////bool m_Right = false;
-		////bool m_Brake = false;
-		////bool m_HandBrake = false;
-		////
-		////bool IsVehicleInAir = true;
-		////
-		////PlayerControls m_Controls;
-		////
-		////VehicleSceneQueryData* m_VehicleSceneQueryData = NULL;
-		////physx::PxBatchQuery* m_BatchQuery = NULL;
-		//
-		//if (m_Physics != nullptr)  m_Physics->ShutdownPhysics();
+		
+		if (m_Vehicle4W != nullptr) m_Vehicle4W->release();
+
+		SAFE_RELEASE(m_Material);
+
+		if(m_FrictionPairs != nullptr) m_FrictionPairs->release();
+
     }
 
     bool VehicleComponent::Update(float frameTime)
@@ -76,6 +52,7 @@ namespace Project
 		m_VehicleInputData.setDigitalBrake(true);
 		
 		m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ m_ResetPos.x, m_ResetPos.y, m_ResetPos.z });
+
 
 		m_Accelerate = false;
 		m_Left = false;
@@ -128,6 +105,9 @@ namespace Project
 		{
 			ImGui::Text("Gear: Other");
 		}
+
+		int rpm = m_Vehicle4W->mDriveDynData.getEngineRotationSpeed() * 10;
+		ImGui::Text(" RPM: %d", rpm);
 
 		ImGui::End();
 	}
@@ -350,6 +330,7 @@ namespace Project
 		vehActor->setMass(chassisData.mMass);
 		vehActor->setMassSpaceInertiaTensor(chassisData.mMOI);
 		vehActor->setCMassLocalPose(physx::PxTransform(chassisData.mCMOffset, physx::PxQuat(physx::PxIdentity)));
+
 
 		return vehActor;
 	}

@@ -83,12 +83,28 @@ namespace Project
             return false;
         }
 
-
+        DWORD windowStyle = WS_OVERLAPPEDWINDOW;
         // Select the type of window to show our application in
-        DWORD windowStyle = WS_OVERLAPPEDWINDOW; // Standard window
-        //DWORD windowStyle = WS_POPUP;          // Alternative: borderless. If you also set the viewport size to the monitor resolution, you 
-                                                 // get a "fullscreen borderless" window, which works better with alt-tab than DirectX fullscreen,
-                                                 // which is an option in Direct3DSetup.cpp. DirectX fullscreen has slight better performance though.
+        //if (props.windowType == WindowType::Windowed)
+        //{
+        //    windowStyle = WS_OVERLAPPEDWINDOW; // Standard window
+        //} 
+        //else if (props.windowType == WindowType::Fullscreen)
+        //{    
+        //    windowStyle = 
+        //}    
+        //else if (props.windowType == WindowType::FullscreenBorderless)
+        //{
+        //    windowStyle = WS_POPUP;
+        //    props.Width = 1920;
+        //    props.Height = 1080;
+        //}
+        
+        
+        
+        // Alternative: borderless. If you also set the viewport size to the monitor resolution, you 
+        // get a "fullscreen borderless" window, which works better with alt-tab than DirectX fullscreen,
+        // which is an option in Direct3DSetup.cpp. DirectX fullscreen has slight better performance though.
 
         // Calculate overall dimensions for the window. We will render to the *inside* of the window. But the
         // overall winder will be larger because it includes the borders, title bar etc. This code calculates

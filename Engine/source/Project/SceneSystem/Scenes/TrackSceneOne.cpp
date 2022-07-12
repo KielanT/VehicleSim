@@ -54,6 +54,7 @@ namespace Project
 		m_SceneCamera = new Camera(true);
 		m_Timer = new Timer();
 		m_Timer->Stop();
+		m_Timer->Reset();
 		m_IsPaused = false;
 		bestLap = 0;
 		previousTimer = 0;
@@ -299,7 +300,12 @@ namespace Project
 			if (ImGui::Button("Resume", ImVec2(80, 0)))
 			{
 				m_IsPaused = false;
-				m_Timer->Start();
+
+				if(currentTimer > 0.0f)
+					m_Timer->Start();
+				else
+					m_Timer->Reset();
+
 				ImGui::CloseCurrentPopup();
 			}
 			avail = ImGui::GetContentRegionAvail().x;

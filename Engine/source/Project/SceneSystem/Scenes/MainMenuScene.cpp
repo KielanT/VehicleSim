@@ -694,8 +694,8 @@ namespace Project
 
 			ImGui::PushItemWidth(50);
 			IMGUI_LEFT_LABEL(ImGui::InputInt, "Number of gears:", &m_NumGears, 0);
-			m_Gears.mFinalRatio = m_NumGears;
-			m_Gears.mNbRatios = m_NumGears;
+			m_Gears.mFinalRatio = m_NumGears - 4; 
+			m_Gears.mNbRatios = m_NumGears - 4;
 			ImGui::PopItemWidth();
 
 			m_VehicleSettings.SetGears(m_Gears);
