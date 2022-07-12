@@ -6,16 +6,18 @@ namespace Project
 {
 
 
-physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics)
+physx::PxTriangleMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics)
 {
 	physx::PxU32 vertexCount; // stores the vertex count
 	std::vector<physx::PxVec3> vertices; // Stores the vertices
-
+	int triCount;
+	std::vector<unsigned int> indicies;
 	if (entity->GetComponent("CollisionMesh")) // Gets the collision mesh to create the wheel mesh
 	{
 		CollisionComponent* comp = static_cast<CollisionComponent*>(entity->GetComponent("CollisionMesh")); // Creates the component to be accessed
 		vertexCount = comp->GetNumberOfVertices(index); // sets the vertex count
-
+		triCount = comp->GetNumberTriangles(index);
+		indicies = comp->GetIndices();
 		// Fills the vertice array from a cvector3
 		std::vector<CVector3> Wheels = comp->GetVertices(index);  
 		for (int i = 0; i < vertexCount; ++i)
@@ -24,19 +26,22 @@ physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physic
 		}
 	}
 
-	return CreateConvexMesh(vertices.data(), vertexCount, physics->GetPhysics(), physics->GetCooking());
+	//return CreateConvexMesh(vertices.data(), vertexCount, physics->GetPhysics(), physics->GetCooking());
+	return CreateTriangleMesh(vertices.data(), vertexCount, triCount, indicies, *physics->GetPhysics(), *physics->GetCooking());
 }
 
-physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics)
+physx::PxTriangleMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics)
 {
 	physx::PxU32 vertexCount;
 	std::vector<physx::PxVec3> vertices;
-
+	int triCount;
+	std::vector<unsigned int> indicies;
 	if (entity->GetComponent("CollisionMesh"))
 	{
 		CollisionComponent* comp = static_cast<CollisionComponent*>(entity->GetComponent("CollisionMesh"));
 		vertexCount = comp->GetNumberOfVertices(index);
-
+		triCount = comp->GetNumberTriangles(index);
+		indicies = comp->GetIndices();
 
 		std::vector<CVector3> Chassis = comp->GetVertices(index);
 
@@ -46,10 +51,11 @@ physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* phys
 		}
 	}
 
-	return CreateConvexMesh(vertices.data(), vertexCount, physics->GetPhysics(), physics->GetCooking());
+	//return CreateConvexMesh(vertices.data(), vertexCount, physics->GetPhysics(), physics->GetCooking());
+	return CreateTriangleMesh(vertices.data(), vertexCount, triCount, indicies, *physics->GetPhysics(), *physics->GetCooking());
 }
 
-void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii)
+void MakeWheelWidthsAndRadii(physx::PxTriangleMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii)
 {
 	// Computes the wheel widths and radii the same way done in the physx samples
 	for (physx::PxU32 i = 0; i < 4; i++)
@@ -72,7 +78,7 @@ void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF
 	}
 }
 
-physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh)
+physx::PxVec3 MakeChassis(physx::PxTriangleMesh* chassisConvexMesh)
 {
 	// Computes the chassis the same way physx samples does
 	const physx::PxU32 numChassisVerts = chassisConvexMesh->getNbVertices();

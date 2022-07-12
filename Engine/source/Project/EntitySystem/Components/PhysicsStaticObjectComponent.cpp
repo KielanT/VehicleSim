@@ -103,7 +103,6 @@ namespace Project
 				}
 				physx::PxVec3* v = vertices.data();
 
-				physx::PxU32* i = comp->GetIndices().data();
 
 				physx::PxTriangleMeshGeometry geom = CreateTriangleMesh(v, vertexCount, triCount, comp->GetIndices(), *m_Physics->GetPhysics(), *m_Physics->GetCooking());
 

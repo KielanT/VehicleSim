@@ -178,19 +178,24 @@ namespace Project
 		physx::PxRigidDynamic* veh4WActor = NULL;
 		{
 			//Construct a convex mesh for a cylindrical wheel.
-			physx::PxConvexMesh* wheelMesh[PX_MAX_NB_WHEELS];
+			physx::PxTriangleMesh* wheelMesh[PX_MAX_NB_WHEELS];
 
 
 			// TODO Find a way to have the wheels selected in the order (remove hard coding)
-			wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics); // Front Left
-			wheelMesh[1] = CreateWheelMesh(4, m_Entity, m_Physics); // Front right
-			wheelMesh[2] = CreateWheelMesh(2, m_Entity, m_Physics); // Rear left
+			wheelMesh[0] = CreateWheelMesh(3, m_Entity, m_Physics); // Front Left
+			wheelMesh[1] = CreateWheelMesh(3, m_Entity, m_Physics); // Front right
+			wheelMesh[2] = CreateWheelMesh(3, m_Entity, m_Physics); // Rear left
 			wheelMesh[3] = CreateWheelMesh(3, m_Entity, m_Physics); // Rear Right
+
+			if (wheelMesh[3] == nullptr)
+			{
+				int i = 0;
+			}
 
 			// Compute wheel widths and radii
 			MakeWheelWidthsAndRadii(wheelMesh, wheelWidths, wheelRadii);
 
-			physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
+			physx::PxTriangleMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
 			physx::PxMaterial* wheelMaterials[PX_MAX_NB_WHEELS];
 
 			//Set the meshes and materials for the wheels.
@@ -201,8 +206,8 @@ namespace Project
 			}
 
 			//Chassis just has a single convex shape.
-			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(1, m_Entity, m_Physics); 
-			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
+			physx::PxTriangleMesh* chassisConvexMesh = CreateChassisMesh(1, m_Entity, m_Physics); 
+			physx::PxTriangleMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
 			physx::PxMaterial* chassisMaterials[1] = { m_Material };
 
 			// Compute the chassis dimesions 
@@ -295,7 +300,7 @@ namespace Project
 		
 	}
 
-	physx::PxRigidDynamic* VehicleComponent::CreateVehicleActor(const physx::PxVehicleChassisData& chassisData, physx::PxMaterial** wheelMaterials, physx::PxConvexMesh** wheelConvexMeshes, const physx::PxU32 numWheels, const physx::PxFilterData& wheelSimFilterData, physx::PxMaterial** chassisMaterials, physx::PxConvexMesh** chassisConvexMeshes, const physx::PxU32 numChassisMeshes, const physx::PxFilterData& chassisSimFilterData)
+	physx::PxRigidDynamic* VehicleComponent::CreateVehicleActor(const physx::PxVehicleChassisData& chassisData, physx::PxMaterial** wheelMaterials, physx::PxTriangleMesh** wheelConvexMeshes, const physx::PxU32 numWheels, const physx::PxFilterData& wheelSimFilterData, physx::PxMaterial** chassisMaterials, physx::PxTriangleMesh** chassisConvexMeshes, const physx::PxU32 numChassisMeshes, const physx::PxFilterData& chassisSimFilterData)
 	{
 		//We need a rigid body actor for the vehicle.
 	//Don't forget to add the actor to the scene after setting up the associated vehicle.
@@ -311,7 +316,7 @@ namespace Project
 		//Add all the wheel shapes to the actor.
 		for (auto i = 0; i < numWheels; i++)
 		{
-			physx::PxConvexMeshGeometry geom(wheelConvexMeshes[i]);
+			physx::PxTriangleMeshGeometry geom(wheelConvexMeshes[i]);
 			physx::PxShape* wheelShape = physx::PxRigidActorExt::createExclusiveShape(*vehActor, geom, *wheelMaterials[i]);
 			wheelShape->setQueryFilterData(wheelQryFilterData);
 			wheelShape->setSimulationFilterData(wheelSimFilterData);
@@ -321,7 +326,7 @@ namespace Project
 		//Add the chassis shapes to the actor.
 		for (auto i = 0; i < numChassisMeshes; i++)
 		{
-			physx::PxShape* chassisShape = physx::PxRigidActorExt::createExclusiveShape(*vehActor, physx::PxConvexMeshGeometry(chassisConvexMeshes[i]), *chassisMaterials[i]);
+			physx::PxShape* chassisShape = physx::PxRigidActorExt::createExclusiveShape(*vehActor, physx::PxTriangleMeshGeometry(chassisConvexMeshes[i]), *chassisMaterials[i]);
 			chassisShape->setQueryFilterData(chassisQryFilterData);
 			chassisShape->setSimulationFilterData(chassisSimFilterData);
 			chassisShape->setLocalPose(physx::PxTransform(physx::PxIdentity));

@@ -77,15 +77,15 @@ namespace Project
 	}
 
 	// Create wheel meshes 
-	physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics);
+	physx::PxTriangleMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics);
 	// Create chassis mesh
-	physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics);
+	physx::PxTriangleMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics);
 	
 	// Compute the wheel widths and radii from the convex mesh
-	void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
+	void MakeWheelWidthsAndRadii(physx::PxTriangleMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
 
 	// Creates the chassis from convex mesh
-	physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
+	physx::PxVec3 MakeChassis(physx::PxTriangleMesh* chassisConvexMesh);
 	
 	// Compute all the wheel offsets
 	void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims, const physx::PxF32* wheelWidth,
