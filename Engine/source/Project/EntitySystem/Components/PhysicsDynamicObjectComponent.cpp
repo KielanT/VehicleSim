@@ -9,11 +9,12 @@ namespace Project
 	}
 	bool PhysicsDynamicObjectComponent::Update(float frameTime)
 	{
-		UpdatePositionAndRotation();
+		UpdatePositionAndRotation(); // Updates the position for any physic simulation
 		return true;
 	}
 	void PhysicsDynamicObjectComponent::UpdatePositionAndRotation()
 	{
+		// Only update position and rotation if the actor exists
 		if (m_RigidDynamic != nullptr)
 		{
 			CVector3 pos;
@@ -30,7 +31,7 @@ namespace Project
 		}
 	}
 	
-	physx::PxShape* PhysicsDynamicObjectComponent::GetBoxShape()
+	physx::PxShape* PhysicsDynamicObjectComponent::GetBoxShape() 
 	{
 		return physx::PxRigidActorExt::createExclusiveShape(*m_RigidDynamic, physx::PxBoxGeometry(m_CollisionScale.x, m_CollisionScale.y, m_CollisionScale.z), *m_Material);;
 	}
@@ -41,6 +42,7 @@ namespace Project
 
 	physx::PxShape* PhysicsDynamicObjectComponent::GetConvextMeshShape()
 	{
+		// Creates convex dynamic
 		physx::PxShape* shape = nullptr;
 		if (m_Entity->GetComponent("Renderer"))
 		{

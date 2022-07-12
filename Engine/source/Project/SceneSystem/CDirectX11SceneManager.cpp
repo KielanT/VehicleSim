@@ -72,23 +72,23 @@ namespace Project
 		//m_Scenes.insert(pos, scene); // Adds scene to the array
 
 		// Scene order
-		IScene* scene = new MainMenuScene(this, m_Renderer, true, 0); // Creates a new temp scene
+		IScene* scene = new MainMenuScene(this, m_Renderer, true, 0); // Creates a new  scene
 		auto pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 		
-		scene = new TrackSceneOne(this, m_Renderer, true, 1); // Creates a new temp scene
+		scene = new TrackSceneOne(this, m_Renderer, true, 1); // Creates a new  scene
 		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 		
-		scene = new TrackSceneTwo(this, m_Renderer, true, 2); // Creates a new temp scene
+		scene = new TrackSceneTwo(this, m_Renderer, true, 2); // Creates a new  scene
 		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 		
-		scene = new OpenWorldSceneOne(this, m_Renderer, true, 3); // Creates a new temp scene
+		scene = new OpenWorldSceneOne(this, m_Renderer, true, 3); // Creates a new  scene
 		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 
-		scene = new OpenWorldSceneTwo(this, m_Renderer, true, 4); // Creates a new temp scene
+		scene = new OpenWorldSceneTwo(this, m_Renderer, true, 4); // Creates a new  scene
 		pos = m_Scenes.begin() + scene->GetSceneIndex(); // Used to add the scene at the correct position
 		m_Scenes.insert(pos, scene); // Adds scene to the array
 		

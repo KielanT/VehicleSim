@@ -84,7 +84,6 @@ namespace Project
 
 	bool Entity::Update(float frameTime)
 	{
-		// While loop for recieving messages
 
 		std::map<TEntityUID, EntityComponent*>::iterator it = m_Components.begin();
 		while (it != m_Components.end())

@@ -30,7 +30,7 @@ namespace Project
 
 	void RendererComponent::Render()
 	{
-
+		// Renders the model with the correct textures, shaders and state
 		if(m_isRendered && m_Model != nullptr && m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
 			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
@@ -54,12 +54,12 @@ namespace Project
 
 	void RendererComponent::SetTexture(std::string texturePath)
 	{
+		// Sets the texture
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
 			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
 			if (!LoadTexture(dx11Renderer, texturePath, &m_TextureResource, &m_TextureSRV))
 			{
-				int i = 0;
 				// Error Check here
 			}
 		}
@@ -67,6 +67,7 @@ namespace Project
 
 	void RendererComponent::SetShaders(ID3D11PixelShader* ps, ID3D11VertexShader* vs)
 	{
+		// Sets the shaders
 		SetPixelShader(ps);
 		SetVertexShader(vs);
 	}

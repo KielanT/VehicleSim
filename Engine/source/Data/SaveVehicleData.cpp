@@ -6,14 +6,18 @@ namespace Project
 {
 	void SaveVehicleData::SaveVehicleDataToFile(VehicleSettings settings)
 	{
+		// Creates a new document to write to (will Overwrite existing one)
 		tinyxml2::XMLDocument doc;
-
+		
+		// Sets the version for the xml doc
 		tinyxml2::XMLDeclaration* decl = doc.NewDeclaration();
 		doc.InsertFirstChild(decl);
 
+		// Creates a new root and adds it to the file
 		tinyxml2::XMLElement* root = doc.NewElement("VehicleSettings");
 		doc.InsertEndChild(root);
 
+		// Creates new child object with attributes and adds it to the file
 		tinyxml2::XMLElement* child = doc.NewElement("Basic");
 		child->SetAttribute("ChassisMass", settings.GetChassisMass());
 		child->SetAttribute("WheelMass", settings.GetWheelMass());
@@ -22,6 +26,13 @@ namespace Project
 
 		child = doc.NewElement("Tires");
 		child->SetAttribute("Type", settings.GetTireType());
+		root->InsertEndChild(child);
+
+		child = doc.NewElement("ToeAngle");
+		child->SetAttribute("FL", settings.GetToeAngle().frontLeftAngle);
+		child->SetAttribute("FR", settings.GetToeAngle().frontRightAngle);
+		child->SetAttribute("RL", settings.GetToeAngle().rearLeftAngle);
+		child->SetAttribute("RR", settings.GetToeAngle().rearRightAngle);
 		root->InsertEndChild(child);
 
 		child = doc.NewElement("Differential");
@@ -97,26 +108,29 @@ namespace Project
 
 
 
-		doc.SaveFile(m_Path.c_str());
+		doc.SaveFile(m_Path.c_str()); // Saves the file in the correct place
 
 	}
 	bool SaveVehicleData::LoadVehicleData(VehicleSettings& settings)
 	{
+		// Creates a document
 		tinyxml2::XMLDocument doc;
 
+		// Loads and checks if the file exists
 		tinyxml2::XMLError error = doc.LoadFile(m_Path.c_str());
 		if (error != tinyxml2::XML_SUCCESS) return false;
 
+		// Gets the first element to start reading from
 		tinyxml2::XMLElement* element = doc.FirstChildElement();
 		if (element == nullptr) return false;
 
-		while (element != nullptr)
+		while (element != nullptr) // Loops until now more elements in the file
 		{
 			std::string elementName = element->Name();
-			if (elementName == "VehicleSettings")
+			if (elementName == "VehicleSettings") // Checks its reading in from the correct element
 			{
-				// Get the basic details first
-				tinyxml2::XMLElement* childElement = element->FirstChildElement("Basic");
+				// Get the basic details first and reads in the settings and adds it to the settings
+				tinyxml2::XMLElement* childElement = element->FirstChildElement("Basic"); 
 				const tinyxml2::XMLAttribute* attr = childElement->FindAttribute("ChassisMass");
 				if (attr != nullptr) settings.SetChassisMass(attr->FloatValue());
 				attr = childElement->FindAttribute("WheelMass");
@@ -127,6 +141,19 @@ namespace Project
 				childElement = element->FirstChildElement("Tires");
 				attr = childElement->FindAttribute("Type");
 				if (attr != nullptr) settings.SetTires(attr->IntValue());
+
+				ToeAngles angles;
+				childElement = element->FirstChildElement("ToeAngle");
+				attr = childElement->FindAttribute("FL");
+				if (attr != nullptr) angles.frontLeftAngle = attr->FloatValue();
+				attr = childElement->FindAttribute("FR");
+				if (attr != nullptr) angles.frontRightAngle = attr->FloatValue();
+				attr = childElement->FindAttribute("RL");
+				if (attr != nullptr) angles.rearLeftAngle = attr->FloatValue();
+				attr = childElement->FindAttribute("RR");
+				if (attr != nullptr) angles.rearRightAngle = attr->FloatValue();
+				settings.SetToeAngle(angles);
+
 
 				physx::PxVehicleDifferential4WData data;
 				childElement = element->FirstChildElement("Differential");

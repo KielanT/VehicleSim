@@ -2,6 +2,7 @@
 <VehicleSettings>
     <Basic ChassisMass="1500" WheelMass="20" MaxSteer="1"/>
     <Tires Type="0"/>
+    <ToeAngle FL="0" FR="0" RL="0" RR="0"/>
     <Differential Type="0" FrontBias="1.3" RearBias="1.3" CentreBias="1.3" FrontRearSplit="0.44999999" FrontLeftRightSplit="0.5" RearLeftRightSplit="0.5"/>
     <Engine PeakTorque="500" MaxRpm="600"/>
     <Gears SwitchTime="0.1" NumGears="4"/>

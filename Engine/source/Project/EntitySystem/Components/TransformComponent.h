@@ -8,6 +8,8 @@
 #include "Math/CVector3.h"
 #include "Math/CMatrix4x4.h"
 
+// The transform component, is used to set the roation, position and scale of an object. Needs to be implemented better and not require access to the render component
+
 namespace Project
 {
 	class P_API TransformComponent : public EntityComponent
@@ -41,12 +43,14 @@ namespace Project
 
 		~TransformComponent();
 
+		// Setters
 		void SetPosition(CVector3 pos) { m_Position = pos; }
 		void SetRotation(CVector3 rot, int node = 0) 
 		{ 
 			m_Rotation = rot;
 
 		}
+		// Sets the rotation from a quaternion 
 		void SetRotationFromQuat(CVector3 quat, float w, int node = 0) 
 		{ 
 			CMatrix4x4 m = CMatrix4x4(quat, w);
@@ -63,11 +67,12 @@ namespace Project
 		}
 		void SetScale(CVector3 scale) { m_Scale = scale; }
 
+		// Getters
 		const CVector3 GetPosition() { return m_Position; }
 		const CVector3 GetRotation() { return m_Rotation; }
 		const CVector3 GetScale() { return m_Scale; }
 
-		const CVector3 GetFacingVector(int node = 0) // Returns facing vector
+		const CVector3 GetFacingVector(int node = 0) // Returns facing vector used for the camera
 		{
 			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Renderer"))
 			{
@@ -82,18 +87,18 @@ namespace Project
 			}
 		}
 
-		CVector3 GetYAxis(int node = 0) 
+		CVector3 GetYAxis(int node = 0)  // Returns the y azis
 		{
 			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Renderer"))
 			{
 				RendererComponent* comp = static_cast<RendererComponent*>(m_Entity->GetComponent("Renderer"));
-				return comp->GetModel()->GetWorldMatrix(node).GetZAxis();
+				return comp->GetModel()->GetWorldMatrix(node).GetYAxis();
 			}
 			if (m_Entity->GetComponent("Mesh") && m_Entity->GetComponent("Light Renderer"))
 			{
 				LightRendererComponent* comp = static_cast<LightRendererComponent*>(m_Entity->GetComponent("Light Renderer"));
 				comp->GetModel()->GetWorldMatrix(node);
-				return comp->GetModel()->GetWorldMatrix(node).GetZAxis();
+				return comp->GetModel()->GetWorldMatrix(node).GetYAxis();
 			}
 		}
 

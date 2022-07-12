@@ -6,6 +6,7 @@
 
 namespace Project
 {
+	// The implmented dynamic objects
 	enum class PhysicsDynmaicObjectType
 	{
 		Box = 0,
@@ -66,12 +67,15 @@ namespace Project
 		physx::PxRigidDynamic* GetActor() { return m_RigidDynamic; }
 		
 	private:
+		// Creates the shapes required
 		physx::PxShape* GetBoxShape();
 		physx::PxShape* GetSphereShape();
 		physx::PxShape* GetConvextMeshShape();
 
 
 	private:
+
+		// Member variables
 		Entity* m_Entity;
 		IPhysics* m_Physics;
 		PhysicsDynmaicObjectType m_ObjectType;

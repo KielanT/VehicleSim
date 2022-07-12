@@ -32,10 +32,10 @@ namespace Project
 
     BOOL WindowsWindow::Init(WindowProperties& props)
     {
-        m_windowClassName = L"WindowClass";
+        m_windowClassName = L"WindowClass"; // Sets the window class name
         m_Window = S_OK;
 
-        m_Window = CreateDesktopWindow(props);
+        m_Window = CreateDesktopWindow(props); // Creates the destop window
 
         return TRUE;
     }

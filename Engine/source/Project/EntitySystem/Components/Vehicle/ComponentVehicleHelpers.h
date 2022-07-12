@@ -3,8 +3,11 @@
 #include "Physics/PhysX4.1/PhysxModelHelpers.h"
 #include "Project/EntitySystem/Components/CollisionComponent.h"
 
+// enums, variables and functions for creating vehicles
+
 namespace Project
 {
+	// Create different tires that the vehicle can use
 	enum
 	{
 		TIRE_TYPE_NORMAL = 0,
@@ -16,6 +19,7 @@ namespace Project
 		MAX_NUM_TIRE_TYPES
 	};
 		
+	// Different surface types (only tarmac is implemented)
 	enum
 	{
 		SURFACE_TYPE_TARMAC = 0,
@@ -36,6 +40,7 @@ namespace Project
 		{1.00f,		0.1f,	0.80f,	0.80f,	0.80f,	0.80f} // GRASS
 	};
 	
+	// The collision flags used for setting up collision
 	enum
 	{
 		COLLISION_FLAG_GROUND = 1 << 0,
@@ -51,6 +56,7 @@ namespace Project
 		COLLISION_FLAG_DRIVABLE_OBSTACLE_AGAINST = COLLISION_FLAG_GROUND | COLLISION_FLAG_CHASSIS | COLLISION_FLAG_OBSTACLE | COLLISION_FLAG_DRIVABLE_OBSTACLE
 	};
 
+	// Used to set if an object is drivable or not
 	enum
 	{
 		DRIVABLE_SURFACE = 0xffff0000,
@@ -58,27 +64,34 @@ namespace Project
 	};
 
 	
-
+	// Sets up the filter for drivable surfaces
 	static void DrivableSurface(physx::PxFilterData& filterData)
 	{
 		filterData.word3 = static_cast<physx::PxU32>(DRIVABLE_SURFACE);
 	}
 
+	// Sets up the filter for nondrivable surfaces
 	static void NonDrivableSurface(physx::PxFilterData& filterData)
 	{
 		filterData.word3 = UNDRIVABLE_SURFACE;
 	}
 
+	// Create wheel meshes 
 	physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics);
+	// Create chassis mesh
 	physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics);
 	
+	// Compute the wheel widths and radii from the convex mesh
 	void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);
 
+	// Creates the chassis from convex mesh
 	physx::PxVec3 MakeChassis(physx::PxConvexMesh* chassisConvexMesh);
 	
+	// Compute all the wheel offsets
 	void ComputeWheelCenterActorOffsets4W(const physx::PxF32 wheelFrontZ, const physx::PxF32 wheelRearZ, const physx::PxVec3& chassisDims, const physx::PxF32* wheelWidth,
 		const physx::PxF32* wheelRadius, const physx::PxU32 numWheels, physx::PxVec3* wheelCentreOffsets);
 
+	// Creates the friction pairs for friction surfaces
 	physx::PxVehicleDrivableSurfaceToTireFrictionPairs* CreateFrictionPairs(const physx::PxMaterial* defaultMaterial);
 
 }

@@ -46,8 +46,7 @@ namespace Project
 
     bool VehicleComponent::Update(float frameTime)
     {
-
-
+		// Update the position, and rotation, use controls to move the vehicle and move the camera with the vehicle
         if (m_Physics != nullptr)
         {
 			// Update vehicle positioning and rotation
@@ -69,6 +68,7 @@ namespace Project
 
 	void VehicleComponent::Reset()
 	{
+		// Reset the position and the vehicle to original starting point
 		m_Vehicle4W->setToRestState();
 		m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
 		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
@@ -86,6 +86,7 @@ namespace Project
 
 	void VehicleComponent::GearsUI()
 	{
+		// Shows the gears that the vehicle is currently in
 		ImGuiWindowFlags flag = 0;
 		flag = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
@@ -133,6 +134,7 @@ namespace Project
 
 	void VehicleComponent::SetupVehicle()
     {
+		// Gets the transform for positioning the vehicle in the correct place
         if (m_Entity->GetComponent("Transform"))
         {
             m_Transform = static_cast<TransformComponent*>(m_Entity->GetComponent("Transform"));
@@ -178,16 +180,16 @@ namespace Project
 
 	physx::PxVehicleDrive4W* VehicleComponent::CreateVehicle4W()
 	{
-
+		// Creates th vector 3 variables for use in vehicle creation
 		physx::PxVec3 chassisDims = { 0.0f, 0.0f, 0.0f };
 		physx::PxVec3 chassisCMOffset = { 0.0f, 0.0f, 0.0f };
 
 
-		physx::PxF32 wheelWidths[PX_MAX_NB_WHEELS];
+		physx::PxF32 wheelWidths[PX_MAX_NB_WHEELS]; 
 		physx::PxF32 wheelRadii[PX_MAX_NB_WHEELS];
 
 
-
+		// Creates the filters for collision, stops the wheels and chassis from colliding
 		const physx::PxFilterData& chassisSimFilterData = physx::PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
 		const physx::PxFilterData& wheelSimFilterData = physx::PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
 
@@ -200,38 +202,33 @@ namespace Project
 
 
 			// TODO Find a way to have the wheels selected in the order (remove hard coding)
-			//wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics); // Front Left
-			//wheelMesh[1] = CreateWheelMesh(4, m_Entity, m_Physics); // Front right
-			//wheelMesh[2] = CreateWheelMesh(2, m_Entity, m_Physics); // Rear left
-			//wheelMesh[3] = CreateWheelMesh(3, m_Entity, m_Physics); // Rear 
+			wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics); // Front Left
+			wheelMesh[1] = CreateWheelMesh(4, m_Entity, m_Physics); // Front right
+			wheelMesh[2] = CreateWheelMesh(2, m_Entity, m_Physics); // Rear left
+			wheelMesh[3] = CreateWheelMesh(3, m_Entity, m_Physics); // Rear Right
 
-			wheelMesh[0] = CreateWheelMesh(0, m_Entity, m_Physics);
-			wheelMesh[1] = CreateWheelMesh(0, m_Entity, m_Physics);
-			wheelMesh[2] = CreateWheelMesh(0, m_Entity, m_Physics);
-			wheelMesh[3] = CreateWheelMesh(0, m_Entity, m_Physics);
-
-
-
+			// Compute wheel widths and radii
 			MakeWheelWidthsAndRadii(wheelMesh, wheelWidths, wheelRadii);
 
-			//Assume all wheels are identical for simplicity.
 			physx::PxConvexMesh* wheelConvexMeshes[PX_MAX_NB_WHEELS];
 			physx::PxMaterial* wheelMaterials[PX_MAX_NB_WHEELS];
 
-			//Set the meshes and materials for the driven wheels.
+			//Set the meshes and materials for the wheels.
 			for (physx::PxU32 i = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT; i++)
 			{
 				wheelConvexMeshes[i] = wheelMesh[i];
 				wheelMaterials[i] = m_Material;
 			}
 
-			//Chassis just has a single convex shape for simplicity.
+			//Chassis just has a single convex shape.
 			physx::PxConvexMesh* chassisConvexMesh = CreateChassisMesh(1, m_Entity, m_Physics); 
 			physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
 			physx::PxMaterial* chassisMaterials[1] = { m_Material };
 
+			// Compute the chassis dimesions 
 			chassisDims = MakeChassis(chassisConvexMeshes[0]);
 
+			// Calculates the Moment of inertia of the chassis
 			physx::PxVec3 chassisMOI
 			((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * m_VehicleSettings.GetChassisMass() / 12.0f,
 				(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * m_VehicleSettings.GetChassisMass() / 12.0f,
@@ -291,8 +288,6 @@ namespace Project
 
 			//Clutch
 			driveSimData.setClutchData(m_VehicleSettings.GetClutch());
-
-
 
 			//Ackermann steer accuracy
 			physx::PxVehicleAckermannGeometryData ackermann;
@@ -385,7 +380,7 @@ namespace Project
 				wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxHandBrakeTorque = m_VehicleSettings.GetHandBrakeTorque();
 				wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxHandBrakeTorque = m_VehicleSettings.GetHandBrakeTorque();
 			}
-			else if (m_VehicleSettings.GetHandBrake() == HandBrake::RearWheelsOnly)
+			else if (m_VehicleSettings.GetHandBrake() == HandBrake::AllWheels)
 			{
 				//Enable the handbrake for the all wheels.
 				wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxHandBrakeTorque = m_VehicleSettings.GetHandBrakeTorque();
@@ -396,6 +391,11 @@ namespace Project
 			//Enable steering for the front wheels only. // TODO Set up other drive settings
 			wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxSteer = m_VehicleSettings.GetMaxSteer();
 			wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxSteer = m_VehicleSettings.GetMaxSteer();
+
+			wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mToeAngle = m_VehicleSettings.GetToeAngle().rearLeftAngle;
+			wheels[physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mToeAngle = m_VehicleSettings.GetToeAngle().rearRightAngle;
+			wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mToeAngle = m_VehicleSettings.GetToeAngle().frontLeftAngle;
+			wheels[physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mToeAngle = m_VehicleSettings.GetToeAngle().rearRightAngle;
 		}
 
 		//Set up the tires.
@@ -494,7 +494,8 @@ namespace Project
 	void VehicleComponent::MoveVehicle(float frameTime)
 	{
 		UpdateInput();
-
+		
+		// Enables movement if the keys are down
 		if (KeyHeld(m_Controls.accelerate))
 			m_Accelerate = true;
 
@@ -507,21 +508,24 @@ namespace Project
 		if (KeyHeld(m_Controls.brake))
 			m_Brake = true;
 
-		if (KeyHeld(m_Controls.gearUp))
-			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
-
-		if (KeyHeld(m_Controls.gearDown))
-			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
-
 		if (KeyHeld(m_Controls.handBrake))
 			m_HandBrake = true;
 
+		if (KeyHit(m_Controls.gearUp) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+
+		if (KeyHit(m_Controls.gearDown))
+			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+
+		
+		// Resets the vehicle
 		if(m_IsResetEnabled && KeyHit(m_Controls.reset))
 			Reset();
 
 		
 		physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTablesComp(SteerVsForwardSpeedDataComp, 4);
 		
+		// Sets up the input data, required for vehicle movement
 		physx::PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(KeySmoothingData, SteerVsForwardSpeedTablesComp, m_VehicleInputData, frameTime, IsVehicleInAir, *m_Vehicle4W);
 
 		//Raycasts.
@@ -542,6 +546,7 @@ namespace Project
 
 	void VehicleComponent::UpdateVehiclePosAndRot()
 	{
+		// Updates the pos and rotation of the vehicle
 		CVector3 pos;
 		pos.x = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.x;
 		pos.y = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().p.y - 0.4f;
@@ -554,7 +559,7 @@ namespace Project
 		rot.z = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose().q.z;
 		m_Transform->SetRotationFromQuat(rot, w);
 
-
+		// Updates rotation of the rendered wheels (does not work as it should)
 		/*physx::PxShape* shapeBuffer[4];
 		m_Vehicle4W->getRigidDynamicActor()->getShapes(shapeBuffer, m_Vehicle4W->mWheelsSimData.getNbWheels());
 		const physx::PxTransform vehGlobalPose = m_Vehicle4W->getRigidDynamicActor()->getGlobalPose();
@@ -566,12 +571,14 @@ namespace Project
 
 	void VehicleComponent::UpdateInput()
 	{
+		// Update the input data for the physx simulation
 		m_VehicleInputData.setDigitalAccel(m_Accelerate);
 		m_VehicleInputData.setDigitalSteerLeft(m_Left);
 		m_VehicleInputData.setDigitalSteerRight(m_Right);
 		m_VehicleInputData.setDigitalBrake(m_Brake);
 		m_VehicleInputData.setDigitalHandbrake(m_HandBrake);
 
+		// Must be set to false each frame
 		m_Accelerate = false;
 		m_Left = false;
 		m_Right = false;
@@ -582,6 +589,7 @@ namespace Project
 
 	void VehicleComponent::MoveCamera()
 	{
+		// Moves the camera with the vehicle
 		if (m_Camera != nullptr)
 		{
 			CVector3 facingVector = m_Transform->GetFacingVector();

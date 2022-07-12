@@ -95,6 +95,8 @@ namespace Project
 		m_Clutch = m_VehicleSettings.GetClutch();
 		m_FrontAntiStiffness = m_VehicleSettings.GetFrontAntiRollBarStiffness();
 		m_RearAntiStiffness = m_VehicleSettings.GetRearAntiRollBarStiffness();
+		m_ToeAngle = m_VehicleSettings.GetToeAngle();
+		
 
 		m_PeakTorque = m_Engine.mPeakTorque;
 		m_RPM = m_Engine.mMaxOmega * 10;
@@ -550,8 +552,31 @@ namespace Project
 				ImGui::EndCombo();
 			}
 			ImGui::PopItemWidth();
-
 			m_VehicleSettings.SetTires(item_current_idx);
+
+			ImGui::BeginDisabled(true);
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputFloat, "FL Toe:", &m_ToeAngle.frontLeftAngle, 0);
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputFloat, "FR Toe:", &m_ToeAngle.frontRightAngle, 0);
+			ImGui::PopItemWidth();
+
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputFloat, "RL Toe:", &m_ToeAngle.rearLeftAngle, 0);
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::InputFloat, "RR Toe:", &m_ToeAngle.rearRightAngle, 0);
+			ImGui::PopItemWidth();
+			m_VehicleSettings.SetToeAngle(m_ToeAngle);
+			ImGui::EndDisabled();
+
 			ImGui::TreePop();
 		}
 	}

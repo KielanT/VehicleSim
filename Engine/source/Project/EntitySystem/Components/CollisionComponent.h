@@ -5,6 +5,12 @@
 #include "Project/EntitySystem/Entity.h"
 #include "Project/EntitySystem/EntityComponent.h"
 
+/************************************************************/
+/******		Collision component only used for		 ********/
+/******		  the vehicle component	                 ********/
+/******		  Needs better achitecture               ********/
+/************************************************************/
+
 namespace Project
 {
 	class CollisionComponent : public EntityComponent

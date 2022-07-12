@@ -15,7 +15,7 @@
 
 namespace Project
 {
-#define IMGUI_LEFT_LABEL(func, label, ...) (ImGui::TextUnformatted(label), ImGui::SameLine(), func("##" label, __VA_ARGS__))
+
 
 	class MainMenuScene : public IScene
 	{
@@ -142,6 +142,7 @@ namespace Project
 		
 		float m_FrontAntiStiffness;
 		float m_RearAntiStiffness;
+		ToeAngles m_ToeAngle;
 
 		physx::PxVehicleDifferential4WData m_Diff;
 		physx::PxVehicleEngineData m_Engine;

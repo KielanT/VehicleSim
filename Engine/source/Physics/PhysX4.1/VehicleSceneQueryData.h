@@ -3,6 +3,8 @@
 // From physx snippets
 #include <PxPhysicsAPI.h>
 
+// SCENE QUERY DATA NEEDED TO ALLOW THE VEHICLE TO MOVE AND BE CONTROLLED
+
 enum
 {
 	DRIVABLE_SURFACE = 0xffff0000,

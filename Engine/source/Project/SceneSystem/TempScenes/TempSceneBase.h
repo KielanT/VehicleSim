@@ -6,7 +6,6 @@
 #include "Project/EntitySystem/EntityManager.h"
 #include "Project/SceneSystem/CDirectX11SceneManager.h"
 #include "Physics/PhysX4.1/VehicleSceneQueryData.h"
-#include "Physics/PhysX4.1/VehicleHelpers.h"
 
 namespace Project
 {

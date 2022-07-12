@@ -19,6 +19,7 @@ namespace Project
 	public:
 		VehicleComponent(Entity* entity, TEntityUID UID, IPhysics* physics, VehicleSettings vehSettings) : EntityComponent("VehicleComponent", UID, entity)
 		{
+			// Sets up the vehicle with all the correct data
 			m_Entity = entity;
 			if (m_Entity != nullptr && physics != nullptr)
 			{
@@ -45,6 +46,7 @@ namespace Project
 		
 		virtual bool Update(float frameTime) override;
 		
+		// Used for attach camera to the vehicle
 		void AttachMainCamera(Camera* camera) { m_Camera = camera; };
 		void DetachMainCamera() { m_Camera = nullptr; }
 
@@ -119,6 +121,8 @@ namespace Project
 		bool IsVehicleInAir = false;
 
 		PlayerControls m_Controls;
+
+		// Data required for vehicle movement
 
 		VehicleSceneQueryData* m_VehicleSceneQueryData = NULL;
 		physx::PxBatchQuery* m_BatchQuery = NULL;

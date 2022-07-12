@@ -10,7 +10,8 @@ namespace Project
 	class PhysX : public IPhysics
 	{
 	public:
-		virtual bool InitPhysics(float meshWeldTolerance = 0.001f, CVector3 gravity = CVector3(0.0f, -9.81f, 0.0f)) override;
+		// Initialise all physics objects
+		virtual bool InitPhysics(float meshWeldTolerance = 0.001f, CVector3 gravity = CVector3(0.0f, -9.81f, 0.0f)) override; 
 		virtual bool InitPhysics(physx::PxSimulationEventCallback* callBack, physx::PxSimulationFilterShader filterShader, float meshWeldTolerance = 0.001f, CVector3 gravity = CVector3(0.0f, -9.81f, 0.0f)) override;
 
 		virtual void ShutdownPhysics() override;

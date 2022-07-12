@@ -17,6 +17,7 @@ namespace Project
 	class P_API RendererComponent : public EntityComponent
 	{
 	public:
+		// Constructor sets all the required data for rendering
 		RendererComponent(bool isRendered,  IRenderer* renderer, Entity* entity, TEntityUID UID, IShader* shader, IState* state,
 			std::string filePath = "media/BasicTex.png",
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
@@ -40,7 +41,7 @@ namespace Project
 
 				if (comp->GetMeshPath() != "")
 				{
-
+					// Changes the filepath to the correct path
 					std::filesystem::path MainPath = std::filesystem::current_path();
 
 					std::filesystem::path meshPath = std::filesystem::current_path().parent_path().append("Engine\\");
@@ -80,6 +81,7 @@ namespace Project
 
 		virtual bool Update(float frameTime) override;
 
+		// Will render the models
 		void Render();
 		Model* GetModel() { return m_Model; }
 

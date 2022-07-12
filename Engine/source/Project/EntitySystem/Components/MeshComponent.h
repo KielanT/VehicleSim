@@ -3,6 +3,8 @@
 #include "Project/Core.h"
 #include "Project/EntitySystem/EntityComponent.h"
 
+// Entire ecs needs to be redone, this component should not be necessary
+
 namespace Project
 {
 	class P_API MeshComponent : public EntityComponent

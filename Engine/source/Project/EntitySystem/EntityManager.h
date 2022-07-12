@@ -39,6 +39,9 @@ namespace Project
 		~EntityManager();
 
 	public:
+
+		// Functions for create different entities
+
 		TEntityUID CreateEntity(const std::string& name);
 		TEntityUID CreateModelEntity(const std::string& name, std::string fileMeshPath, bool isRendered = true, std::string filePath = "media/BasicTexOrange.png",
 			SEntityTransform transform = SEntityTransform(),

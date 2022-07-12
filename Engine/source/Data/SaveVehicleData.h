@@ -6,11 +6,14 @@ namespace Project
 	class SaveVehicleData
 	{
 	public:
+		// Saves vehicle data to file
 		void SaveVehicleDataToFile(VehicleSettings settings);
 
+		// Loads the vehicle date
 		bool LoadVehicleData(VehicleSettings& settings);
 
-		void SetPath(std::string path) { m_Path = path; }
+		// Allows the file path to be changed
+		void SetPath(std::string path) { m_Path = path; } 
 
 	private:
 		std::string m_Path = "data/VehicleData.xml";
