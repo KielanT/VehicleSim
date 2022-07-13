@@ -6,12 +6,6 @@ namespace Project
 {
 	LightRendererComponent::~LightRendererComponent()
 	{
-		delete m_Renderer;
-
-		delete m_Entity;
-
-		delete m_Mesh;
-		delete m_Model;
 
 		if (m_TextureResource) m_TextureResource->Release();
 		if (m_TextureSRV) m_TextureSRV->Release();
@@ -34,7 +28,7 @@ namespace Project
 	{
 		if (m_Model != nullptr && m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 
 			dx11Renderer->GetDeviceContext()->VSSetShader(m_VertexShader, nullptr, 0);
 			dx11Renderer->GetDeviceContext()->PSSetShader(m_PixelShader, nullptr, 0);

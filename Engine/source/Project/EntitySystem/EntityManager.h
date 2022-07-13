@@ -34,8 +34,8 @@ namespace Project
 	class P_API EntityManager
 	{
 	public:
-		EntityManager(IRenderer* renderer);
-		EntityManager(IRenderer* renderer, IPhysics* physics);
+		EntityManager(std::shared_ptr<IRenderer> renderer);
+		EntityManager(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IPhysics> physics);
 		~EntityManager();
 
 	public:
@@ -164,14 +164,14 @@ namespace Project
 
 		void RenderAllEntities();
 
-		const IShader* GetShader() { return m_Shader; }
+		const std::shared_ptr<IShader> GetShader() { return m_Shader; }
 
 	private:
 		EntityManager(const EntityManager&);
 		EntityManager& operator=(const EntityManager&);
 
 	private:
-		IRenderer* m_Renderer;
+		std::shared_ptr<IRenderer> m_Renderer;
 
 		typedef std::vector<Entity*> TEntities;
 		typedef TEntities::iterator TEntityIter;
@@ -186,11 +186,11 @@ namespace Project
 		TEntityIter m_EnumEntity;
 		std::string m_EnumName;
 
-		IShader* m_Shader;
-		IState* m_State;
+		std::shared_ptr<IShader> m_Shader;
+		std::shared_ptr<IState> m_State;
 
 		bool m_IsPhysics = false;
-		IPhysics* m_Physics;
+		std::shared_ptr<IPhysics> m_Physics;
 	};
 
 }

@@ -21,7 +21,7 @@ namespace Project
 	class PhysicsDynamicObjectComponent : public EntityComponent
 	{
 	public:
-		PhysicsDynamicObjectComponent(Entity* entity, TEntityUID UID, PhysicsDynmaicObjectType objectType, IPhysics* physics, bool isDrivable = false, CVector3 colScale = { 1.0f, 1.0f, 1.0f }) : EntityComponent("PhysicsDynamicObject", UID, entity)
+		PhysicsDynamicObjectComponent(Entity* entity, TEntityUID UID, PhysicsDynmaicObjectType objectType, std::shared_ptr<IPhysics> physics, bool isDrivable = false, CVector3 colScale = { 1.0f, 1.0f, 1.0f }) : EntityComponent("PhysicsDynamicObject", UID, entity)
 		{
 			m_Entity = entity;
 			m_ObjectType = objectType;
@@ -77,7 +77,7 @@ namespace Project
 
 		// Member variables
 		Entity* m_Entity;
-		IPhysics* m_Physics;
+		std::shared_ptr<IPhysics> m_Physics;
 		PhysicsDynmaicObjectType m_ObjectType;
 		physx::PxMaterial* m_Material;
 

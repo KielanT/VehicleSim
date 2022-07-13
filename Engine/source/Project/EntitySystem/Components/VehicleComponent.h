@@ -17,7 +17,7 @@ namespace Project
 	class VehicleComponent : public EntityComponent
 	{
 	public:
-		VehicleComponent(Entity* entity, TEntityUID UID, IPhysics* physics, VehicleSettings vehSettings) : EntityComponent("VehicleComponent", UID, entity)
+		VehicleComponent(Entity* entity, TEntityUID UID, std::shared_ptr<IPhysics> physics, VehicleSettings vehSettings) : EntityComponent("VehicleComponent", UID, entity)
 		{
 			// Sets up the vehicle with all the correct data
 			m_Entity = entity;
@@ -47,7 +47,7 @@ namespace Project
 		virtual bool Update(float frameTime) override;
 		
 		// Used for attach camera to the vehicle
-		void AttachMainCamera(Camera* camera) { m_Camera = camera; };
+		void AttachMainCamera(std::shared_ptr<Camera> camera) { m_Camera = camera; };
 		void DetachMainCamera() { m_Camera = nullptr; }
 
 		physx::PxRigidDynamic* GetActor() { return m_Vehicle4W->getRigidDynamicActor(); }
@@ -99,7 +99,7 @@ namespace Project
 	private:
 		Entity* m_Entity = nullptr;
 		
-		IPhysics* m_Physics = nullptr;
+		std::shared_ptr<IPhysics> m_Physics = nullptr;
 		VehicleSettings m_VehicleSettings;
 
 		physx::PxVehicleDrive4W* m_Vehicle4W = nullptr;
@@ -110,7 +110,7 @@ namespace Project
 		
 		physx::PxVehicleDrivableSurfaceToTireFrictionPairs* m_FrictionPairs = nullptr;
 
-		Camera* m_Camera = nullptr;
+		std::shared_ptr<Camera> m_Camera = nullptr;
 
 		bool m_Accelerate = false;
 		bool m_Left = false;

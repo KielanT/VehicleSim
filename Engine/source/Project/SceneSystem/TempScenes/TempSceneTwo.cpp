@@ -4,7 +4,7 @@
 
 namespace Project
 {
-    TempSceneTwo::TempSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
+    TempSceneTwo::TempSceneTwo(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
     {
         m_Renderer = renderer;
         m_SceneIndex = sceneIndex;
@@ -28,7 +28,7 @@ namespace Project
 
         m_EntityManager->CreateModelEntity("Crate", path + "CargoContainer.x");
 
-        m_SceneCamera = new Camera();
+        m_SceneCamera = std::make_shared<Camera>();
         return true;
     }
 
@@ -68,7 +68,7 @@ namespace Project
 
     void TempSceneTwo::ReleaseResources()
     {
-        delete m_SceneCamera;     m_SceneCamera = nullptr;
+
 
         m_EntityManager->DestroyAllEntities();
     }

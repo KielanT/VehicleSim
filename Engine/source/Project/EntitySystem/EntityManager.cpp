@@ -10,7 +10,7 @@
 
 namespace Project
 {
-	EntityManager::EntityManager(IRenderer* renderer)
+	EntityManager::EntityManager(std::shared_ptr<IRenderer> renderer)
 	{
 		m_Renderer = renderer;
 		m_Entities.reserve(1024);
@@ -33,7 +33,7 @@ namespace Project
 		
 	}
 
-	EntityManager::EntityManager(IRenderer* renderer, IPhysics* physics)
+	EntityManager::EntityManager(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IPhysics> physics)
 	{
 		m_Renderer = renderer;
 		m_Entities.reserve(1024);

@@ -16,7 +16,7 @@ namespace Project
 		virtual ~WindowsWindow();
 
 		// Updates the window with the scene
-		virtual void Update(ISceneManager* m_SceneManager) override;
+		virtual void Update(std::shared_ptr<ISceneManager> sceneManager) override;
 
 		// Returns the window width
 		virtual unsigned int GetWidth() const override { return m_Props.Width; }
@@ -47,7 +47,7 @@ namespace Project
 		HRESULT CreateDesktopWindow(WindowProperties& props);
 
 		// Runs the window with the scene
-		HRESULT Run(ISceneManager* m_SceneManager);
+		HRESULT Run(std::shared_ptr<ISceneManager> m_SceneManager);
 
 	private:
 		HWND      m_hWnd; // Window handle member varibale

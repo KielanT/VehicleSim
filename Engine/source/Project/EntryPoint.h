@@ -1,5 +1,8 @@
 #pragma once
 
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+
 #ifdef P_PLATFORM_WINDOWS
 
 extern Project::Application* Project::CreateApplication(); // Allows the main app to implement the project
@@ -9,7 +12,11 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
    auto app = Project::CreateApplication(); // Creates an the application
    app->Run(); // Runs the application
+
+   
    delete app; // Deletes the application
+   _CrtDumpMemoryLeaks();
+   return 0;
 }
 
 #endif

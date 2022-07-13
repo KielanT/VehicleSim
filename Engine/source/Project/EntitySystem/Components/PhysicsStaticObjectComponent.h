@@ -22,7 +22,7 @@ namespace Project
 	class PhysicsStaticObjectComponent : public EntityComponent
 	{
 	public:
-		PhysicsStaticObjectComponent(Entity* entity, TEntityUID UID, PhysicsStaticObjectType objectType, IPhysics* physics, bool isDrivable = false, CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isTrigger = false,  CVector3 trigScale = { 1.0f, 1.0f, 1.0f }, CVector3 trigPos = { 0.0f, 0.0f, 0.0f }, PhysicsStaticObjectType triggerOjectType = PhysicsStaticObjectType::Box) : EntityComponent("PhysicsStaticObject", UID, entity)
+		PhysicsStaticObjectComponent(Entity* entity, TEntityUID UID, PhysicsStaticObjectType objectType, std::shared_ptr<IPhysics> physics, bool isDrivable = false, CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isTrigger = false,  CVector3 trigScale = { 1.0f, 1.0f, 1.0f }, CVector3 trigPos = { 0.0f, 0.0f, 0.0f }, PhysicsStaticObjectType triggerOjectType = PhysicsStaticObjectType::Box) : EntityComponent("PhysicsStaticObject", UID, entity)
 		{
 			// Sets the memeber variables
 			m_Entity = entity;
@@ -105,7 +105,7 @@ namespace Project
 		
 	private:
 		Entity* m_Entity;
-		IPhysics* m_Physics;
+		std::shared_ptr<IPhysics> m_Physics;
 		PhysicsStaticObjectType m_ObjectType;
 		physx::PxMaterial* m_Material;
 

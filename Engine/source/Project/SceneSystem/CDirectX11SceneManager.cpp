@@ -21,7 +21,7 @@
 
 namespace Project
 {
-	CDirectX11SceneManager::CDirectX11SceneManager(IRenderer* renderer, WindowProperties& props)
+	CDirectX11SceneManager::CDirectX11SceneManager(std::shared_ptr<IRenderer> renderer, WindowProperties& props)
 	{
 		m_Renderer = renderer; // Sets the renderer
 		m_Props = props; // Sets the properties
@@ -35,7 +35,6 @@ namespace Project
 
 	CDirectX11SceneManager::~CDirectX11SceneManager()
 	{
-		delete m_Renderer; // Deletes the renderer
 
 		for (int i = 0; i < m_Scenes.size(); ++i)
 			 delete m_Scenes[i]; // Deletes each scene in the renderer
@@ -149,7 +148,7 @@ namespace Project
 		//// Common settings ////
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11) // Checks the correct renderer
 		{
-			DirectX11Renderer* d11Renderer = static_cast<DirectX11Renderer*>(m_Renderer); // Casts the renderer to the correct renderer
+			std::shared_ptr<DirectX11Renderer> d11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer); // Casts the renderer to the correct renderer
 
 			// Sets the correct scene settings
 			d11Renderer->PerFrameConstants.ambientColour = m_Scenes[m_SceneIndex]->GetAmbientColour();
@@ -200,16 +199,16 @@ namespace Project
 	{
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* d11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 			// Set camera matrices in the constant buffer and send over to GPU
-			d11Renderer->PerFrameConstants.viewMatrix = m_Scenes[m_SceneIndex]->GetCamera()->ViewMatrix();
-			d11Renderer->PerFrameConstants.projectionMatrix = m_Scenes[m_SceneIndex]->GetCamera()->ProjectionMatrix();
-			d11Renderer->PerFrameConstants.viewProjectionMatrix = m_Scenes[m_SceneIndex]->GetCamera()->ViewProjectionMatrix();
-			UpdateConstantBuffer(d11Renderer->GetDeviceContext(), d11Renderer->PerFrameConstantBuffer, d11Renderer->PerFrameConstants);
+			dx11Renderer->PerFrameConstants.viewMatrix = m_Scenes[m_SceneIndex]->GetCamera()->ViewMatrix();
+			dx11Renderer->PerFrameConstants.projectionMatrix = m_Scenes[m_SceneIndex]->GetCamera()->ProjectionMatrix();
+			dx11Renderer->PerFrameConstants.viewProjectionMatrix = m_Scenes[m_SceneIndex]->GetCamera()->ViewProjectionMatrix();
+			UpdateConstantBuffer(dx11Renderer->GetDeviceContext(), dx11Renderer->PerFrameConstantBuffer, dx11Renderer->PerFrameConstants);
 
 			// Indicate that the constant buffer we just updated is for use in the vertex shader (VS) and pixel shader (PS)
-			d11Renderer->GetDeviceContext()->VSSetConstantBuffers(0, 1, &d11Renderer->PerFrameConstantBuffer); // First parameter must match constant buffer number in the shader 
-			d11Renderer->GetDeviceContext()->PSSetConstantBuffers(0, 1, &d11Renderer->PerFrameConstantBuffer);
+			dx11Renderer->GetDeviceContext()->VSSetConstantBuffers(0, 1, &dx11Renderer->PerFrameConstantBuffer); // First parameter must match constant buffer number in the shader 
+			dx11Renderer->GetDeviceContext()->PSSetConstantBuffers(0, 1, &dx11Renderer->PerFrameConstantBuffer);
 
 			m_Scenes[m_SceneIndex]->RenderScene();
 		}

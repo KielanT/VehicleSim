@@ -5,11 +5,11 @@
 
 namespace Project
 {
-    IState* SetStates(ERendererType type)
+    std::unique_ptr<IState> SetStates(ERendererType type)
     {
         if (type == ERendererType::DirectX11) // Returns the DirectX 11 States
         {
-            return new CDirectX11States();
+            return std::make_unique<CDirectX11States>();
         }
         else
         {

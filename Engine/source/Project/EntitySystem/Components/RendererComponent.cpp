@@ -6,11 +6,6 @@ namespace Project
 {
 	RendererComponent::~RendererComponent()
 	{
-		//if(m_Renderer != nullptr) delete m_Renderer;
-		
-		if (m_Mesh != nullptr)delete m_Mesh;
-		if (m_Model != nullptr)delete m_Model;
-		
 		if (m_TextureResource) m_TextureResource->Release();
 		if (m_TextureSRV) m_TextureSRV->Release();
 		
@@ -33,7 +28,7 @@ namespace Project
 		// Renders the model with the correct textures, shaders and state
 		if(m_isRendered && m_Model != nullptr && m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 
 			dx11Renderer->GetDeviceContext()->VSSetShader(m_VertexShader, nullptr, 0);
 			dx11Renderer->GetDeviceContext()->PSSetShader(m_PixelShader, nullptr, 0);
@@ -57,7 +52,7 @@ namespace Project
 		// Sets the texture
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 			if (!LoadTexture(dx11Renderer, texturePath, &m_TextureResource, &m_TextureSRV))
 			{
 				// Error Check here

@@ -50,8 +50,6 @@ namespace Project
 		if (m_SceneManager != nullptr)
 		{
 			m_SceneManager->Release();
-			delete m_SceneManager; // Deletes the scene manager
-
 		}
 
 	}

@@ -30,6 +30,6 @@ namespace Project
 		
 	};
 
-	IPhysics* NewPhysics(const EPhysicsType type);
+	std::shared_ptr<IPhysics> NewPhysics(const EPhysicsType type);
 
 }

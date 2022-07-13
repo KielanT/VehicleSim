@@ -10,7 +10,7 @@
 namespace Project
 {
 
-	OpenWorldSceneTwo::OpenWorldSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour,
+	OpenWorldSceneTwo::OpenWorldSceneTwo(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour,
 		float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -26,7 +26,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 
-	OpenWorldSceneTwo::OpenWorldSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
+	OpenWorldSceneTwo::OpenWorldSceneTwo(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex,
 		CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -45,9 +45,9 @@ namespace Project
 
 	bool OpenWorldSceneTwo::InitGeometry()
 	{
-		m_EntityManager = new EntityManager(m_Renderer);
+		m_EntityManager = std::make_unique<EntityManager>(m_Renderer);
 
-		m_SceneCamera = new Camera(true);
+		m_SceneCamera = std::make_shared<Camera>(true);
 
 		/*****************************************************/
 		/**			   Create the entities                  **/
@@ -78,7 +78,7 @@ namespace Project
 			/*****************************************************/
 			// Set Actors and shapes here
 
-			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
+			m_PhysicsEntityManager = std::make_unique<EntityManager>(m_Renderer, m_PhysicsSystem);
 			SEntityTransform transform = SEntityTransform();
 			transform.Scale = { 2.0f, 0.0f, 2.0f };
 			
@@ -165,7 +165,6 @@ namespace Project
 
 	void OpenWorldSceneTwo::ReleaseResources()
 	{
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)			  m_EntityManager->DestroyAllEntities();
 		if (m_PhysicsEntityManager != nullptr)    m_PhysicsEntityManager->DestroyAllEntities();

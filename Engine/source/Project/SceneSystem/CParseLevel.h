@@ -11,7 +11,7 @@ namespace Project
 	{
 	public:
 		// Constructor just stores a pointer to the entity manager so all methods below can access it
-		CParseLevel(EntityManager* entityManager) : m_EntityManager(entityManager) {}
+		CParseLevel(std::shared_ptr<EntityManager> entityManager) : m_EntityManager(entityManager) {}
 
 		bool ParseFile(const std::string& fileName);
 
@@ -33,7 +33,7 @@ namespace Project
 	private:
 		// Constructer is passed a pointer to an entity manager used to create 
 		// entities as they are parsed
-		EntityManager* m_EntityManager;
+		std::shared_ptr<EntityManager> m_EntityManager;
 	};
 
 }

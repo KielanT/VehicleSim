@@ -29,7 +29,7 @@ namespace Project
 		virtual int GetSceneIndex() = 0;
 
 		// Returns the camera
-		virtual Camera* GetCamera() = 0;
+		virtual  std::shared_ptr<Camera> GetCamera() = 0;
 
 		// Scene Settings
 		virtual void SetAmbientColour(CVector3 ambientColour) = 0;

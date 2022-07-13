@@ -13,7 +13,7 @@
 namespace Project
 {
     ErrorLogger log;
-    TempSceneOne::TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
+    TempSceneOne::TempSceneOne(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
     {
         m_Renderer = renderer;
         m_SceneIndex = sceneIndex;
@@ -32,7 +32,7 @@ namespace Project
       
     }
 
-    TempSceneOne::TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
+    TempSceneOne::TempSceneOne(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
     {
         m_Renderer = renderer;
         m_SceneIndex = sceneIndex;
@@ -54,7 +54,7 @@ namespace Project
         
         m_LightEntityManager = new EntityManager(m_Renderer);
         
-        m_TestManager = new EntityManager(m_Renderer);
+        m_TestManager = std::make_shared<EntityManager>(m_Renderer);
         
         CParseLevel LevelParser(m_TestManager);
         
@@ -94,7 +94,7 @@ namespace Project
             m_PhysicsSystem->GetScene()->addActor(*m_BoxActor2);
         }
         
-        m_SceneCamera = new Camera();
+        m_SceneCamera = std::make_shared<Camera>();
         return true;
     }
 
@@ -217,8 +217,6 @@ namespace Project
 
         if(m_PhysicsSystem != nullptr) m_PhysicsSystem->ShutdownPhysics();
 
-
-        if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
     }
 
     void TempSceneOne::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)

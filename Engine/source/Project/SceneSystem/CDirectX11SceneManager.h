@@ -13,7 +13,7 @@ namespace Project
 	class CDirectX11SceneManager : public ISceneManager
 	{
 	public:
-		CDirectX11SceneManager(IRenderer* renderer, WindowProperties& props);
+		CDirectX11SceneManager(std::shared_ptr<IRenderer> renderer, WindowProperties& props);
 		~CDirectX11SceneManager();
 
 		// Loads the first scene in the array (typically index 0)
@@ -33,7 +33,7 @@ namespace Project
 		// Gets the the current scene index
 		virtual const int GetCurrentSceneIndex() override { return m_SceneIndex; }
 
-		virtual IRenderer* GetRenderer() override { return m_Renderer; }
+		virtual std::shared_ptr<IRenderer> GetRenderer() override { return m_Renderer; }
 
 		WindowProperties GetWindowsProperties() { return m_Props; }
 
@@ -49,7 +49,7 @@ namespace Project
 		virtual void RenderSceneFromCamera() override;
 
 	private:
-		IRenderer* m_Renderer; // Memeber variable for the renderer in use
+		std::shared_ptr<IRenderer> m_Renderer; // Memeber variable for the renderer in use
 		WindowProperties m_Props; // Member variable for the window properties
 		std::vector<IScene*> m_Scenes; // Member variable for the scene array
 

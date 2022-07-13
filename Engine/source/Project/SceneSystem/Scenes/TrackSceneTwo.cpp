@@ -10,7 +10,7 @@
 namespace Project
 {
 
-	TrackSceneTwo::TrackSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour,
+	TrackSceneTwo::TrackSceneTwo(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour,
 		float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -26,7 +26,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 
-	TrackSceneTwo::TrackSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
+	TrackSceneTwo::TrackSceneTwo(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex,
 		CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -43,10 +43,10 @@ namespace Project
 
 	bool TrackSceneTwo::InitGeometry()
 	{
-		m_EntityManager = new EntityManager(m_Renderer);
+		m_EntityManager = std::make_unique<EntityManager>(m_Renderer);
 
-		m_SceneCamera = new Camera(true);
-		m_Timer = new Timer();
+		m_SceneCamera = std::make_shared<Camera>(true);
+		m_Timer = std::make_unique<Timer>();
 		m_Timer->Stop();
 		m_Timer->Reset();
 		m_IsPaused = false;
@@ -80,7 +80,7 @@ namespace Project
 			/*****************************************************/
 			// Set Actors and shapes here
 
-			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
+			m_PhysicsEntityManager = std::make_unique<EntityManager>(m_Renderer, m_PhysicsSystem);
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Track", PhysicsStaticObjectType::TriangleMesh, path + "TrackTwo.obj", { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, true, path + "brick1.jpg");
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackFinishLine", PhysicsStaticObjectType::TriangleMesh, path + "TrackTwoFinishLine.obj", { -8.0f, 0.0f, 40.0f });
@@ -164,8 +164,6 @@ namespace Project
 
 	void TrackSceneTwo::ReleaseResources()
 	{
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
-
 		if (m_EntityManager != nullptr)			  m_EntityManager->DestroyAllEntities();
 		if (m_PhysicsEntityManager != nullptr)    m_PhysicsEntityManager->DestroyAllEntities();
 

@@ -18,9 +18,9 @@ namespace Project
 
 	private:
 		std::unique_ptr<IWindow> m_Window; // Variable for the window
-		IRenderer* m_Renderer = nullptr; // Variable for the renderer
+		std::shared_ptr<IRenderer> m_Renderer = nullptr; // Variable for the renderer
 
-		ISceneManager* m_SceneManager; // Variable for the scene manager
+		std::shared_ptr<ISceneManager> m_SceneManager; // Variable for the scene manager
 
 	};
 

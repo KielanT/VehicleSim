@@ -18,7 +18,7 @@ namespace Project
 	{
 	public:
 		// Constructor sets all the required data for rendering
-		RendererComponent(bool isRendered,  IRenderer* renderer, Entity* entity, TEntityUID UID, IShader* shader, IState* state,
+		RendererComponent(bool isRendered, std::shared_ptr<IRenderer> renderer, Entity* entity, TEntityUID UID, std::shared_ptr<IShader> shader, std::shared_ptr<IState> state,
 			std::string filePath = "media/BasicTex.png",
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
@@ -32,12 +32,12 @@ namespace Project
 
 			if (entity->GetComponent("Mesh") && m_Renderer->GetRenderType() == ERendererType::DirectX11)
 			{
-				DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+				std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 				MeshComponent* comp = static_cast<MeshComponent*>(entity->GetComponent("Mesh"));
 			
 
-				CDirectX11Shader* dx11Shader = static_cast<CDirectX11Shader*>(shader);
-				CDirectX11States* dx11State = static_cast<CDirectX11States*>(state);
+				std::shared_ptr<CDirectX11Shader> dx11Shader = std::static_pointer_cast<CDirectX11Shader>(shader);
+				std::shared_ptr<CDirectX11States> dx11State = std::static_pointer_cast<CDirectX11States>(state);
 
 				if (comp->GetMeshPath() != "")
 				{
@@ -47,10 +47,10 @@ namespace Project
 					std::filesystem::path meshPath = std::filesystem::current_path().parent_path().append("Engine\\");
 
 					std::filesystem::current_path(meshPath); // Sets the current path to the mesh path
-					m_Mesh = new Mesh(dx11Renderer, comp->GetMeshPath());
+					m_Mesh = std::make_shared<Mesh>(dx11Renderer, comp->GetMeshPath());
 
 
-					m_Model = new Model(m_Mesh);
+					m_Model = std::make_shared<Model>(m_Mesh);
 
 
 					SetTexture(filePath);
@@ -83,7 +83,7 @@ namespace Project
 
 		// Will render the models
 		void Render();
-		Model* GetModel() { return m_Model; }
+		std::shared_ptr<Model> GetModel() { return m_Model; }
 
 		void SetIsRendered(bool isRendered) { m_isRendered = isRendered; }
 
@@ -107,10 +107,10 @@ namespace Project
 		bool GetIsRendered() { return m_isRendered; }
 
 	private:
-		IRenderer* m_Renderer;
+		std::shared_ptr<IRenderer> m_Renderer;
 
-		Mesh* m_Mesh;
-		Model* m_Model;
+		std::shared_ptr<Mesh> m_Mesh;
+		std::shared_ptr<Model> m_Model;
 
 		ID3D11Resource* m_TextureResource;
 		ID3D11ShaderResourceView* m_TextureSRV;

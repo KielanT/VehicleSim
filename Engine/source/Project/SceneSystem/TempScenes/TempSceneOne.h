@@ -43,11 +43,11 @@ namespace Project
 	class TempSceneOne : public IScene, public physx::PxSimulationEventCallback
 	{
 	public:
-		TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(0.2f, 0.2f, 0.3f),
+		TempSceneOne(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour = CVector3(0.2f, 0.2f, 0.3f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
-		TempSceneOne(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		TempSceneOne(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
@@ -63,7 +63,7 @@ namespace Project
 
 		virtual int GetSceneIndex() override { return m_SceneIndex; }
 
-		virtual Camera* GetCamera() override { return m_SceneCamera; } 
+		virtual std::shared_ptr<Camera> GetCamera() override { return m_SceneCamera; }
 
 		// Scene Settings
 		virtual void SetAmbientColour(CVector3 ambientColour) override { m_AmbientColour = ambientColour; }
@@ -100,16 +100,16 @@ namespace Project
 		// Gui Test variables
 		CVector3 renderedBox;
 
-		IRenderer* m_Renderer;
+		std::shared_ptr<IRenderer> m_Renderer;
 		int m_SceneIndex;
 		bool m_EnablePhysics;
 
-		Camera* m_SceneCamera = nullptr;
+		std::shared_ptr<Camera> m_SceneCamera = nullptr;
 
 		EntityManager* m_EntityManager = nullptr;
 		EntityManager* m_LightEntityManager = nullptr;
 
-		EntityManager* m_TestManager = nullptr;
+		std::shared_ptr<EntityManager> m_TestManager = nullptr;
 		
 		CVector3 m_AmbientColour;
 		float m_SpecularPower;
@@ -120,7 +120,7 @@ namespace Project
 
 		ErrorLogger m_Log;
 
-		IPhysics* m_PhysicsSystem = nullptr;
+		std::shared_ptr<IPhysics> m_PhysicsSystem = nullptr;
 		
 
 		// Physx Geometry test

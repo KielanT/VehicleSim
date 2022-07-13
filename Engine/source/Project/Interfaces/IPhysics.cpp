@@ -4,11 +4,11 @@
 
 namespace Project
 {
-	IPhysics* NewPhysics(const EPhysicsType type)
+	std::shared_ptr<IPhysics> NewPhysics(const EPhysicsType type)
 	{
 		if (type == EPhysicsType::PhysX4) // Returns the DirectX 11 renderer
 		{
-			return new PhysX();
+			 return std::make_shared<PhysX>();
 		}
 		else
 		{

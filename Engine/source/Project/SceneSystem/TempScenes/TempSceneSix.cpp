@@ -4,7 +4,7 @@
 namespace Project
 {
 
-	TempSceneSix::TempSceneSix(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour,
+	TempSceneSix::TempSceneSix(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour,
 		float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -20,7 +20,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 
-	TempSceneSix::TempSceneSix(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
+	TempSceneSix::TempSceneSix(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex,
 		CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -37,9 +37,9 @@ namespace Project
 
 	bool TempSceneSix::InitGeometry()
 	{
-		m_EntityManager = new EntityManager(m_Renderer);
+		m_EntityManager = std::make_unique<EntityManager>(m_Renderer);
 
-		m_SceneCamera = new Camera();
+		m_SceneCamera = std::make_shared<Camera>();
 
 
 		/*****************************************************/
@@ -65,7 +65,7 @@ namespace Project
 			/*****************************************************/
 			// Set Actors and shapes here
 			
-			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
+			m_PhysicsEntityManager = std::make_unique<EntityManager>(m_Renderer, m_PhysicsSystem);
 			//m_PhysicsEntityManager->CreatePhysicsEntity("Plane", path + "Ground.x", "media/BasicTexOrange.png", PhysicsObjectType::Plane, RigidBodyType::Static);
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/untitled1Parented.obj", path + "Compact/untitled4.obj", VehicleSettings(), path + "Compact/CompactBlue.png");
 			//m_PhysicsEntityManager->CreatePhysicsEntity("Cube", path + "Cube.x", "media/BasicTexWhite.png", PhysicsObjectType::Box, RigidBodyType::Dynamic, SEntityTransform(0.0f, 20.0f, 40.0f), { 5.0f, 5.0f, 5.0f });
@@ -120,7 +120,6 @@ namespace Project
 
 	void TempSceneSix::ReleaseResources()
 	{
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)			  m_EntityManager->DestroyAllEntities();
 		if (m_PhysicsEntityManager != nullptr)    m_PhysicsEntityManager->DestroyAllEntities();

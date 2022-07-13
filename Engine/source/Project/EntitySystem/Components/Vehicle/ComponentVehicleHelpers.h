@@ -77,10 +77,10 @@ namespace Project
 	}
 
 	// Create wheel meshes 
-	physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics);
+	physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, std::shared_ptr<IPhysics> physics);
 	
 	// Create chassis mesh
-	physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics);
+	physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, std::shared_ptr<IPhysics> physics);
 	
 	// Compute the wheel widths and radii from the convex mesh
 	void MakeWheelWidthsAndRadii(physx::PxConvexMesh** wheelConvexMeshes, physx::PxF32* wheelWidths, physx::PxF32* wheelRadii);

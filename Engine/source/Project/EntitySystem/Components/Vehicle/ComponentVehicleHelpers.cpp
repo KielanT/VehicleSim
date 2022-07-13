@@ -6,7 +6,7 @@ namespace Project
 {
 
 
-physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physics)
+physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, std::shared_ptr<IPhysics> physics)
 {
 	physx::PxU32 vertexCount; // stores the vertex count
 	std::vector<physx::PxVec3> vertices; // Stores the vertices
@@ -29,7 +29,7 @@ physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physic
 
 
 
-physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics)
+physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, std::shared_ptr<IPhysics> physics)
 {
 	physx::PxU32 vertexCount;
 	std::vector<physx::PxVec3> vertices;

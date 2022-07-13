@@ -11,11 +11,11 @@ namespace Project
 	class TempSceneFive : public IScene
 	{
 	public:
-		TempSceneFive(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		TempSceneFive(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
-		TempSceneFive(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
+		TempSceneFive(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour = CVector3(1.0f, 1.0f, 1.0f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
@@ -31,7 +31,7 @@ namespace Project
 
 		virtual int GetSceneIndex() override { return m_SceneIndex; }
 
-		virtual Camera* GetCamera() override { return m_SceneCamera; }
+		virtual std::shared_ptr<Camera> GetCamera() override { return m_SceneCamera; }
 
 		// Scene Settings
 		virtual void SetAmbientColour(CVector3 ambientColour) override { m_AmbientColour = ambientColour; }
@@ -47,7 +47,7 @@ namespace Project
 	private:
 		ErrorLogger m_Log;
 
-		IRenderer* m_Renderer;
+		std::shared_ptr<IRenderer> m_Renderer;
 		int m_SceneIndex;
 		bool m_EnablePhysics;
 
@@ -56,14 +56,14 @@ namespace Project
 		ColourRGBA m_backgroundColour;
 		bool m_VsyncOn;
 
-		Camera* m_SceneCamera = nullptr;
+		std::shared_ptr<Camera> m_SceneCamera = nullptr;
 
 		EntityManager* m_EntityManager = nullptr;
 		EntityManager* m_LightEntityManager = nullptr;
 
 		CDirectX11SceneManager* m_sceneManager;
 
-		IPhysics* m_PhysicsSystem = nullptr;
+		std::shared_ptr<IPhysics> m_PhysicsSystem = nullptr;
 
 		physx::PxMaterial* m_Material = nullptr;
 

@@ -12,12 +12,12 @@ namespace Project
 		virtual ~IShader(){}
 
 		// Initialize the shaders 
-		virtual bool InitShaders(IRenderer* renderer) = 0;
+		virtual bool InitShaders(std::shared_ptr<IRenderer> renderer) = 0;
 
 		// Release the shaders
 		virtual void ReleaseShaders() = 0;
 	};
 
 	// Sets the shader depending on the renderer
-	IShader* SetShader(ERendererType renderertype);
+	std::unique_ptr<IShader> SetShader(ERendererType renderertype);
 }

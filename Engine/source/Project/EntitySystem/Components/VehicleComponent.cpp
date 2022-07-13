@@ -506,7 +506,6 @@ namespace Project
 			if (KeyHit(m_Controls.gearUp))
 				m_GearUp = true;
 
-
 			if (KeyHit(m_Controls.gearDown))
 				m_GearDown = true;
 

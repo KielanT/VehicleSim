@@ -7,12 +7,11 @@ namespace Project
 {
 	CDirectX11Shader::~CDirectX11Shader()
 	{
-		delete m_Renderer;
 
 		ReleaseShaders(); // Release the shaders
 	}
 
-	bool CDirectX11Shader::InitShaders(IRenderer* renderer)
+	bool CDirectX11Shader::InitShaders(std::shared_ptr<IRenderer> renderer)
 	{
 		m_Renderer = renderer;
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11) // Checks the renderer is the correct type
@@ -115,7 +114,7 @@ namespace Project
 
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 
 			HRESULT hr = dx11Renderer->GetDevice()->CreateVertexShader(byteCode.data(), byteCode.size(), nullptr, &shader);
 			if (FAILED(hr))
@@ -152,7 +151,7 @@ namespace Project
 
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 
 			HRESULT hr = dx11Renderer->GetDevice()->CreatePixelShader(byteCode.data(), byteCode.size(), nullptr, &shader);
 			if (FAILED(hr))

@@ -7,7 +7,7 @@
 
 namespace Project
 {
-	TempSceneThree::TempSceneThree(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
+	TempSceneThree::TempSceneThree(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
 		m_SceneIndex = sceneIndex;
@@ -22,7 +22,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 
-	TempSceneThree::TempSceneThree(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
+	TempSceneThree::TempSceneThree(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
 		m_SceneIndex = sceneIndex;
@@ -41,7 +41,7 @@ namespace Project
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 		
-		m_SceneCamera = new Camera();
+		m_SceneCamera = std::make_shared<Camera>();
 		
 		std::string path = "media/";
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
@@ -204,9 +204,6 @@ namespace Project
 
 	void TempSceneThree::ReleaseResources()
 	{
-		
-
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)    m_EntityManager->DestroyAllEntities();
 

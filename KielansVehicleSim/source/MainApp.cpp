@@ -1,5 +1,7 @@
 #include <Project.h>
 
+
+
 class Main : public Project::Application
 {
 public:
@@ -16,5 +18,6 @@ public:
 
 Project::Application* Project::CreateApplication()
 {
+	
 	return new Main();
 }

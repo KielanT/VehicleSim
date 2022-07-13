@@ -23,7 +23,7 @@ namespace Project
 
 	physx::PxVehicleDrive4WRawInputData VehicleInputData;
 
-	TempSceneFive::TempSceneFive(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour /*= CVector3(1.0f, 1.0f, 1.0f)*/, float specularPower /*= 256.0f*/, ColourRGBA backgroundColour /*= ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f)*/, bool vsyncOn /*= true*/)
+	TempSceneFive::TempSceneFive(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour /*= CVector3(1.0f, 1.0f, 1.0f)*/, float specularPower /*= 256.0f*/, ColourRGBA backgroundColour /*= ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f)*/, bool vsyncOn /*= true*/)
 	{
 		m_Renderer = renderer;
 		m_SceneIndex = sceneIndex;
@@ -38,7 +38,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 
-	TempSceneFive::TempSceneFive(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour /*= CVector3(1.0f, 1.0f, 1.0f)*/, float specularPower /*= 256.0f*/, ColourRGBA backgroundColour /*= ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f)*/, bool vsyncOn /*= true*/)
+	TempSceneFive::TempSceneFive(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex, CVector3 ambientColour /*= CVector3(1.0f, 1.0f, 1.0f)*/, float specularPower /*= 256.0f*/, ColourRGBA backgroundColour /*= ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f)*/, bool vsyncOn /*= true*/)
 	{
 		m_Renderer = renderer;
 		m_SceneIndex = sceneIndex;
@@ -56,7 +56,7 @@ namespace Project
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 
-		m_SceneCamera = new Camera();
+		m_SceneCamera = std::make_shared<Camera>();
 
 		std::string path = "media/";
 		m_EntityManager->CreateModelEntity("Floor", path + "Ground.x");
@@ -239,7 +239,6 @@ namespace Project
 
 	void TempSceneFive::ReleaseResources()
 	{
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)    m_EntityManager->DestroyAllEntities();
 

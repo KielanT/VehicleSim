@@ -14,7 +14,7 @@ namespace Project
 		virtual ~IWindow() {}
 
 		// Updates the window with the scene
-		virtual void Update(ISceneManager* m_SceneManager) = 0;
+		virtual void Update(std::shared_ptr<ISceneManager> m_SceneManager) = 0;
 
 		// Returns the window width
 		virtual unsigned int GetWidth() const = 0;
@@ -26,6 +26,6 @@ namespace Project
 		virtual WindowProperties GetWindowProperties() const = 0;
 
 		// Creates the window
-		static IWindow* Create(WindowProperties& props);
+		static std::unique_ptr<IWindow> Create(WindowProperties& props);
 	};
 }

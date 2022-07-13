@@ -9,7 +9,7 @@
 namespace Project
 {
 	
-	TempSceneBase::TempSceneBase(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour, 
+	TempSceneBase::TempSceneBase(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour,
 		float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -25,7 +25,7 @@ namespace Project
 		m_EnablePhysics = false;
 	}
 	
-	TempSceneBase::TempSceneBase(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex, 
+	TempSceneBase::TempSceneBase(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex,
 		CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -44,7 +44,7 @@ namespace Project
 	{
 		m_EntityManager = new EntityManager(m_Renderer);
 
-		m_SceneCamera = new Camera();
+		m_SceneCamera = std::make_shared<Camera>();
 
 
 		/*****************************************************/
@@ -110,7 +110,6 @@ namespace Project
 	
 	void TempSceneBase::ReleaseResources()
 	{
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)    m_EntityManager->DestroyAllEntities();
 

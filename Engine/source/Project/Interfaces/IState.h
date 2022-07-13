@@ -11,12 +11,12 @@ namespace Project
 		virtual ~IState() {}
 
 		// Initialize the states 
-		virtual bool InitStates(IRenderer* renderer) = 0;
+		virtual bool InitStates(std::shared_ptr<IRenderer> renderer) = 0;
 
 		// Release the states
 		virtual void ReleaseStates() = 0;
 	};
 
 	// Returns the states depending on the renderer
-	IState* SetStates(ERendererType type);
+	std::unique_ptr<IState> SetStates(ERendererType type);
 }

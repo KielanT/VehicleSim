@@ -9,7 +9,7 @@ namespace Project
         ReleaseStates();
     }
 
-    bool CDirectX11States::InitStates(IRenderer* renderer)
+    bool CDirectX11States::InitStates(std::shared_ptr<IRenderer> renderer)
     {
         //--------------------------------------------------------------------------------------
         // Texture Samplers
@@ -17,7 +17,7 @@ namespace Project
          // Each block of code creates a filtering mode. Copy a block and adjust values to add another mode. See texturing lab for details
         if (renderer->GetRenderType() == ERendererType::DirectX11)
         {
-            DirectX11Renderer* dx11Renderer = static_cast<DirectX11Renderer*>(renderer);
+            std::shared_ptr<DirectX11Renderer> dx11Renderer = std::static_pointer_cast<DirectX11Renderer>(renderer);
             D3D11_SAMPLER_DESC samplerDesc = {};
 
             ////-------- Point Sampling (pixelated textures) --------////
@@ -244,20 +244,23 @@ namespace Project
 
     void CDirectX11States::ReleaseStates()
     {
-        if (m_PointSampler)         m_PointSampler->Release();
-        if (m_TrilinearSampler)     m_TrilinearSampler->Release();
-        if (m_Anisotropic4xSampler) m_Anisotropic4xSampler->Release();
+        // All commented out due to an exception being thrown when switching window mode twice in the UI without closing the game
+        // But this does not always occur
+
+       // if (m_PointSampler != nullptr)         m_PointSampler->Release();
+        //if (m_TrilinearSampler != nullptr)     m_TrilinearSampler->Release();
+        //if (m_Anisotropic4xSampler != nullptr) m_Anisotropic4xSampler->Release();
         
-        if (m_NoBlendingState)       m_NoBlendingState->Release();
-        if (m_AdditiveBlendingState) m_AdditiveBlendingState->Release();
+        //if (m_NoBlendingState != nullptr)       m_NoBlendingState->Release();
+        //if (m_AdditiveBlendingState != nullptr) m_AdditiveBlendingState->Release();
         
-        if (m_CullBackState)  m_CullBackState->Release();
-        if (m_CullFrontState) m_CullFrontState->Release();
-        if (m_CullNoneState)  m_CullNoneState->Release();
+        //if (m_CullBackState != nullptr)  m_CullBackState->Release();
+       // if (m_CullFrontState != nullptr) m_CullFrontState->Release();
+        //if (m_CullNoneState != nullptr)  m_CullNoneState->Release();
         
-        if (m_UseDepthBufferState) m_UseDepthBufferState->Release();
-        if (m_DepthReadOnlyState)  m_DepthReadOnlyState->Release();
-        if (m_NoDepthBufferState)  m_NoDepthBufferState->Release();
+        //if (m_UseDepthBufferState != nullptr) m_UseDepthBufferState->Release();
+       // if (m_DepthReadOnlyState != nullptr)  m_DepthReadOnlyState->Release();
+        //if (m_NoDepthBufferState != nullptr)  m_NoDepthBufferState->Release();
     }
 
     ID3D11SamplerState* CDirectX11States::GetSamplerState(ESamplerState ss)

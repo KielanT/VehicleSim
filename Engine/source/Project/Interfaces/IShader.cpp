@@ -4,11 +4,11 @@
 
 namespace Project
 {
-	IShader* SetShader(ERendererType renderertype)
+	std::unique_ptr<IShader> SetShader(ERendererType renderertype)
 	{
 		if (renderertype == ERendererType::DirectX11) // Returns the DirectX 11 shaders
 		{
-			return new CDirectX11Shader();
+			return std::make_unique<CDirectX11Shader>();
 		}
 		else
 		{

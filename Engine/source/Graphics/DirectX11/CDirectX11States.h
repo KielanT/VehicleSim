@@ -42,7 +42,7 @@ namespace Project
 		~CDirectX11States();
 
 		// Initialize the states 
-		virtual bool InitStates(IRenderer* renderer) override;
+		virtual bool InitStates(std::shared_ptr<IRenderer> renderer) override;
 
 		// Release the states
 		virtual void ReleaseStates() override;
@@ -55,20 +55,20 @@ namespace Project
 	private:
 
 		// Member variables
-		ID3D11SamplerState* m_PointSampler; // Variable for the Point sampler
-		ID3D11SamplerState* m_TrilinearSampler; // Variable for the Trilinear sampler
-		ID3D11SamplerState* m_Anisotropic4xSampler; // Variable for the Anisotropic4x sampler
+		ID3D11SamplerState* m_PointSampler = nullptr; // Variable for the Point sampler
+		ID3D11SamplerState* m_TrilinearSampler = nullptr; // Variable for the Trilinear sampler
+		ID3D11SamplerState* m_Anisotropic4xSampler = nullptr; // Variable for the Anisotropic4x sampler
 
-		ID3D11BlendState* m_NoBlendingState;  // Variable for the No Blending state
-		ID3D11BlendState* m_AdditiveBlendingState; // Variable for the Additive Blending state
+		ID3D11BlendState* m_NoBlendingState = nullptr;  // Variable for the No Blending state
+		ID3D11BlendState* m_AdditiveBlendingState = nullptr; // Variable for the Additive Blending state
 
-		ID3D11RasterizerState* m_CullBackState; // Variable for the Cull Back state
-		ID3D11RasterizerState* m_CullFrontState; // Variable for the Cull Front state
-		ID3D11RasterizerState* m_CullNoneState; // Variable for the Cull None state
+		ID3D11RasterizerState* m_CullBackState = nullptr; // Variable for the Cull Back state
+		ID3D11RasterizerState* m_CullFrontState = nullptr; // Variable for the Cull Front state
+		ID3D11RasterizerState* m_CullNoneState = nullptr; // Variable for the Cull None state
 
-		ID3D11DepthStencilState* m_UseDepthBufferState; // Variable for the Use Depth Buffer state
-		ID3D11DepthStencilState* m_DepthReadOnlyState; // Variable for the Depth Read Only state
-		ID3D11DepthStencilState* m_NoDepthBufferState; // Variable for the No Depth Buffer state
+		ID3D11DepthStencilState* m_UseDepthBufferState = nullptr; // Variable for the Use Depth Buffer state
+		ID3D11DepthStencilState* m_DepthReadOnlyState = nullptr; // Variable for the Depth Read Only state
+		ID3D11DepthStencilState* m_NoDepthBufferState = nullptr; // Variable for the No Depth Buffer state
 	}; 
 }
 

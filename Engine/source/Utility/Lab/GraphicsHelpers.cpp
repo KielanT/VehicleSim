@@ -13,7 +13,7 @@
 // This function requires you to pass a ID3D11Resource* (e.g. &gTilesDiffuseMap), which manages the GPU memory for the
 // texture and also a ID3D11ShaderResourceView* (e.g. &gTilesDiffuseMapSRV), which allows us to use the texture in shaders
 // The function will fill in these pointers with usable data. Returns false on failure
-bool LoadTexture(Project::DirectX11Renderer* renderer, std::string filename, ID3D11Resource** texture, ID3D11ShaderResourceView** textureSRV)
+bool LoadTexture(std::shared_ptr<Project::DirectX11Renderer> renderer, std::string filename, ID3D11Resource** texture, ID3D11ShaderResourceView** textureSRV)
 {
     // DDS files need a different function from other files
     std::string dds = ".dds"; // So check the filename extension (case insensitive)

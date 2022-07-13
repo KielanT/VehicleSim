@@ -12,7 +12,7 @@
 
 namespace Project
 {
-	Model::Model(Mesh* mesh, CVector3 position /*= { 0,0,0 }*/, CVector3 rotation /*= { 0,0,0 }*/, float scale /*= 1*/)
+	Model::Model(std::shared_ptr<Mesh> mesh, CVector3 position /*= { 0,0,0 }*/, CVector3 rotation /*= { 0,0,0 }*/, float scale /*= 1*/)
 		: mMesh(mesh)
 	{
 

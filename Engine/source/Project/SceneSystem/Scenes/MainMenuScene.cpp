@@ -9,7 +9,7 @@
 namespace Project
 {
 
-	MainMenuScene::MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour,
+	MainMenuScene::MainMenuScene(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour,
 		float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -27,7 +27,7 @@ namespace Project
 		m_WindowsSettings = m_Renderer->GetWindowsProperties();
 	}
 
-	MainMenuScene::MainMenuScene(CDirectX11SceneManager* sceneManager, IRenderer* renderer, bool enablePhysics, int sceneIndex,
+	MainMenuScene::MainMenuScene(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, bool enablePhysics, int sceneIndex,
 		CVector3 ambientColour, float specularPower, ColourRGBA backgroundColour, bool vsyncOn)
 	{
 		m_Renderer = renderer;
@@ -47,9 +47,9 @@ namespace Project
 
 	bool MainMenuScene::InitGeometry()
 	{
-		m_EntityManager = new EntityManager(m_Renderer);
+		m_EntityManager = std::make_unique<EntityManager>(m_Renderer);
 
-		m_SceneCamera = new Camera();
+		m_SceneCamera = std::make_shared<Camera>();
 
 		std::string path = "media/";
 	
@@ -72,7 +72,7 @@ namespace Project
 
 			m_Material = m_PhysicsSystem->GetPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 
-			m_PhysicsEntityManager = new EntityManager(m_Renderer, m_PhysicsSystem);
+			m_PhysicsEntityManager = std::make_unique<EntityManager>(m_Renderer, m_PhysicsSystem);
 			/*****************************************************/
 			/**			   Set up actors and objects            **/
 			/*****************************************************/
@@ -118,7 +118,7 @@ namespace Project
 
 		if (m_Renderer->GetRenderType() == ERendererType::DirectX11)
 		{
-			DirectX11Renderer* render = static_cast<DirectX11Renderer*>(m_Renderer);
+			std::shared_ptr<DirectX11Renderer> render = std::static_pointer_cast<DirectX11Renderer>(m_Renderer);
 
 			if (render != nullptr)
 			{
@@ -204,7 +204,6 @@ namespace Project
 
 	void MainMenuScene::ReleaseResources()
 	{
-		if (m_SceneCamera != nullptr) { delete m_SceneCamera;  m_SceneCamera = nullptr; }
 
 		if (m_EntityManager != nullptr)			  m_EntityManager->DestroyAllEntities();
 		if (m_PhysicsEntityManager != nullptr)    m_PhysicsEntityManager->DestroyAllEntities();

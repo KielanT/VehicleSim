@@ -5,11 +5,11 @@
 
 namespace Project
 {
-    ISceneManager* Project::NewSceneManager(IRenderer* renderer)
+    std::shared_ptr<ISceneManager> Project::NewSceneManager(std::shared_ptr<IRenderer> renderer)
     {
         if (renderer->GetRenderType() == ERendererType::DirectX11) // Returns the DirectX 11 scene manager
         {
-            return new CDirectX11SceneManager(renderer, renderer->GetWindowsProperties());
+            return std::make_shared<CDirectX11SceneManager>(renderer, renderer->GetWindowsProperties());
         }
         else
         {

@@ -14,9 +14,9 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 namespace Project
 {
-    IWindow* IWindow::Create(WindowProperties& props)
+    std::unique_ptr<IWindow> IWindow::Create(WindowProperties& props)
     {
-        return new WindowsWindow(props);
+        return std::make_unique<WindowsWindow>(props);
     }
 
     WindowsWindow::WindowsWindow(WindowProperties& props)
@@ -41,11 +41,11 @@ namespace Project
     }
 
 
-    void WindowsWindow::Update(ISceneManager* m_SceneManager)
+    void WindowsWindow::Update(std::shared_ptr<ISceneManager> sceneManager)
     {
         if (SUCCEEDED(m_Window))
         {
-            m_Window = Run(m_SceneManager);
+            m_Window = Run(sceneManager);
         }
     }
 
@@ -129,7 +129,7 @@ namespace Project
         return TRUE;
     }
 
-    HRESULT WindowsWindow::Run(ISceneManager* m_SceneManager)
+    HRESULT WindowsWindow::Run(std::shared_ptr<ISceneManager> m_SceneManager)
     {
         HRESULT hr = S_OK;
 
@@ -155,7 +155,7 @@ namespace Project
         // Setup Platform/Renderer bindings
         ImGui_ImplWin32_Init(m_Props.Hwnd);
 
-        DirectX11Renderer* renderer = static_cast<DirectX11Renderer*>(m_SceneManager->GetRenderer());
+        std::shared_ptr<DirectX11Renderer> renderer = std::static_pointer_cast<DirectX11Renderer>(m_SceneManager->GetRenderer());
         ImGui_ImplDX11_Init(renderer->GetDevice(), renderer->GetDeviceContext());
 
         // Initialise scene

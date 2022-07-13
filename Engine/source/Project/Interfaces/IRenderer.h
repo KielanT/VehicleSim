@@ -25,5 +25,5 @@ namespace Project
 	};
 
 	// Returns the renderer base on the type selected
-	IRenderer* NewRenderer(const ERendererType type);
+	std::shared_ptr<IRenderer> NewRenderer(const ERendererType type);
 }

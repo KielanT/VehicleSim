@@ -9,7 +9,7 @@ namespace Project
 	class TempSceneTwo : public IScene
 	{
 	public:
-		TempSceneTwo(CDirectX11SceneManager* sceneManager, IRenderer* renderer, int sceneIndex, CVector3 ambientColour = CVector3(0.2f, 0.2f, 0.3f),
+		TempSceneTwo(CDirectX11SceneManager* sceneManager, std::shared_ptr<IRenderer> renderer, int sceneIndex, CVector3 ambientColour = CVector3(0.2f, 0.2f, 0.3f),
 			float specularPower = 256.0f, ColourRGBA backgroundColour = ColourRGBA(0.2f, 0.2f, 0.3f, 1.0f),
 			bool vsyncOn = true);
 
@@ -25,7 +25,7 @@ namespace Project
 
 		virtual int GetSceneIndex() override { return m_SceneIndex; }
 
-		virtual Camera* GetCamera() override { return m_SceneCamera; } 
+		virtual  std::shared_ptr<Camera> GetCamera() override { return m_SceneCamera; }
 
 		// Scene Settings
 		virtual void SetAmbientColour(CVector3 ambientColour) override { m_AmbientColour = ambientColour; }
@@ -39,10 +39,10 @@ namespace Project
 		virtual bool GetVSync() override { return m_VsyncOn; }
 
 	private:
-		IRenderer* m_Renderer;
+		std::shared_ptr<IRenderer> m_Renderer;
 		int m_SceneIndex;
 
-		Camera* m_SceneCamera;
+		std::shared_ptr<Camera> m_SceneCamera;
 
 		EntityManager* m_EntityManager;
 		EntityManager* m_LightEntityManager;
