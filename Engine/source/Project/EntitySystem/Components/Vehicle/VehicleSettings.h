@@ -47,6 +47,7 @@ namespace Project
 		}
 
 		/*Getters for all the settings*/
+		const bool GetAuto() { return m_IsAuto; }
 		const int GetNumberOfWheels() { return m_NumWheels; }
 		const physx::PxF32 GetChassisMass() { return m_ChassisMass; }
 		const physx::PxF32 GetWheelMass() { return m_WheelMass; }
@@ -71,6 +72,7 @@ namespace Project
 		const physx::PxVehicleSuspensionData DefaultSuspension();
 
 		/*Setters for all the settings*/
+		void SetAutomatic(bool automatic) { m_IsAuto = automatic; }
 		void SetChassisMass(physx::PxF32 mass) { m_ChassisMass = mass; }
 		void SetWheelMass(physx::PxF32 mass) { m_WheelMass = mass; }
 		void SetMaxSteer(physx::PxF32 steer) { m_MaxSteer = steer; }

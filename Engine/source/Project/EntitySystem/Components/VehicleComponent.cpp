@@ -47,7 +47,8 @@ namespace Project
 		// Reset the position and the vehicle to original starting point
 		m_Vehicle4W->setToRestState();
 		m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
-		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
+
+		m_Vehicle4W->mDriveDynData.setUseAutoGears(m_VehicleSettings.GetAuto());
 
 		m_VehicleInputData.setDigitalBrake(true);
 		
@@ -143,7 +144,7 @@ namespace Project
 
 		m_Vehicle4W->setToRestState();
 		m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
-		m_Vehicle4W->mDriveDynData.setUseAutoGears(true);
+		m_Vehicle4W->mDriveDynData.setUseAutoGears(m_VehicleSettings.GetAuto());
 
 		m_VehicleInputData.setDigitalBrake(true);
 
@@ -492,12 +493,24 @@ namespace Project
 		if (KeyHeld(m_Controls.handBrake))
 			m_HandBrake = true;
 
-		if (KeyHit(m_Controls.gearUp) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
-			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
+		if (m_VehicleSettings.GetAuto())
+		{
+			if (KeyHit(m_Controls.gearUp) && m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eREVERSE)
+				m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eFIRST);
 
-		if (KeyHit(m_Controls.gearDown))
-			m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+			if (KeyHit(m_Controls.gearDown))
+				m_Vehicle4W->mDriveDynData.forceGearChange(physx::PxVehicleGearsData::eREVERSE);
+		}
+		else
+		{
+			if (KeyHit(m_Controls.gearUp))
+				m_GearUp = true;
 
+
+			if (KeyHit(m_Controls.gearDown))
+				m_GearDown = true;
+
+		}
 		
 		// Resets the vehicle
 		if(m_IsResetEnabled && KeyHit(m_Controls.reset))
@@ -558,13 +571,17 @@ namespace Project
 		m_VehicleInputData.setDigitalSteerRight(m_Right);
 		m_VehicleInputData.setDigitalBrake(m_Brake);
 		m_VehicleInputData.setDigitalHandbrake(m_HandBrake);
-
+		m_VehicleInputData.setGearUp(m_GearUp);
+		m_VehicleInputData.setGearDown(m_GearDown);
+		
 		// Must be set to false each frame
 		m_Accelerate = false;
 		m_Left = false;
 		m_Right = false;
 		m_Brake = false;
 		m_HandBrake = false;
+		m_GearUp = false;
+		m_GearDown = false;
 
 	}
 

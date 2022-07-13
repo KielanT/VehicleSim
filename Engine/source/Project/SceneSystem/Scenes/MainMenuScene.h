@@ -134,6 +134,7 @@ namespace Project
 		void SetDefaultControls();
 
 		VehicleSettings m_VehicleSettings;
+		bool m_IsAuto;
 		int m_ChassisMass;
 		int m_WheelMass;
 		int m_MaxSteer;

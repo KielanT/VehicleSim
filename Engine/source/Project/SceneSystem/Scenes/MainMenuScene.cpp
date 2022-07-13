@@ -86,6 +86,7 @@ namespace Project
 
 		m_VehicleSettings = VehicleSettings();
 
+		m_IsAuto = m_VehicleSettings.GetAuto();
 		m_ChassisMass = m_VehicleSettings.GetChassisMass();
 		m_WheelMass = m_VehicleSettings.GetWheelMass();
 		m_MaxSteer = m_VehicleSettings.GetMaxSteer();
@@ -465,6 +466,13 @@ namespace Project
 		{
 			// Set Chassis Mass
 			ImGui::PushItemWidth(50);
+			IMGUI_LEFT_LABEL(ImGui::Checkbox, "Automatic:", &m_IsAuto);
+			m_VehicleSettings.SetAutomatic(m_IsAuto);
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(50);
 			IMGUI_LEFT_LABEL(ImGui::InputInt, "Chassis Mass:", &m_ChassisMass, 0);
 			m_VehicleSettings.SetChassisMass(m_ChassisMass);
 			ImGui::PopItemWidth();
@@ -486,6 +494,8 @@ namespace Project
 			m_VehicleSettings.SetMaxSteer(m_MaxSteer);
 			ImGui::PopItemWidth();
 			ImGui::EndDisabled();
+			
+
 			
 			TireSettings();
 

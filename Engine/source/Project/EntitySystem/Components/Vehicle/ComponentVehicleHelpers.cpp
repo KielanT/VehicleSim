@@ -27,6 +27,8 @@ physx::PxConvexMesh* CreateWheelMesh(int index, Entity* entity, IPhysics* physic
 	return CreateConvexMesh(vertices.data(), vertexCount, physics->GetPhysics(), physics->GetCooking());
 }
 
+
+
 physx::PxConvexMesh* CreateChassisMesh(int index, Entity* entity, IPhysics* physics)
 {
 	physx::PxU32 vertexCount;

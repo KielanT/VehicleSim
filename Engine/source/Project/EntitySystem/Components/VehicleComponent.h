@@ -117,6 +117,8 @@ namespace Project
 		bool m_Right = false;
 		bool m_Brake = false;
 		bool m_HandBrake = false;
+		bool m_GearUp = false;
+		bool m_GearDown = false;
 		
 		bool IsVehicleInAir = false;
 

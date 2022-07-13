@@ -19,6 +19,7 @@ namespace Project
 
 		// Creates new child object with attributes and adds it to the file
 		tinyxml2::XMLElement* child = doc.NewElement("Basic");
+		child->SetAttribute("Auto", settings.GetAuto());
 		child->SetAttribute("ChassisMass", settings.GetChassisMass());
 		child->SetAttribute("WheelMass", settings.GetWheelMass());
 		child->SetAttribute("MaxSteer", settings.GetMaxSteer());
@@ -131,7 +132,9 @@ namespace Project
 			{
 				// Get the basic details first and reads in the settings and adds it to the settings
 				tinyxml2::XMLElement* childElement = element->FirstChildElement("Basic"); 
-				const tinyxml2::XMLAttribute* attr = childElement->FindAttribute("ChassisMass");
+				const tinyxml2::XMLAttribute* attr = childElement->FindAttribute("Auto");
+				if (attr != nullptr) settings.SetAutomatic(attr->BoolValue());
+				 attr = childElement->FindAttribute("ChassisMass");
 				if (attr != nullptr) settings.SetChassisMass(attr->FloatValue());
 				attr = childElement->FindAttribute("WheelMass");
 				if (attr != nullptr) settings.SetWheelMass(attr->FloatValue());
