@@ -29,7 +29,7 @@ namespace Project
 	enum class WindowType
 	{
 		Windowed = 0,
-		Fullscreen,
+		//Fullscreen,
 		FullscreenBorderless
 	};
 

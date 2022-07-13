@@ -34,6 +34,10 @@ namespace Project
 				attr = childElement->FindAttribute("Height");
 				if (attr != nullptr) m_Props.Height = attr->FloatValue();
 
+				childElement = element->FirstChildElement("Window");
+				attr = childElement->FindAttribute("Mode");
+				if (attr != nullptr) m_Props.windowType = static_cast<WindowType>(attr->IntValue());
+
 				childElement = element->FirstChildElement("Renderer");
 				attr = childElement->FindAttribute("Type");
 				if (attr != nullptr) m_Props.RendererType = GetRenderType(attr->Value());
@@ -69,6 +73,10 @@ namespace Project
 		child = doc.NewElement("Size");
 		child->SetAttribute("Width", settings.Width);
 		child->SetAttribute("Height", settings.Height);
+		root->InsertEndChild(child);
+
+		child = doc.NewElement("Window");
+		child->SetAttribute("Mode", static_cast<int>(settings.windowType));
 		root->InsertEndChild(child);
 
 		child = doc.NewElement("Renderer");

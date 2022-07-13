@@ -85,22 +85,19 @@ namespace Project
 
         DWORD windowStyle = WS_OVERLAPPEDWINDOW;
         // Select the type of window to show our application in
-        //if (props.windowType == WindowType::Windowed)
-        //{
-        //    windowStyle = WS_OVERLAPPEDWINDOW; // Standard window
-        //} 
-        //else if (props.windowType == WindowType::Fullscreen)
-        //{    
-        //    windowStyle = 
-        //}    
-        //else if (props.windowType == WindowType::FullscreenBorderless)
-        //{
-        //    windowStyle = WS_POPUP;
-        //    props.Width = 1920;
-        //    props.Height = 1080;
-        //}
-        
-        
+
+        if (props.windowType == WindowType::FullscreenBorderless)
+        {
+            windowStyle = WS_POPUP;
+            RECT desktop;
+            const HWND hDesktop = GetDesktopWindow();
+            GetWindowRect(hDesktop, &desktop);
+            props.Width = desktop.right;
+            props.Height = desktop.bottom;
+        }
+       
+      
+
         
         // Alternative: borderless. If you also set the viewport size to the monitor resolution, you 
         // get a "fullscreen borderless" window, which works better with alt-tab than DirectX fullscreen,

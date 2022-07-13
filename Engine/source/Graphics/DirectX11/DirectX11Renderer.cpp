@@ -23,8 +23,12 @@ namespace Project
 
         // Create a Direct3D device (i.e. initialise D3D) and create a swap-chain (create a back buffer to render to)
         DXGI_SWAP_CHAIN_DESC swapDesc = {};
-        swapDesc.OutputWindow = m_Props.Hwnd;                           // Target window
-        swapDesc.Windowed = TRUE;
+        swapDesc.OutputWindow = m_Props.Hwnd;          // Target window
+        if (m_Props.windowType == WindowType::FullscreenBorderless)
+            swapDesc.Windowed = FALSE;
+        else
+            swapDesc.Windowed = TRUE;
+
         swapDesc.BufferCount = 1;
         swapDesc.BufferDesc.Width = m_Props.Width;             // Target window size
         swapDesc.BufferDesc.Height = m_Props.Height;            // --"--

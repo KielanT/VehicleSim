@@ -164,6 +164,10 @@ namespace Project
 			}
 		}
 
+		m_WindowMode[0] = "Windowed";
+		m_WindowMode[1] = "Fullscreen Bordeless";
+		m_CurrentWindowModeIndex = static_cast<int>(m_WindowsSettings.windowType);
+
 
 		m_SceneCamera->SetPosition({ 0, 10, -40 });
 		m_SceneCamera->SetRotation({ 0, 0, 0 });
@@ -692,11 +696,11 @@ namespace Project
 
 			ImGui::SameLine();
 
+			ImGui::BeginDisabled(true);
 			ImGui::PushItemWidth(50);
 			IMGUI_LEFT_LABEL(ImGui::InputInt, "Number of gears:", &m_NumGears, 0);
-			m_Gears.mFinalRatio = m_NumGears - 4; 
-			m_Gears.mNbRatios = m_NumGears - 4;
 			ImGui::PopItemWidth();
+			ImGui::EndDisabled();
 
 			m_VehicleSettings.SetGears(m_Gears);
 			ImGui::TreePop();
@@ -913,6 +917,27 @@ namespace Project
 
 		m_WindowsSettings.Height = windSize[currentWindowIndex].height;
 		m_WindowsSettings.Width = windSize[currentWindowIndex].width;
+
+		m_WindowModePreviewValue = m_WindowMode[m_CurrentWindowModeIndex];
+		ImGui::PushItemWidth(310);
+		if (IMGUI_LEFT_LABEL(ImGui::BeginCombo, "Window Mode: ", m_WindowModePreviewValue))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(m_WindowMode); n++)
+			{
+				const bool is_selected = (currentWindowIndex == n);
+				if (ImGui::Selectable(m_WindowMode[n], is_selected))
+					m_CurrentWindowModeIndex = n;
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			m_WindowsSettings.windowType = static_cast<WindowType>(m_CurrentWindowModeIndex);
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
 
 		const char* renderType[1];
 		renderType[0] = "DirectX 11";

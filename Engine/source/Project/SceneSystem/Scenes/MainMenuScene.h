@@ -117,6 +117,10 @@ namespace Project
 		const char* windowPreviewValue;
 		int currentWindowIndex = 0;
 
+		const char* m_WindowMode[2];
+		const char* m_WindowModePreviewValue;
+		int m_CurrentWindowModeIndex = 0;
+
 		std::string m_AcclerateBuffer;
 		std::string m_SteerRightBuffer;
 		std::string m_SteerLeftBuffer;
