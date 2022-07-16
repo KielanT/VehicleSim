@@ -83,7 +83,7 @@ namespace Project
             return false;
         }
 
-        DWORD windowStyle = WS_OVERLAPPEDWINDOW;
+        DWORD windowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
         // Select the type of window to show our application in
 
         if (props.windowType == WindowType::FullscreenBorderless)
