@@ -53,7 +53,7 @@ namespace Project
 
 		child = doc.NewElement("Gears");
 		child->SetAttribute("SwitchTime", settings.GetGears().mSwitchTime);
-		child->SetAttribute("NumGears", settings.GetGears().mFinalRatio);
+		child->SetAttribute("NumGears", settings.GetGears().mNbRatios);
 		root->InsertEndChild(child);
 
 		child = doc.NewElement("Clutch");
@@ -188,7 +188,7 @@ namespace Project
 				attr = childElement->FindAttribute("SwitchTime");
 				if (attr != nullptr) gData.mSwitchTime = attr->FloatValue();
 				attr = childElement->FindAttribute("NumGears");
-				if (attr != nullptr) gData.mFinalRatio = attr->FloatValue();
+				if (attr != nullptr) gData.mNbRatios = attr->FloatValue();
 				settings.SetGears(gData);
 
 				childElement = element->FirstChildElement("Clutch"); physx::PxVehicleClutchData cData;

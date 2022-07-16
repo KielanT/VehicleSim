@@ -288,6 +288,10 @@ namespace Project
 
 		if (ImGui::BeginPopupModal("PauseMenuPopUp", nullptr, popupFlags))
 		{
+			ImVec2 vec = ImGui::GetMainViewport()->GetCenter();
+			ImVec2 size = ImGui::GetWindowSize();
+			ImGui::SetWindowPos({ vec.x - (size.x / 2), vec.y - (size.y / 2) });
+
 			m_IsPaused = true;
 			std::string t = "Paused";
 			auto windowWidth = ImGui::GetWindowSize().x;

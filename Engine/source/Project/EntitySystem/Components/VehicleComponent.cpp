@@ -54,6 +54,7 @@ namespace Project
 		
 		m_Vehicle4W->getRigidDynamicActor()->setGlobalPose({ m_ResetPos.x, m_ResetPos.y, m_ResetPos.z });
 
+		
 
 		m_Accelerate = false;
 		m_Left = false;
@@ -70,6 +71,9 @@ namespace Project
 
 
 		ImGui::Begin("HUD", nullptr, flag);
+		ImVec2 vec = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetWindowPos({ vec.x * 1.8f, vec.y * 1.8f });
+
 		if (m_Vehicle4W->mDriveDynData.getCurrentGear() == physx::PxVehicleGearsData::eNEUTRAL)
 		{
 			ImGui::Text("Gear: Neutral");
@@ -469,10 +473,6 @@ namespace Project
 		wheelsSimData->addAntiRollBarData(barRear);
 	}
 
-
-
-
-
 	void VehicleComponent::MoveVehicle(float frameTime)
 	{
 		UpdateInput();
@@ -508,7 +508,6 @@ namespace Project
 
 			if (KeyHit(m_Controls.gearDown))
 				m_GearDown = true;
-
 		}
 		
 		// Resets the vehicle

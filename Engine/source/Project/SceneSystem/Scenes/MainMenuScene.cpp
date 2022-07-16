@@ -102,7 +102,7 @@ namespace Project
 		m_PeakTorque = m_Engine.mPeakTorque;
 		m_RPM = m_Engine.mMaxOmega * 10;
 		m_GearSwitchTime = m_Gears.mSwitchTime;
-		m_NumGears = (int)m_Gears.mFinalRatio;
+		m_NumGears = (int)m_Gears.mNbRatios;
 		m_ClutchStrength = m_Clutch.mStrength;
 
 		for (int i = 0; i < 4; ++i)
@@ -282,6 +282,7 @@ namespace Project
 				m_IsOpenWorldSelected = false;
 				m_IsMiniGamesSelected = false;
 			}
+			m_IsMapSelected = false;
 		}
 		else if (bOepnWorldBtn)
 		{
@@ -291,6 +292,7 @@ namespace Project
 				m_IsHotLapSelected = false;
 				m_IsMiniGamesSelected = false;
 			}
+			m_IsMapSelected = false;
 		}
 		else if(bGamesBtn)
 		{
@@ -300,6 +302,7 @@ namespace Project
 				m_IsOpenWorldSelected = false;
 				m_IsHotLapSelected = false;
 			}
+			m_IsMapSelected = false;
 		}
 		LoadMaps();
 
@@ -325,12 +328,14 @@ namespace Project
 
 			if (bMapOneBtn)
 			{
-				m_IsMapSelected = !m_IsMapSelected;
+				if (!m_IsMapSelected)
+					m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 1;
 			}
 			if (bMapTwoBtn)
 			{
-				m_IsMapSelected = !m_IsMapSelected;
+				if(!m_IsMapSelected)
+					m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 2;
 			}
 
@@ -354,7 +359,8 @@ namespace Project
 			ImGui::End();
 			if (bMapOneBtn)
 			{
-				m_IsMapSelected = !m_IsMapSelected;
+				if (!m_IsMapSelected)
+					m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 3;
 			}
 
@@ -379,7 +385,8 @@ namespace Project
 			ImGui::End();
 			if (bMapOneBtn)
 			{
-				m_IsMapSelected = !m_IsMapSelected;
+				if (!m_IsMapSelected)
+					m_IsMapSelected = !m_IsMapSelected;
 				m_MapIndex = 4;
 			}
 
@@ -705,11 +712,12 @@ namespace Project
 
 			ImGui::SameLine();
 
-			ImGui::BeginDisabled(true);
+			//ImGui::BeginDisabled(true);
 			ImGui::PushItemWidth(50);
 			IMGUI_LEFT_LABEL(ImGui::InputInt, "Number of gears:", &m_NumGears, 0);
+			m_Gears.mNbRatios = m_NumGears;
 			ImGui::PopItemWidth();
-			ImGui::EndDisabled();
+			//ImGui::EndDisabled();
 
 			m_VehicleSettings.SetGears(m_Gears);
 			ImGui::TreePop();
