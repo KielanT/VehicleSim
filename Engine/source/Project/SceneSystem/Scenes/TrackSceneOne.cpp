@@ -97,7 +97,7 @@ namespace Project
 			SEntityTransform transform = SEntityTransform();
 			transform.Position = { 0.0f, 2.0f, 0.0f };
 			transform.Scale = { 10.0f, 10.0f, 2.0f };
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackFinishLine", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneFinishLine.obj", { 0.0f, 0.0f, 40.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexWhite.png", true, transform);
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackFinishLine", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneFinishLine.obj", { 0.0f, 0.0f, 40.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "GridTextures/BasicTexWhite.png", true, transform);
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/MainCompact.obj", path + "Compact/CollisionCompact.obj", vehicleSettings, path + "Compact/CompactBlue.png");
 			//m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/MainCompact.obj", path + "Compact/test1.obj", vehicleSettings, path + "Compact/CompactBlue.png");
 		}

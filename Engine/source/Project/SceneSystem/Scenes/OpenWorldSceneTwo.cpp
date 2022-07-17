@@ -82,23 +82,23 @@ namespace Project
 			SEntityTransform transform = SEntityTransform();
 			transform.Scale = { 2.0f, 0.0f, 2.0f };
 			
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x", transform, { 1.0f, 1.0f, 1.0f }, true, path + "BasicTexGreen.png");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x", transform, { 1.0f, 1.0f, 1.0f }, true, path + "GridTextures/BasicTexGreen.png");
 		
 			transform.Scale = { 1.0f, 1.0f, 1.0f };
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Pitch", PhysicsStaticObjectType::TriangleMesh, path + "Pitch.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexWhite.png");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Pitch", PhysicsStaticObjectType::TriangleMesh, path + "Pitch.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "GridTextures/BasicTexWhite.png");
 			
 			transform.Position = { 0.0f, 0.0f, 160.0f };
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("GoalOne", PhysicsStaticObjectType::TriangleMesh, path + "GoalOne.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexYellow.png");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("GoalOne", PhysicsStaticObjectType::TriangleMesh, path + "GoalOne.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "GridTextures/BasicTexYellow.png");
 			
 			transform.Position = { 0.0f, 0.0f, -160.0f };
-			m_PhysicsEntityManager->CreatePhysicsStaticEntity("GoalTwo", PhysicsStaticObjectType::TriangleMesh, path + "GoalTwo.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "BasicTexYellow.png");
+			m_PhysicsEntityManager->CreatePhysicsStaticEntity("GoalTwo", PhysicsStaticObjectType::TriangleMesh, path + "GoalTwo.obj", transform, { 1.0f, 1.0f, 1.0f }, false, path + "GridTextures/BasicTexYellow.png");
 			
 			transform.Position = { 0.0f, 0.0f, -30.0f };
 			m_PhysicsEntityManager->CreateVehicleEntity("MainCar", path + "Compact/MainCompact.obj", path + "Compact/CollisionCompact.obj", vehicleSettings, path + "Compact/CompactBlue.png", transform);
 
 			transform.Position = { 0.0f, 0.0f, 0.0f };
 			transform.Scale = { 0.3f, 0.3f, 0.3f };
-			m_PhysicsEntityManager->CreatePhysicsDynamicEntity("Sphere", PhysicsDynmaicObjectType::Sphere, path + "Sphere.x", transform, { transform.Scale.x * 10, transform.Scale.y, transform.Scale.z }, false, path + "BasicTexBlue.png");
+			m_PhysicsEntityManager->CreatePhysicsDynamicEntity("Sphere", PhysicsDynmaicObjectType::Sphere, path + "Sphere.x", transform, { transform.Scale.x * 10, transform.Scale.y, transform.Scale.z }, false, path + "GridTextures/BasicTexBlue.png");
 			if (m_PhysicsEntityManager->GetEntity("Sphere") && m_PhysicsEntityManager->GetEntity("Sphere")->GetComponent("PhysicsDynamicObject"));
 			{
 				PhysicsDynamicObjectComponent* comp = static_cast<PhysicsDynamicObjectComponent*>(m_PhysicsEntityManager->GetEntity("Sphere")->GetComponent("PhysicsDynamicObject"));

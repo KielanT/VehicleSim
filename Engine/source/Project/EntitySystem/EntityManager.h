@@ -43,7 +43,7 @@ namespace Project
 		// Functions for creating different entities
 
 		TEntityUID CreateEntity(const std::string& name);
-		TEntityUID CreateModelEntity(const std::string& name, std::string fileMeshPath, bool isRendered = true, std::string filePath = "media/BasicTexOrange.png",
+		TEntityUID CreateModelEntity(const std::string& name, std::string fileMeshPath, bool isRendered = true, std::string filePath = "media/GridTextures/BasicTexOrange.png",
 			SEntityTransform transform = SEntityTransform(),
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
@@ -75,7 +75,7 @@ namespace Project
 	
 
 		TEntityUID CreatePhysicsStaticEntity(const std::string& name, PhysicsStaticObjectType objectType, std::string mainMeshPath, 
-			SEntityTransform transform = SEntityTransform(), CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isDrivable = false, std::string texturePath = "media/BasicTexWhite.png",
+			SEntityTransform transform = SEntityTransform(), CVector3 colScale = { 1.0f, 1.0f, 1.0f }, bool isDrivable = false, std::string texturePath = "media/GridTextures/BasicTexWhite.png",
 			bool isTrigger = false, SEntityTransform triggerTransform = SEntityTransform(), PhysicsStaticObjectType triggerObjectType = PhysicsStaticObjectType::Box,
 			EPixelShader pixelShader = EPixelShader::PixelLightingPixelShader,
 			EVertexShader vertexShader = EVertexShader::PixelLightingVertexShader,
