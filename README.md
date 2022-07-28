@@ -1,3 +1,8 @@
+Github link: https://github.com/KielanT/VehicleSim.git
+
+Executable in Build/Debug-windows-x86_64/KielansVehicleSim 
+
+**** IF PULLED FROM GIT **** 
 1) Generate project with the GenerateProject.bat
 2) Load VehicleSim.sln
 3) Right Click KielansVehicleSim Project and Set as Startup Project (was set in premake didn't work)	

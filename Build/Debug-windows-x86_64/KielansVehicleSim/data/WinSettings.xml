@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <Title Name="KielansVehicleSimulator"/>
+    <Size Width="1280" Height="720"/>
+    <Window Mode="0"/>
+    <Renderer Type="DirectX11"/>
+    <Physics Type="PhysX4"/>
+</Window>
