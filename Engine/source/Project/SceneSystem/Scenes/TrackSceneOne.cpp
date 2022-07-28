@@ -62,7 +62,6 @@ namespace Project
 		/**			   Create the entities                  **/
 		/*****************************************************/
 		std::string path = "media/";
-		//m_EntityManager->CreateModelEntity("/*EntityName*/", /*EntityMesh*/);
 
 		SaveVehicleData data;
 		VehicleSettings vehicleSettings;
@@ -92,7 +91,7 @@ namespace Project
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("Plane", PhysicsStaticObjectType::Plane, path + "Ground.x");
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackOuter", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneOuter.obj", { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
 			m_PhysicsEntityManager->CreatePhysicsStaticEntity("TrackInner", PhysicsStaticObjectType::TriangleMesh, path + "TrackOneInner.obj", { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
-			//m_PhysicsEntityManager->CreatePhysicsStaticEntity("testVeh", PhysicsStaticObjectType::TriangleMesh, path + "Compact/test2.obj", { 0.0f, 10.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "brick1.jpg");
+			//m_PhysicsEntityManager->CreatePhysicsStaticEntity("testVeh", PhysicsStaticObjectType::TriangleMesh, path + "Compact/MainCompact.obj", { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, false, path + "Compact/CompactBlue.png");
 
 			SEntityTransform transform = SEntityTransform();
 			transform.Position = { 0.0f, 2.0f, 0.0f };

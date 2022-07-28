@@ -135,7 +135,7 @@ private:
 	                                  // can sometimes save a matrix multiply in the shader (optional)
 
 	const float ROTATION_SPEED = 2.0f;
-	const float MOVEMENT_SPEED = 50.0f;
+	const float MOVEMENT_SPEED = 25.0f;
 
 	bool m_IsChase = false;
 };
